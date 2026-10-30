@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;450;500;550;600;650;700&display=swap");
+/* Shared palette. Change these brand, background and type tokens in one place. */
+:root {
+  --brand: #344c35;
+  --brand-dark: #233b25;
+  --ink: #202d23;
+  --cream: #f0ecdf;
+  --surface: #fffef9;
+  --canvas: #f8f8f2;
+  --muted: #788071;
+  --line: #e3e6db;
+  --accent: #bfa56d;
+  --soft: #edf1e7;
+  --danger: #ad413b;
+  --orange: var(--brand);
+  --font: "Jost", sans-serif;
+  font-family: var(--font);
+}
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font);
+}
+.preview-note {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 200;
+  background: var(--ink);
+  color: var(--surface);
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  max-width: calc(100% - 24px);
+}
+.preview-note a {
+  text-decoration: underline;
+  margin-left: 14px;
+}
+
+:root {
+  --color-fff4df: #fff4df;
+  --color-ffffff35: #ffffff35;
+  --color-eee9d8ed: #eee9d8ed;
+  --color-7a240b0b: #7a240b0b;
+  --color-fff2e2: #fff2e2;
+  --color-f9e5d5: #f9e5d5;
+  --color-17251c: #17251c;
+  --color-55200022: #55200022;
+  --color-fff0da: #fff0da;
+  --color-4a2514: #4a2514;
+  --color-fff6: #fff6;
+  --color-291a13: #291a13;
+  --color-381f13: #381f13;
+  --color-63341e: #63341e;
+  --color-fff1d5: #fff1d5;
+  --color-ffebc5a8: #ffebc5a8;
+  --color-e9d8cc: #e9d8cc;
+  --color-fbe8d6: #fbe8d6;
+  --color-83432b: #83432b;
+  --color-5b7047: #5b7047;
+  --color-725f50: #725f50;
+  --color-fff0df: #fff0df;
+  --color-876b50: #876b50;
+  --color-6a503e: #6a503e;
+  --color-8c5134: #8c5134;
+  --color-422918: #422918;
+  --color-9d4429: #9d4429;
+  --color-66391212: #66391212;
+  --color-905137: #905137;
+  --color-382114: #382114;
+  --color-2b160a80: #2b160a80;
+  --color-725d4d: #725d4d;
+  --color-3d150373: #3d150373;
+  --color-2a1a13: #2a1a13;
+  --color-f0ecdfb8: #f0ecdfb8;
+  --color-102014b3: #102014b3;
+  --color-10201433: #10201433;
+  --color-f6f1e3: #f6f1e3;
+  --color-10201480: #10201480;
+  --color-fff7e5: #fff7e5;
+  --color-223c27: #223c27;
+  --color-d8d8c4: #d8d8c4;
+  --color-17251ce6: #17251ce6;
+  --color-526841: #526841;
+  --color-102014ed: #102014ed;
+  --color-102014aa: #102014aa;
+  --color-52604f: #52604f;
+  --color-344c3540: #344c3540;
+  --color-66391220: #66391220;
+  --color-382a23: #382a23;
+  --color-344c352b: #344c352b;
+  --color-17251c80: #17251c80;
+  --color-344c3524: #344c3524;
+  --color-344c3530: #344c3530;
+  --color-344c3522: #344c3522;
+  --color-e8e1d5: #e8e1d5;
+  --color-d8ddd5: #d8ddd5;
+  --color-273725: #273725;
+  --color-25321f26: #25321f26;
+  --color-dfc479a6: #dfc479a6;
+  --color-fff4d54d: #fff4d54d;
+  --color-fff8: #fff8;
+  --color-fff8e9: #fff8e9;
+  --color-3c4938: #3c4938;
+  --color-344c3570: #344c3570;
+  --color-344c3538: #344c3538;
+  --color-344c352d: #344c352d;
+  --color-394236: #394236;
+  --color-a5b987: #a5b987;
+  --color-fffdf2: #fffdf2;
+  --color-c3d0b8: #c3d0b8;
+  --color-c5cfbd: #c5cfbd;
+  --color-faf0d9: #faf0d9;
+  --color-9a782e: #9a782e;
+  --color-e8eef6: #e8eef6;
+  --color-5e7590: #5e7590;
+  --color-eaf1e3: #eaf1e3;
+  --color-577b43: #577b43;
+  --color-f8e7e1: #f8e7e1;
+  --color-ab6859: #ab6859;
+  --color-f0f1e7: #f0f1e7;
+  --color-86a565: #86a565;
+  --color-fae9e5: #fae9e5;
+  --color-9a4338: #9a4338;
+  --color-15251566: #15251566;
+  --color-0005: #0005;
+  --color-f8e5df: #f8e5df;
+  --color-934938: #934938;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

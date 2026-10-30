@@ -1,0 +1,43 @@
+{
+  "frameCount": 239,
+  "width": 1920,
+  "height": 1080,
+  "directory": "scenes/herbal-oil-advertisement",
+  "revision": "herbal-native-a601197f96ee",
+  "fps": 24.0,
+  "durationSeconds": 9.958333333333334,
+  "source": "Herbal_oil_bottle_advertisement_3860f7b0_1080p_gwr_video_mvp.mp4",
+  "processing": "Every native frame; lossless WebP; all exported RGB hashes match source decode; no retouching or resizing",
+  "phases": [
+    {
+      "name": "empty-bowl",
+      "start": 0,
+      "end": 23
+    },
+    {
+      "name": "ingredients",
+      "start": 24,
+      "end": 71
+    },
+    {
+      "name": "bowl-pour",
+      "start": 72,
+      "end": 107
+    },
+    {
+      "name": "bottle-fill-and-label",
+      "start": 108,
+      "end": 167
+    },
+    {
+      "name": "cap",
+      "start": 168,
+      "end": 203
+    },
+    {
+      "name": "hero",
+      "start": 204,
+      "end": 238
+    }
+  ]
+}

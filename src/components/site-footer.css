@@ -1,0 +1,43 @@
+.store-footer { background: var(--brand-dark); color: var(--cream); padding: 76px clamp(24px, 6.3vw, 120px) 38px; }
+.store-footer a { color: inherit; text-decoration: none; }
+.store-footer a:hover { color: #dfca99; }
+.store-footer-main { display: grid; grid-template-columns: 2.15fr .85fr .85fr .95fr 1.2fr; gap: clamp(24px, 3vw, 60px); padding-bottom: 56px; }
+.store-footer-brand { padding-right: clamp(0px, 3vw, 55px); }
+.store-footer-wordmark { display: inline-block; font-size: clamp(28px, 2.5vw, 40px); font-weight: 500; letter-spacing: -.04em; line-height: 1.2; }
+.store-footer-tagline { font-size: 9px; letter-spacing: .19em; color: #d0ba88; margin: 12px 0 32px; }
+.store-footer-description { font-size: 15px; line-height: 1.85; max-width: 390px; margin-bottom: 30px; color: #e0dfcd; }
+.store-footer-column { display: flex; flex-direction: column; gap: 13px; padding-top: 5px; min-width: 0; }
+.store-footer-column h2, .footer-signup > label { font-size: 12px; font-weight: 500; letter-spacing: .19em; color: #d0ba88; margin: 0 0 10px; display: block; }
+.store-footer-column > a { font-size: 14px; line-height: 1.6; }
+.store-footer-contact > a { display: flex; align-items: baseline; gap: 9px; overflow-wrap: anywhere; }
+.store-footer-contact svg { flex-shrink: 0; align-self: center; }
+.store-footer-contact address { font-size: 13px; line-height: 1.85; font-style: normal; color: #c0c9b6; white-space: pre-line; margin-top: 5px; }
+.footer-signup-field { display: flex; align-items: center; border-bottom: 1px solid #d0ba8866; margin: 16px 0 9px; }
+.footer-signup input { border: 0; background: transparent; color: var(--cream); padding: 12px 0; font: inherit; font-size: 14px; width: 100%; min-width: 0; outline-offset: 3px; }
+.footer-signup input::placeholder { color: #b9c2ad; }
+.footer-signup button { display: grid; place-items: center; width: 40px; min-height: 44px; flex-shrink: 0; border: 0; background: transparent; color: #d0ba88; cursor: pointer; }
+.footer-signup button:disabled { opacity: .45; cursor: wait; }
+.footer-signup small { font-size: 10px; color: #b9c2ad; }
+.footer-form-message { font-size: 12px; margin-top: 12px; }
+.store-footer-service { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 35px; padding: 30px 0; border-block: 1px solid #d0ba8833; }
+.store-footer-service > div { display: flex; align-items: flex-start; gap: 15px; }
+.store-footer-service svg { color: #d0ba88; flex-shrink: 0; margin-top: 3px; }
+.store-footer-service p { margin: 0; }
+.store-footer-service strong { display: block; font-size: 12px; font-weight: 500; letter-spacing: .16em; color: #d0ba88; margin-bottom: 5px; }
+.store-footer-service span { font-size: 12px; color: #c0c9b6; line-height: 1.7; }
+.store-footer-legal { display: flex; justify-content: space-between; gap: 20px; align-items: baseline; padding-top: 26px; }
+.store-footer-legal nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.store-footer-legal a, .store-footer-legal p, .store-footer-bottom { font-size: 11px; color: #b9c2ad; line-height: 1.8; }
+.store-footer-legal p { letter-spacing: .08em; }
+.store-footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 18px; }
+.store-footer-bottom p { margin: 0; }
+.store-footer :focus-visible { outline: 2px solid #d0ba88; outline-offset: 5px; }
+.store-footer-social h2 { font-size: 12px; font-weight: 500; letter-spacing: .19em; color: #d0ba88; margin: 0 0 16px; }
+.store-footer-social > div { display: flex; gap: 12px; }
+.store-footer-social a, .store-footer-social span { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #d0ba8866; border-radius: 50%; color: #d0ba88; }
+.store-footer-social a:hover { background: #d0ba8820; }
+.store-footer-social span { opacity: .65; }
+.footer-payment-label { display: flex; align-items: center; gap: 10px; }
+.footer-payment-label svg { flex-shrink: 0; font-size: 20px; }
+@media (max-width: 1150px) { .store-footer-main { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; } .store-footer-brand { grid-column: 1 / -1; display: block; max-width: 500px; padding-right: 0; } }
+@media (max-width: 700px) { .store-footer { padding: 50px 24px 28px; } .store-footer-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .store-footer-brand { grid-column: 1 / -1; } .store-footer-service { grid-template-columns: 1fr; gap: 24px; } .store-footer-legal { flex-direction: column; gap: 15px; } .store-footer-legal nav { gap: 10px 20px; } .store-footer-bottom { flex-wrap: wrap; } }
