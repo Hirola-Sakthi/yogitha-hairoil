@@ -7,6 +7,11 @@ import "./order-confirmation.css";
 export default function OrderConfirmation({ order, product, preview }) {
   const paid = order.paymentStatus === "paid";
   const pending = order.paymentMethod === "razorpay" && !paid;
+  const items = order.items?.length ? order.items : [{
+    productName: order.productName || product?.name || "Ayurvedic Hair Oil",
+    image: product?.image,
+    quantity: order.quantity || 1,
+  }];
   return (
     <section className="confirmation-page" aria-labelledby="confirmation-title">
       <div className="confirmation-card">
@@ -19,10 +24,12 @@ export default function OrderConfirmation({ order, product, preview }) {
         </header>
         <div className="confirmation-body">
           <div className="confirmation-reference"><span>Order number</span><strong>{order.id}</strong></div>
-          <div className="confirmation-product">
-            <img src={imageUrl(product?.image || "/product-showcase.webp")} alt={order.productName || product?.name || "Ayurvedic hair oil"} />
-            <div><span>YOUR SELECTION</span><h2>{order.productName || product?.name || "Ayurvedic Hair Oil"}</h2><p>Quantity {order.quantity || 1}</p></div>
-            <Package size={22} strokeWidth={1.3} aria-hidden="true" />
+          <div className="confirmation-items">
+            {items.map((item, index) => <div className="confirmation-product" key={`${item.productId || index}-${item.variantId || "item"}`}>
+              <img src={imageUrl(item.image || product?.image || "/product-showcase.webp")} alt={item.productName || "Ayurvedic hair oil"} />
+              <div><span>YOUR SELECTION</span><h2>{item.productName}</h2><p>Quantity {item.quantity || 1}</p></div>
+              {index === 0 && <Package size={22} strokeWidth={1.3} aria-hidden="true" />}
+            </div>)}
           </div>
           <dl className="confirmation-totals">
             {Number.isFinite(order.subtotalPaise) && <div><dt>Subtotal</dt><dd>{money(order.subtotalPaise)}</dd></div>}

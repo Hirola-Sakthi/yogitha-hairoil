@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -15,6 +15,9 @@ import {
   EyeOff,
   LockKeyhole,
   UserRound,
+  Clock3,
+  ShoppingBag,
+  BadgeCheck,
 } from "lucide-react";
 import { api, preview, money, date, requestId } from "../shared/api";
 import { useStore } from "./StoreContext";
@@ -287,24 +290,71 @@ function loadRazorpayCheckout() {
   return razorpayScriptPromise;
 }
 export function CheckoutPage() {
-  const { data, user, error, refreshCart } = useStore(),
+  const { data, user, error, refreshCart, cart, cartBusy } = useStore(),
     location = useLocation();
   const q = new URLSearchParams(location.search),
-    p = productForSize(data?.products.find((p) => p.id === q.get("product")), q.get("variant") || "50ml"),
+    cartMode = q.get("cart") === "1",
+    queryProduct = productForSize(data?.products.find((p) => p.id === q.get("product")), q.get("variant") || "50ml"),
     qty = Math.max(1, Math.min(20, Number(q.get("quantity")) || 1));
+  const checkoutItems = cartMode
+    ? cart.items
+    : queryProduct
+      ? [{ productId: queryProduct.id, variantId: queryProduct.variantId, quantity: qty, name: queryProduct.name, sizeLabel: queryProduct.sizeLabel, pricePaise: queryProduct.pricePaise, image: queryProduct.image }]
+      : [];
+  const checkoutSignature = checkoutItems.map(item => `${item.productId}:${item.variantId}:${item.quantity}`).join("|");
+  const p = cartMode && checkoutItems.length
+    ? productForSize(data?.products.find(product => product.id === checkoutItems[0].productId), checkoutItems[0].variantId)
+    : queryProduct;
+  const subtotalPaise = checkoutItems.reduce((sum, item) => sum + item.pricePaise * item.quantity, 0);
   const key = useRef(requestId()),
     [failure, setFailure] = useState(""),
     [busy, setBusy] = useState(false),
     [paymentMethod, setPaymentMethod] = useState(""),
+    [deliveryPincode, setDeliveryPincode] = useState(""),
+    [shippingQuote, setShippingQuote] = useState(null),
+    [shippingBusy, setShippingBusy] = useState(false),
+    [shippingError, setShippingError] = useState(""),
     [success, setSuccess] = useState(null);
   const selectedPaymentMethod =
     paymentMethod || (data?.checkout.cod ? "cod" : "razorpay");
+  useEffect(() => {
+    setShippingQuote(null);
+    setShippingError("");
+    if (!/^\d{6}$/.test(deliveryPincode) || !checkoutItems.length || !user) return undefined;
+    let live = true;
+    setShippingBusy(true);
+    const timer = window.setTimeout(async () => {
+      try {
+        const quote = preview
+          ? { shippingPaise: data?.settings?.shippingPaise || 0, courierName: "Preview shipping" }
+          : await api("/shipping/quote", {
+              method: "POST",
+              body: {
+                items: checkoutItems.map(item => ({ productId: item.productId, variantId: item.variantId, quantity: item.quantity })),
+                address: { pincode: deliveryPincode },
+                paymentMethod: selectedPaymentMethod,
+              },
+            });
+        if (live) setShippingQuote(quote);
+      } catch (quoteError) {
+        if (live) setShippingError(quoteError.message);
+      } finally {
+        if (live) setShippingBusy(false);
+      }
+    }, 350);
+    return () => { live = false; window.clearTimeout(timer); };
+  }, [deliveryPincode, checkoutSignature, selectedPaymentMethod, user, data, preview]);
   if (user === undefined || !data)
     return (
       <Frame title="Preparing checkout…">
         <p>{error}</p>
       </Frame>
     );
+  if (success) return <OrderConfirmation order={success} product={p} preview={preview} />;
+  if (cartMode && cartBusy)
+    return <Frame title="Preparing your order…"><p>Checking the items in your bag.</p></Frame>;
+  if (cartMode && !checkoutItems.length)
+    return <Frame title="Your bag is empty."><Link className="store-btn" to="/cart">Return to your bag</Link></Frame>;
   if (!user)
     return (
       <section className="checkout-signin-page" aria-labelledby="checkout-signin-title">
@@ -313,11 +363,11 @@ export function CheckoutPage() {
         <p className="checkout-signin-eyebrow">ONE STEP BEFORE CHECKOUT</p>
         <h1 id="checkout-signin-title">Your care is almost yours.</h1>
         <p className="checkout-signin-description">Sign in to place your order and keep your delivery updates in one place.</p>
-        {p && <div className="checkout-signin-product">
-          <img src={imageUrl(p.image || "/product-showcase.webp")} alt={p.name} />
-          <div><h2>{p.name}</h2><p>{p.sizeLabel} · Quantity {qty}</p></div>
-          <strong>{money(p.pricePaise * qty)}</strong>
-        </div>}
+        {checkoutItems.map(item => <div className="checkout-signin-product" key={`${item.productId}-${item.variantId}`}>
+          <img src={imageUrl(item.image || "/product-showcase.webp")} alt={item.name} />
+          <div><h2>{item.name}</h2><p>{item.sizeLabel} · Quantity {item.quantity}</p></div>
+          <strong>{money(item.pricePaise * item.quantity)}</strong>
+        </div>)}
         <Link
           className="store-btn"
           to={
@@ -332,7 +382,6 @@ export function CheckoutPage() {
         </div>
       </section>
     );
-  if (success) return <OrderConfirmation order={success} product={p} preview={preview} />;
   if (!p)
     return (
       <Frame title="Choose your product first.">
@@ -352,15 +401,18 @@ export function CheckoutPage() {
             setBusy(true);
             setFailure("");
             const formData = Object.fromEntries(new FormData(e.currentTarget));
+            const orderItems = checkoutItems.map(item => ({
+              productId: item.productId,
+              variantId: item.variantId,
+              quantity: item.quantity,
+            }));
             try {
               if (selectedPaymentMethod === "razorpay") {
                 key.current = requestId();
                 const checkoutOrder = await api("/payments/razorpay/order", {
                   method: "POST",
                   body: {
-                    productId: p.id,
-                    variantId: p.variantId,
-                    quantity: qty,
+                    items: orderItems,
                     address: formData,
                     idempotencyKey: key.current,
                   },
@@ -372,7 +424,7 @@ export function CheckoutPage() {
                   amount: checkoutOrder.amount,
                   currency: checkoutOrder.currency,
                   name: data.settings.brand || "Dr. Yogitha's",
-                  description: p.name,
+                  description: cartMode ? `${orderItems.length} items` : p.name,
                   prefill: {
                     name: formData.name,
                     email: user.email,
@@ -385,7 +437,7 @@ export function CheckoutPage() {
                         method: "POST",
                         body: response,
                       });
-                      setSuccess(result.order);
+                      setSuccess(result.order || result);
                       refreshCart().catch(() => {});
                     } catch (verificationError) {
                       setFailure(verificationError.message);
@@ -408,9 +460,7 @@ export function CheckoutPage() {
                   await api("/orders", {
                     method: "POST",
                     body: {
-                      productId: p.id,
-                      variantId: p.variantId,
-                      quantity: qty,
+                      items: orderItems,
                       paymentMethod: "cod",
                       address: formData,
                       idempotencyKey: key.current,
@@ -443,6 +493,7 @@ export function CheckoutPage() {
                 <input
                   name={k}
                   placeholder={placeholder}
+                  {...(k === "pincode" ? { value: deliveryPincode, onChange: e => setDeliveryPincode(e.target.value.replace(/\D/g, "").slice(0, 6)) } : {})}
                   autoComplete={autoComplete}
                   type={k === "phone" ? "tel" : "text"}
                   defaultValue={k === "name" ? user.name : ""}
@@ -512,7 +563,7 @@ export function CheckoutPage() {
                 ))
               : "policies with the store before ordering."}
           </p>
-          <button className="store-btn" disabled={busy || (!data.checkout.cod && !data.checkout.onlinePayments)}>
+          <button className="store-btn" disabled={busy || shippingBusy || !shippingQuote || (!data.checkout.cod && !data.checkout.onlinePayments)}>
             {busy
               ? selectedPaymentMethod === "razorpay" ? "Opening secure checkout…" : "Placing order…"
               : selectedPaymentMethod === "razorpay"
@@ -525,24 +576,27 @@ export function CheckoutPage() {
         </form>
         <aside className="order-summary">
           <div className="checkout-summary-heading"><h2>Your order</h2><Leaf size={24} strokeWidth={1.3} /></div>
-          <div className="checkout-summary-product">
-          <img src={imageUrl(p.image || "/product-showcase.webp")} alt={p.name} />
-          <div><span className="checkout-brand">DR. YOGITHA’S</span><h3>{p.name}</h3><p>{p.sizeLabel} <span>·</span> Quantity {qty}</p></div>
-          </div>
+          {checkoutItems.map(item => <div className="checkout-summary-product" key={`${item.productId}-${item.variantId}`}>
+            <img src={imageUrl(item.image || "/product-showcase.webp")} alt={item.name} />
+            <div><span className="checkout-brand">DR. YOGITHA&apos;S</span><h3>{item.name}</h3><p>{item.sizeLabel} &middot; Quantity {item.quantity}</p></div>
+            <strong>{money(item.pricePaise * item.quantity)}</strong>
+          </div>)}
           <div>
             <span>Subtotal</span>
-            <strong>{money(p.pricePaise * qty)}</strong>
+            <strong>{money(subtotalPaise)}</strong>
           </div>
           <div>
             <span>Shipping</span>
-            <strong>{money(data.settings.shippingPaise)}</strong>
+            <strong>{shippingBusy ? "Calculating…" : shippingQuote ? money(shippingQuote.shippingPaise) : "Enter PIN code"}</strong>
           </div>
           <div className="summary-total">
             <span>Total</span>
             <strong>
-              {money(p.pricePaise * qty + data.settings.shippingPaise)}
+              {money(subtotalPaise + (shippingQuote?.shippingPaise || 0))}
             </strong>
           </div>
+          {shippingError && <p className="store-error" role="alert">{shippingError}</p>}
+          {shippingQuote?.courierName && <p className="checkout-shipping-estimate">Rate via {shippingQuote.courierName}{shippingQuote.estimatedDays ? ` · Estimated ${shippingQuote.estimatedDays} days` : ""}</p>}
           <p>Availability and totals are confirmed when you place the order.</p>
         </aside>
       </div>
@@ -562,6 +616,7 @@ export function AccountPage() {
       Promise.all([api("/orders"), api("/account/refunds")])
         .then(([o, r]) => {
           setOrders(o);
+          if (o[0]) setSelected(o[0].id);
           setRefunds(r);
         })
         .catch((e) => setError(e.message));
@@ -569,10 +624,12 @@ export function AccountPage() {
   if (user === undefined) return <Frame title="Loading your account…" />;
   if (!user)
     return (
-      <Frame title="Your account awaits.">
-        <Link className="store-btn" to="/login">
-          Sign in <ArrowRight size={16} />
-        </Link>
+      <Frame className="account-welcome" title="Your account awaits.">
+        <div className="account-welcome-card">
+          <p>Sign in to view your orders and manage your account.</p>
+          <Link className="store-btn" to="/login">Sign in <ArrowRight size={16} /></Link>
+          <span>New here? <Link to="/register">Create an account</Link></span>
+        </div>
       </Frame>
     );
   return (
@@ -601,48 +658,51 @@ export function AccountPage() {
       )}
       <h2 className="section-title">Your orders</h2>
       {orders.length ? (
-        orders.map((o) => (
+        orders.map((o) => {
+          const items = o.items?.length ? o.items : [{ productName: o.productName, quantity: o.quantity, image: o.image }];
+          return (
           <article className="account-order" key={o.id}>
-            <div>
+            <div className="account-order-heading">
               <span className="store-muted">
-                {date(o.createdAt)} · {o.id}
+                {date(o.createdAt)} · Order ID: {o.id}
               </span>
-              <h3>{o.productName}</h3>
-              <p>
-                Quantity {o.quantity} · {money(o.totalPaise)}
-              </p>
+              <h3>{items.length > 1 ? `${items.length} products` : items[0].productName}</h3>
             </div>
-            <div>
-              <span className="order-status">{o.status}</span>
+            <span className="order-status">{o.status.replaceAll("_", " ")}</span>
+            <div className="account-order-items">
+              {items.map((item, index) => <div className="account-order-item" key={`${item.productName}-${index}`}>
+                <img src={imageUrl(item.image || "/product-showcase.webp")} alt="" />
+                <span>{item.productName} <small>× {item.quantity}</small></span>
+              </div>)}
+              <strong className="account-order-total">{money(o.totalPaise)}</strong>
               <button
                 className="store-link"
                 onClick={() => setSelected(selected === o.id ? null : o.id)}
+                aria-expanded={selected === o.id}
               >
                 View details <ArrowRight size={15} />
               </button>
             </div>
             {selected === o.id && (
               <div className="account-order-detail">
-                <p>
-                  Payment: {o.paymentStatus} · {o.paymentMethod}
-                </p>
-                <p>
-                  Deliver to:{" "}
-                  {Object.values(o.address).filter(Boolean).join(", ")}
-                </p>
+                <div className="account-order-facts">
+                <p><CreditCard size={16} aria-hidden="true" /><span><strong>Payment method</strong><br />{o.paymentStatus} · {o.paymentMethod}</span></p>
+                <p><MapPin size={16} aria-hidden="true" /><span><strong>Deliver to</strong><br />{Object.values(o.address || {}).filter(Boolean).join(", ")}</span></p>
+                <p><Package size={16} aria-hidden="true" /><span><strong>Placed on</strong><br />{date(o.createdAt)}</span></p>
                 {o.shipment?.awb && (
-                  <p>
-                    Tracking AWB: {o.shipment.awb} · {o.shipment.courier}
-                  </p>
+                  <p><Truck size={16} aria-hidden="true" /><span><strong>Tracking</strong><br />AWB {o.shipment.awb} · {o.shipment.courier}</span></p>
                 )}
                 {o.shipment?.trackingStatus && (
-                  <p>Latest tracking update: {o.shipment.trackingStatus}</p>
+                  <p><Truck size={16} aria-hidden="true" /><span><strong>Latest tracking update</strong><br />{o.shipment.trackingStatus}</span></p>
                 )}
                 {o.timeline.map((t, i) => (
-                  <p key={i}>
-                    {t.status} — {date(t.at)}
+                  <p className="account-order-timeline-entry" key={i}>
+                    {t.status === "awaiting_payment" ? <Clock3 size={15} aria-hidden="true" /> : t.status === "placed" ? <ShoppingBag size={15} aria-hidden="true" /> : t.status === "confirmed" ? <BadgeCheck size={15} aria-hidden="true" /> : <Check size={15} aria-hidden="true" />}
+                    <span>{t.status.replaceAll("_", " ")} — {date(t.at)}</span>
                   </p>
                 ))}
+                </div>
+                <div className="account-order-actions">
                 {o.status === "delivered" && (
                   <form
                     className="store-form"
@@ -656,7 +716,7 @@ export function AccountPage() {
                         await api("/reviews", {
                           method: "POST",
                           body: {
-                            productId: o.productId,
+                            productId: d.productId || o.productId,
                             rating: Number(d.rating),
                             content: d.content,
                           },
@@ -670,6 +730,12 @@ export function AccountPage() {
                     }}
                   >
                     <h3>Share your experience</h3>
+                    {o.items?.length > 1 && <label>
+                      Product
+                      <select name="productId" required>
+                        {o.items.map(item => <option key={`${item.productId}-${item.variantId}`} value={item.productId}>{item.productName}</option>)}
+                      </select>
+                    </label>}
                     <label>
                       Rating
                       <select name="rating">
@@ -731,10 +797,11 @@ export function AccountPage() {
                       Refund: {r.status} · {r.reason}
                     </p>
                   ))}
+                </div>
               </div>
             )}
           </article>
-        ))
+        )})
       ) : (
         <div className="store-empty">
           <Package size={32} />
@@ -957,6 +1024,7 @@ export function ContactForm() {
             {busy ? "Sending…" : "Send your message"}
             <ArrowRight size={16} />
           </button>
+          <p className="contact-privacy"><LockKeyhole size={14} aria-hidden="true" /> We respect your privacy. Your information is safe with us.</p>
         </form>
       </div>
       <section className="contact-map" aria-label="Our location">

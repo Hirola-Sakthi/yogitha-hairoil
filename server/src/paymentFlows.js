@@ -11,13 +11,13 @@ import {
   now,
 } from "./db.js";
 import { check, address as validateAddress } from "./validate.js";
-import { mail } from "./integrations.js";
+import { mail, quoteShiprocketShipping } from "./integrations.js";
 import {
   createRazorpayOrder,
   verifyCheckoutPayment,
 } from "./razorpay.js";
 import { cartIdentifier, consumeCartById } from "./cart.js";
-import { productForSize } from "../../src/shared/productOptions.js";
+import { adjustCheckoutStock, legacyOrderFields, resolveCheckoutItems } from "./checkoutItems.js";
 
 const paymentRecordId = (id) => "PAY-" + id;
 
@@ -25,14 +25,7 @@ async function releaseReservation(order, status) {
   await tx(async () => {
     const current = await get("orders", order.id);
     if (current?.status !== "awaiting_payment") return;
-    const product = await get("products", current.productId);
-    if (product) {
-      const stockKey = current.variantId === "100ml" ? "stock100" : "stock";
-      await put("products", {
-        ...product,
-        [stockKey]: (product[stockKey] || 0) + current.quantity,
-      });
-    }
+    await adjustCheckoutStock(current.items || [{ productId: current.productId, variantId: current.variantId, quantity: current.quantity, name: current.productName, sizeLabel: current.sizeLabel }], 1);
     const at = now();
     await put("orders", {
       ...current,
@@ -88,13 +81,20 @@ export async function createOnlinePayment(user, body, req) {
     };
   }
 
-  check(
-    Number.isSafeInteger(body.quantity) &&
-      body.quantity > 0 &&
-      body.quantity <= 20,
-    "Quantity must be 1–20",
-  );
   const deliveryAddress = validateAddress(body.address);
+  const items = await resolveCheckoutItems(body);
+  const orderFields = legacyOrderFields(items);
+  const fallbackPaise = (await get("settings", "store")).shippingPaise || 0;
+  const shippingQuote = await quoteShiprocketShipping({
+    deliveryPostcode: deliveryAddress.pincode,
+    items,
+    paymentMethod: "razorpay",
+    declaredValue: orderFields.subtotalPaise,
+    fallbackPaise,
+  });
+  const shippingPaise = shippingQuote.shippingPaise;
+  const totalPaise = orderFields.subtotalPaise + shippingPaise;
+  check(Number.isSafeInteger(totalPaise) && totalPaise >= 100, "Invalid payment amount");
   const id = "DY-" + randomBytes(6).toString("hex").toUpperCase();
   const order = await tx(async () => {
     check(
@@ -102,19 +102,7 @@ export async function createOnlinePayment(user, body, req) {
       "Checkout request already exists",
       409,
     );
-    const base = await get("products", String(body.productId || ""));
-    const variantId = body.variantId || "50ml";
-    const product = productForSize(base, variantId);
-    check(product?.status === "active" && product.pricePaise > 0, "Product unavailable");
-    check(product.stock >= body.quantity, "Insufficient stock", 409);
-    const shippingPaise = (await get("settings", "store")).shippingPaise || 0;
-    const totalPaise = product.pricePaise * body.quantity + shippingPaise;
-    check(Number.isSafeInteger(totalPaise) && totalPaise >= 100, "Invalid payment amount");
-    const stockKey = variantId === "100ml" ? "stock100" : "stock";
-    await put("products", {
-      ...base,
-      [stockKey]: product.stock - body.quantity,
-    });
+    await adjustCheckoutStock(items, -1);
     const at = now();
     const created = await put("orders", {
       id,
@@ -122,15 +110,9 @@ export async function createOnlinePayment(user, body, req) {
       email: user.email,
       customer: user.name,
       address: deliveryAddress,
-      productId: product.id,
-      productName: `${product.name} · ${product.sizeLabel}`,
-      variantId: product.variantId,
-      sizeLabel: product.sizeLabel,
-      sku: product.sku,
-      quantity: body.quantity,
-      unitPricePaise: product.pricePaise,
-      subtotalPaise: product.pricePaise * body.quantity,
+      ...orderFields,
       shippingPaise,
+      shippingQuote,
       totalPaise,
       paymentMethod: "razorpay",
       paymentStatus: "pending",
@@ -231,12 +213,7 @@ async function acceptCapturedPayment(payment) {
       reference: payment.id,
       updatedAt: at,
     });
-    await consumeCartById(
-      current.cartId,
-      current.productId,
-      current.quantity,
-      current.variantId,
-    );
+    await consumeCartById(current.cartId, current.items || [{ productId: current.productId, quantity: current.quantity, variantId: current.variantId }]);
     await put("audit", {
       userId: "system",
       action: `Razorpay payment captured for ${current.id}${late ? " (review required)" : ""}`,
@@ -245,10 +222,11 @@ async function acceptCapturedPayment(payment) {
   });
   if (updatedOrder.status === "placed") {
     try {
+      const summary = updatedOrder.items?.map(item => `${item.quantity} × ${item.productName}`).join(", ") || `${updatedOrder.quantity} × ${updatedOrder.productName}`;
       await mail(
         updatedOrder.email,
         `Order ${updatedOrder.id} received`,
-        `Your payment for ${updatedOrder.quantity} × ${updatedOrder.productName} was received. Total INR ${(updatedOrder.totalPaise / 100).toFixed(2)}.`,
+        `Your payment for ${summary} was received. Total INR ${(updatedOrder.totalPaise / 100).toFixed(2)}.`,
       );
     } catch {
       console.error("Razorpay order email failed; payment saved");

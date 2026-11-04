@@ -71,7 +71,22 @@ try {
   await db.collection("limits").createIndex({ expires: 1 }, { expireAfterSeconds: 0 });
   await db.collection("carts").createIndex({ expires: 1 }, { expireAfterSeconds: 0 });
   await db.collection("orders").createIndex({ userId: 1, idempotencyKey: 1 }, { unique: true });
-  await db.collection("reviews").createIndex({ userId: 1, productId: 1 }, { unique: true });
+  const reviews = db.collection("reviews");
+  const reviewIndexes = await reviews.indexes();
+  const legacyReviewIndex = reviewIndexes.find(
+    index => index.name === "userId_1_productId_1" && !index.partialFilterExpression,
+  );
+  if (legacyReviewIndex) await reviews.dropIndex(legacyReviewIndex.name);
+  await reviews.createIndex(
+    { userId: 1, productId: 1 },
+    {
+      unique: true,
+      partialFilterExpression: {
+        userId: { $type: "string" },
+        productId: { $type: "string" },
+      },
+    },
+  );
   await db.collection("refunds").createIndex({ orderId: 1 }, {
     unique: true,
     partialFilterExpression: { status: { $in: ["requested", "approved", "processed"] } },

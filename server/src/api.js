@@ -3,10 +3,10 @@ import { randomUUID, randomBytes } from "node:crypto";
 import { all, get, put, remove, tx, audit, now, findOne, findMany, count, insert, update, deleteMany } from "./db.js";
 import { user, login, logout, hash, verify, digest, limit, safe } from "./auth.js";
 import { check, text, email, validate, address } from "./validate.js";
-import { status, mail, ship, payload } from "./integrations.js";
+import { status, mail, ship, payload, quoteShiprocketShipping } from "./integrations.js";
 import { hostImageKitHtml, hostImageKitUrl, imageKitConfigured } from "./imagekit.js";
 import { cart, consumeCart } from "./cart.js";
-import { productForSize } from "../../src/shared/productOptions.js";
+import { adjustCheckoutStock, legacyOrderFields, resolveCheckoutItems } from "./checkoutItems.js";
 import {
   secureEqual,
   verifyRazorpayWebhook,
@@ -65,6 +65,19 @@ export async function api(req, res, url, b) {
     return verifyOnlinePayment(u, b);
   }
   if (path === "/cart") return cart(req, res, b);
+  if (path === "/shipping/quote" && m === "POST") {
+    auth();
+    const items = await resolveCheckoutItems(b);
+    const fallbackPaise = (await get("settings", "store")).shippingPaise || 0;
+    const quote = await quoteShiprocketShipping({
+      deliveryPostcode: b.address?.pincode,
+      items,
+      paymentMethod: b.paymentMethod,
+      declaredValue: items.reduce((sum, item) => sum + item.subtotalPaise, 0),
+      fallbackPaise,
+    });
+    return quote;
+  }
   if (path === "/auth/me") return {
     user: u
   };
@@ -199,38 +212,35 @@ export async function api(req, res, url, b) {
     await expireRazorpayReservations();
     check(status().cod, "Checkout is not enabled yet", 503);
     check(b.paymentMethod === "cod", "Only cash on delivery is available");
-    check(Number.isSafeInteger(b.quantity) && b.quantity > 0 && b.quantity <= 20, "Quantity must be 1–20");
     const a = address(b.address),
       key = text(b.idempotencyKey, 100);
     check(key.length >= 16, "Checkout request key required");
+    const items = await resolveCheckoutItems(b);
+      const fallbackPaise = (await get("settings", "store")).shippingPaise || 0;
+    const shippingQuote = await quoteShiprocketShipping({
+      deliveryPostcode: a.pincode,
+      items,
+      paymentMethod: "cod",
+      declaredValue: items.reduce((sum, item) => sum + item.subtotalPaise, 0),
+        fallbackPaise,
+    });
     let created = false;
     const o = await tx(async () => {
       created = false;
       const dup = (await all("orders")).find(o => o.userId === u.id && o.idempotencyKey === key);
       if (dup) return dup;
-      const base = await get("products", text(b.productId));
-      const variantId = b.variantId || "50ml";
-      const p = productForSize(base, variantId);
-      check(p?.status === "active" && p.pricePaise > 0, "Product unavailable");
-      check(p.stock >= b.quantity, "Insufficient stock", 409);
-      await put("products", { ...base, [variantId === "100ml" ? "stock100" : "stock"]: p.stock - b.quantity });
-      const shipping = (await get("settings", "store")).shippingPaise;
+      await adjustCheckoutStock(items, -1);
+      const shipping = shippingQuote.shippingPaise;
       const o = await put("orders", {
         id: "DY-" + randomBytes(6).toString("hex").toUpperCase(),
         userId: u.id,
         email: u.email,
         customer: u.name,
         address: a,
-        productId: p.id,
-        productName: `${p.name} · ${p.sizeLabel}`,
-        variantId,
-        sizeLabel: p.sizeLabel,
-        sku: p.sku,
-        quantity: b.quantity,
-        unitPricePaise: p.pricePaise,
-        subtotalPaise: p.pricePaise * b.quantity,
+        ...legacyOrderFields(items),
         shippingPaise: shipping,
-        totalPaise: p.pricePaise * b.quantity + shipping,
+        shippingQuote,
+        totalPaise: items.reduce((sum, item) => sum + item.subtotalPaise, 0) + shipping,
         paymentMethod: "cod",
         paymentStatus: "pending",
         status: "placed",
@@ -250,12 +260,13 @@ export async function api(req, res, url, b) {
         method: "cod",
         createdAt: now()
       });
-      await consumeCart(req, p.id, b.quantity, variantId);
+      await consumeCart(req, items);
       created = true;
       return o;
     });
     if (created) try {
-      await mail(u.email, `Order ${o.id} received`, `Your order for ${o.quantity} × ${o.productName} is placed. Total INR ${(o.totalPaise / 100).toFixed(2)}, payable on delivery.`);
+      const summary = o.items.map(item => `${item.quantity} × ${item.productName}`).join(", ");
+      await mail(u.email, `Order ${o.id} received`, `Your order for ${summary} is placed. Total INR ${(o.totalPaise / 100).toFixed(2)}, payable on delivery.`);
     } catch {
       console.error("Order email failed; order saved");
     }
@@ -285,7 +296,7 @@ export async function api(req, res, url, b) {
   if (path === "/reviews" && m === "POST") {
     auth();
     check(Number.isInteger(b.rating) && b.rating >= 1 && b.rating <= 5 && text(b.content), "Rating and review required");
-    check((await all("orders")).some(o => o.userId === u.id && o.productId === b.productId && o.status === "delivered"), "Reviews are available after delivery", 403);
+    check((await all("orders")).some(o => o.userId === u.id && (o.productId === b.productId || o.items?.some(item => item.productId === b.productId)) && o.status === "delivered"), "Reviews are available after delivery", 403);
     check(!(await all("reviews")).some(r => r.userId === u.id && r.productId === b.productId), "Already reviewed", 409);
     return await put("reviews", {
       userId: u.id,
@@ -403,11 +414,7 @@ export async function api(req, res, url, b) {
         if (b.status === "shipped") check(o.shipment?.awb, "Assign a tracking AWB first");
         if (b.status === "cancelled") {
           check(!o.shipment, "Reconcile booked shipments in Shiprocket before cancellation");
-          const p = await get("products", o.productId);
-          if (p) await put("products", {
-            ...p,
-            [o.variantId === "100ml" ? "stock100" : "stock"]: (o.variantId === "100ml" ? p.stock100 || 0 : p.stock) + o.quantity
-          });
+          await adjustCheckoutStock(o.items || [{ productId: o.productId, variantId: o.variantId, quantity: o.quantity, name: o.productName, sizeLabel: o.sizeLabel }], 1);
         }
         await audit(u, `Order ${id}: ${b.status}`);
         return await put(c, {
@@ -479,7 +486,8 @@ export async function api(req, res, url, b) {
       if (action === "create") {
         check(!o.shipment, "Shipment already exists", 409);
         const p = await get("products", o.productId);
-        check(p && [p.weight, p.length, p.breadth, p.height].every(n => n > 0), "Set confirmed package dimensions first");
+        const packageItems = o.items || [{ weight: p?.weight, length: p?.length, breadth: p?.breadth, height: p?.height }];
+        check(p && packageItems.every(item => [item.weight, item.length, item.breadth, item.height].every(n => n > 0)), "Set confirmed package dimensions first");
         await tx(async () => {
           const current = await get("orders", id);
           check(current && ["confirmed", "processing", "shipped"].includes(current.status), "Confirm the order before shipping");
@@ -503,6 +511,18 @@ export async function api(req, res, url, b) {
           });
           throw e;
         }
+      }
+      if (action === "retry") {
+        check(o.shipment?.status === "needs-reconciliation", "Only an unreconciled shipment can be cleared", 409);
+        return await tx(async () => {
+          const current = await get("orders", id);
+          check(current?.shipment?.status === "needs-reconciliation", "Shipment state changed; refresh the order", 409);
+          const updated = { ...current };
+          delete updated.shipment;
+          const saved = await put("orders", updated);
+          await audit(u, `Cleared unreconciled Shiprocket booking for ${id}`);
+          return saved;
+        });
       }
       check(o.shipment?.shipment_id, "Create a shipment first");
       let data;
@@ -556,7 +576,7 @@ export async function api(req, res, url, b) {
     }
     check(["products", "leads", "reviews", "posts", "categories", "policies"].includes(c), "Use workflow actions");
     if (m === "POST" || m === "PATCH") {
-      if (m === "POST") check(!["reviews", "leads"].includes(c), "Customer submissions only");
+      if (m === "POST") check(c !== "leads", "Customer submissions only");
       const old = id ? await get(c, id) : {};
       check(old, "Not found", 404);
       const d = validate(c, b, old);
@@ -574,6 +594,7 @@ export async function api(req, res, url, b) {
       return await tx(async () => {
         const r = await put(c, {
           ...d,
+          ...(c === "reviews" && m === "POST" ? { source: "manual" } : {}),
           id: id || undefined,
           createdAt: old.createdAt || now()
         });
@@ -583,7 +604,7 @@ export async function api(req, res, url, b) {
     }
     if (m === "DELETE") {
       check(["products", "leads", "reviews", "posts", "categories"].includes(c), "Archive instead");
-      if (c === "products") check(!(await all("orders")).some(o => o.productId === id), "Products with orders must be archived");
+      if (c === "products") check(!(await all("orders")).some(o => o.productId === id || o.items?.some(item => item.productId === id)), "Products with orders must be archived");
       if (c === "categories") check(!(await all("posts")).some(p => p.categoryId === id), "Category is in use");
       await remove(c, id);
       await audit(u, `Deleted ${c}: ${id}`);

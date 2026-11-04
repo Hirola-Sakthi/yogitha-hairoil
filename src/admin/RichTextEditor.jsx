@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -11,7 +12,7 @@ export function editorHtml(content, format) {
 }
 
 export default function RichTextEditor({ value, onChange, onBusyChange }) {
-  const [source, setSource] = useState(false), [panel, setPanel] = useState(""), [url, setUrl] = useState(""), [alt, setAlt] = useState(""), [error, setError] = useState("");
+  const [source, setSource] = useState(false), [panel, setPanel] = useState(""), [url, setUrl] = useState(""), [alt, setAlt] = useState("");
   const editor = useEditor({
     extensions: [StarterKit.configure({ heading: { levels: [2, 3] }, link: { openOnClick: false } }), Image],
     content: value,
@@ -46,20 +47,19 @@ export default function RichTextEditor({ value, onChange, onBusyChange }) {
       <label>{panel === "link" ? "Link URL" : "Image URL"}<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://…" /></label>
       {panel === "image" && <label>Image description<input value={alt} onChange={e => setAlt(e.target.value)} /></label>}
       <button type="button" className="btn secondary" onClick={() => {
-        if (!/^(https?:\/\/|mailto:|\/(?!\/))/.test(url) || (panel === "image" && url.startsWith("mailto:"))) { setError("Use a website URL or a local /path."); return; }
+        if (!/^(https?:\/\/|mailto:|\/(?!\/))/.test(url) || (panel === "image" && url.startsWith("mailto:"))) { toast.error("Use a website URL or a local /path."); return; }
         if (panel === "link") editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
         else editor.chain().focus().setImage({ src: url, alt }).run();
-        setPanel(""); setError("");
+        setPanel("");
       }}>Insert</button>
       {panel === "image" && <label className="rich-upload">Upload image<input type="file" accept="image/jpeg,image/png,image/webp" onChange={async e => {
         const file = e.target.files?.[0]; if (!file) return;
-        onBusyChange(true); setError("");
+        onBusyChange(true);
         try { const src = await uploadImage(file); editor.chain().focus().setImage({ src, alt }).run(); setPanel(""); }
-        catch (err) { setError(err.message); } finally { onBusyChange(false); }
+        catch (err) { toast.error(err.message); } finally { onBusyChange(false); }
       }} /></label>}
       <button type="button" className="text-button" onClick={() => setPanel("")}>Cancel</button>
     </div>}
-    {error && <p className="cms-alert error" role="alert">{error}</p>}
     {source && <textarea className="rich-source" aria-label="Body HTML source" value={value} onChange={e => onChange(e.target.value)} />}
     <div hidden={source}><EditorContent editor={editor} /></div>
   </div>;

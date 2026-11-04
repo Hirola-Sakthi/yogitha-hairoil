@@ -62,23 +62,28 @@ export async function cart(req, res, body) {
       check(next <= 20 && next <= p.stock, "No more stock available for this product", 409);
       check(existing || items.length < 50, "Your bag has reached its item limit");
     }
-    const updated = items.filter(p => !matches(p));
-    if (next) updated.push({ productId, variantId, quantity: next });
+    const updated = existing
+      ? items.flatMap(p => matches(p) ? (next ? [{ ...p, quantity: next }] : []) : [p])
+      : next ? [...items, { productId, variantId, quantity: next }] : items;
     await collection.updateOne({ _id: id }, { $set: { items: updated, expires: new Date(Date.now() + 2592000000) } }, mongoOptions());
     return view(updated);
   });
 }
 
 // Called inside the order transaction, only when a new order is created.
-export async function consumeCart(req, productId, quantity, variantId = "50ml") {
-  return consumeCartById(cartIdentifier(req), productId, quantity, variantId);
+export async function consumeCart(req, items) {
+  return consumeCartById(cartIdentifier(req), items);
 }
 
-export async function consumeCartById(id, productId, quantity, variantId = "50ml") {
+export async function consumeCartById(id, items) {
   if (!id) return;
   const collection = db.collection("carts");
   const current = await collection.findOne({ _id: id }, mongoOptions());
   if (!current) return;
-  const items = current.items.map(p => p.productId === productId && (p.variantId || "50ml") === variantId ? { ...p, quantity: Math.max(0, p.quantity - quantity) } : p).filter(p => p.quantity);
-  await collection.updateOne({ _id: id }, { $set: { items } }, mongoOptions());
+  const selected = Array.isArray(items) ? items : [items];
+  const updated = current.items.map(line => {
+    const item = selected.find(p => p.productId === line.productId && (p.variantId || "50ml") === (line.variantId || "50ml"));
+    return item ? { ...line, quantity: Math.max(0, line.quantity - item.quantity) } : line;
+  }).filter(p => p.quantity);
+  await collection.updateOne({ _id: id }, { $set: { items: updated } }, mongoOptions());
 }

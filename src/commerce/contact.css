@@ -29,6 +29,55 @@
 .contact-map-heading p { font-size: 10px; letter-spacing: 1.8px; margin: 0 0 8px; }
 .contact-map-heading h2 { font-size: 25px; font-weight: 400; margin: 0; }
 .contact-map-heading a { display: flex; align-items: center; gap: 10px; color: var(--brand); font-size: 14px; }
+.commerce-page.premium-contact { max-width: 1280px; padding: 112px 5% 58px; }
+.premium-contact .contact-brand-mark { gap: 14px; }
+.premium-contact .contact-details { background: #F7F5ED; }
+.premium-contact .contact-brand-mark > svg {
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--brand) 10%, transparent);
+  border-radius: 50%;
+  background: #f0ede1;
+  box-shadow: 0 4px 12px rgb(49 59 42 / 7%);
+}
+.premium-contact .contact-detail { align-items: center; gap: 14px; }
+.premium-contact .contact-detail > svg {
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  padding: 10px;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--brand) 17%, transparent);
+  border-radius: 50%;
+  color: var(--brand);
+  stroke-width: 1.7;
+}
+.premium-contact .contact-order-note { align-items: flex-start; gap: 12px; }
+.premium-contact .contact-order-note > svg {
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  padding: 9px;
+  border: 1px solid color-mix(in srgb, var(--brand) 17%, transparent);
+  border-radius: 50%;
+  color: var(--brand);
+  stroke-width: 1.7;
+}
+.premium-contact .contact-privacy {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: -5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+.premium-contact .contact-privacy svg { flex: 0 0 auto; color: var(--brand); stroke-width: 1.8; }
 .premium-contact a:focus-visible, .premium-contact button:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
 @media (max-width: 900px) { .premium-contact .contact-grid { grid-template-columns: 1fr; } }
 @media (max-width: 600px) {

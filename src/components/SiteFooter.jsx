@@ -28,7 +28,7 @@ export default function SiteFooter() {
       </div>
       <nav className="store-footer-column" aria-label="Shop links"><h2>SHOP</h2>
         {product && <Link to={`/products/${product.slug}`}>50 ml & 100 ml</Link>}
-        <Link to="/#routine">Your hair ritual</Link>
+        <Link to="/#shop">Your hair ritual</Link>
         <Link to="/cart">Shopping bag</Link>
         <Link to="/blog">The journal</Link>
       </nav>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -19,7 +19,6 @@ import {
   ArrowRight,
   Search,
   Plus,
-  X,
   Menu,
   LogOut,
   ChevronLeft,
@@ -38,6 +37,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { imageUrl } from "../shared/imageUrl";
+import toast from "react-hot-toast";
 import { api, preview, money, date } from "../shared/api";
 import { uploadImage } from "./media";
 import { modules, labels } from "./schema";
@@ -64,7 +64,7 @@ const nav = [
 const Badge = ({ value }) => (
   <span className={"badge status-" + value}>{String(value ?? "—")}</span>
 );
-const deletableModules = ["products", "leads", "reviews", "posts", "categories"];
+const deletableModules = ["products", "leads", "posts", "categories"];
 export default function AdminApp() {
   const location = useLocation(),
     navigate = useNavigate(),
@@ -75,7 +75,6 @@ export default function AdminApp() {
     ),
     [data, setData] = useState(null),
     [error, setError] = useState(""),
-    [notice, setNotice] = useState(""),
     [query, setQuery] = useState(""),
     [filter, setFilter] = useState("all"),
     [page, setPage] = useState(1),
@@ -83,6 +82,9 @@ export default function AdminApp() {
     [version, setVersion] = useState(0),
     [busy, setBusy] = useState(false),
     [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
   useEffect(() => {
     window.scrollTo(0, 0);
     setError("");
@@ -134,12 +136,11 @@ export default function AdminApp() {
     try {
       await api(path, { method, body });
       navigate("/admin/" + module);
-      setNotice(
-        preview ? "Preview changes saved in this browser." : "Changes saved.",
-      );
+      toast.success(preview ? "Preview changes saved in this browser." : "Changes saved.");
       setVersion((v) => v + 1);
     } catch (e) {
       setError(e.message);
+      setVersion((v) => v + 1);
     } finally {
       setBusy(false);
     }
@@ -328,30 +329,16 @@ export default function AdminApp() {
               <Link to="/">View website ↗</Link>
             </div>
           )}
-          {error && (
-            <div className="cms-alert error" role="alert">
-              {error}
-              <button onClick={() => setError("")} aria-label="Dismiss error">
-                <X size={15} />
-              </button>
-            </div>
-          )}
-          {notice && (
-            <div className="cms-alert" role="status">
-              {notice}
-              <button onClick={() => setNotice("")} aria-label="Dismiss notice">
-                <X size={15} />
-              </button>
-            </div>
-          )}
           {recordId ? (selected && def ? (
           <section
             className="cms-record-page"
             aria-labelledby="record-title"
           >
-            <div className="record-heading">
+            <div className={`record-heading${module === "policies" ? " policy-record-heading" : ""}`}>
               <div>
-                <p className="overline">{def.title}</p>
+                {!(["products", "policies", "payments", "orders", "leads", "reviews"].includes(module)) && (
+                  <p className="overline">{def.title}</p>
+                )}
                 <h1 id="record-title">
                   {module === "posts" ? (selected.id ? "Edit post" : "New post") : module === "policies" ? "Edit policy" : selected.id ? "Record details" : "Create new"}
                 </h1>
@@ -365,11 +352,6 @@ export default function AdminApp() {
                 <ChevronLeft size={16} /> Back to list
               </button>
             </div>
-            {error && (
-              <p className="cms-alert error" role="alert">
-                {error}
-              </p>
-            )}
             {def.fields ? (
               <RecordForm
                 key={module + ":" + recordId}
@@ -436,7 +418,9 @@ export default function AdminApp() {
                           ? "post"
                           : module === "categories"
                             ? "category"
-                            : "user"}
+                            : module === "reviews"
+                              ? "review"
+                              : "user"}
                     </button>
                   )}
                 </div>
@@ -854,17 +838,15 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
     }),
     [faq, setFaq] = useState(item.faq || []),
     [categories, setCategories] = useState([]),
-    [uploadingImages, setUploadingImages] = useState({}),
-    [imageErrors, setImageErrors] = useState({});
+    [uploadingImages, setUploadingImages] = useState({});
   const uploadProductImage = async (field, file, input) => {
     if (!file) return;
     setUploadingImages(current => ({ ...current, [field]: true }));
-    setImageErrors(current => ({ ...current, [field]: "" }));
     try {
       const url = await uploadImage(file);
       setValues(current => ({ ...current, [field]: url }));
     } catch (error) {
-      setImageErrors(current => ({ ...current, [field]: error.message }));
+      toast.error(error.message);
     } finally {
       setUploadingImages(current => ({ ...current, [field]: false }));
       input.value = "";
@@ -893,7 +875,7 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
       {module === "reviews" && (
         <div className="detail-box">
           <strong>
-            {item.name} · {item.rating}/5
+            {item.name} | {item.rating}/5
           </strong>
           <p>{item.content}</p>
         </div>
@@ -943,7 +925,6 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
                   <small>
                     {uploadingImages[k] ? "Uploading image…" : "JPG, PNG or WebP; up to 5 MB."}
                   </small>
-                  {imageErrors[k] && <small className="product-image-error" role="alert">{imageErrors[k]}</small>}
                 </>
               ) : type === "category" ? (
                 <select {...props}>
@@ -1071,6 +1052,9 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
 function Details({ module, item, busy, onAction }) {
   const [status, setStatus] = useState(""),
     [reference, setReference] = useState("");
+  useEffect(() => {
+    if (item.error) toast.error(item.error);
+  }, [item.error]);
   const choices =
     module === "orders"
       ? {
@@ -1136,7 +1120,6 @@ function Details({ module, item, busy, onAction }) {
         <div className="detail-box">
           <h3>Webhook payload</h3>
           <pre>{JSON.stringify(item.payload, null, 2)}</pre>
-          {item.error && <p className="cms-alert error">{item.error}</p>}
         </div>
       )}
       {choices.length > 0 && (
@@ -1251,7 +1234,20 @@ function Details({ module, item, busy, onAction }) {
                   )}
                 </>
               ) : (
-                <p>Reconcile this booking in Shiprocket before continuing.</p>
+                <>
+                  <p>Reconcile this booking in Shiprocket before continuing.</p>
+                  {item.shipment.status === "needs-reconciliation" && (
+                    <button
+                      className="btn secondary"
+                      disabled={busy}
+                      onClick={() => {
+                        if (confirm("Confirm you checked Shiprocket and this order has no shipment. This clears the pending marker so you can try booking again.")) action("retry");
+                      }}
+                    >
+                      Confirm not found and allow retry
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -1260,7 +1256,9 @@ function Details({ module, item, busy, onAction }) {
   );
 }
 function SettingsForm({ data, busy, onSave }) {
-  const [form, setForm] = useState(null);
+  const [form, setForm] = useState(null),
+    [uploadingSocialImage, setUploadingSocialImage] = useState(false),
+    [socialImageFileName, setSocialImageFileName] = useState("");
   useEffect(() => {
     if (data) setForm({ ...data, shippingPaise: data.shippingPaise / 100 });
   }, [data]);
@@ -1269,7 +1267,6 @@ function SettingsForm({ data, busy, onSave }) {
     <>
       <div className="page-heading">
         <div>
-          <p className="overline">THE DETAILS THAT MATTER</p>
           <h1>Store settings</h1>
           <p>Your identity, contact details and search appearance.</p>
         </div>
@@ -1314,6 +1311,7 @@ function SettingsForm({ data, busy, onSave }) {
             <h2>{title}</h2>
             <p>Publish only confirmed business information.</p>
             {fields.map(([k, l]) => (
+              k === "socialImage" ? null :
               <label key={k}>
                 {l}
                 <input
@@ -1341,6 +1339,50 @@ function SettingsForm({ data, busy, onSave }) {
             ))}
             {title === "Search & sharing" && (
               <>
+                <div className="settings-social-image">
+                  <label htmlFor="settings-social-image">Social sharing image</label>
+                  {form.socialImage && (
+                    <img
+                      className="product-image-preview"
+                      src={imageUrl(form.socialImage)}
+                      alt="Social sharing image preview"
+                    />
+                  )}
+                  <input
+                    id="settings-social-image"
+                    type="file"
+                    className="social-image-file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={uploadingSocialImage || busy}
+                    onChange={async (e) => {
+                      const input = e.currentTarget;
+                      const file = input.files?.[0];
+                      if (!file) return;
+                      setSocialImageFileName(file.name);
+                      setUploadingSocialImage(true);
+                      try {
+                        const url = await uploadImage(file);
+                        setForm((current) => ({ ...current, socialImage: url }));
+                      } catch (error) {
+                        toast.error(error.message);
+                      } finally {
+                        setUploadingSocialImage(false);
+                        input.value = "";
+                      }
+                    }}
+                  />
+                  <label className="social-image-picker" htmlFor="settings-social-image">
+                    <span>{uploadingSocialImage ? "Uploading image…" : "Choose image"}</span>
+                    {socialImageFileName && <small>{socialImageFileName}</small>}
+                  </label>
+                  <label htmlFor="settings-social-image-url">Or enter an image URL</label>
+                  <input
+                    id="settings-social-image-url"
+                    type="text"
+                    value={form.socialImage ?? ""}
+                    onChange={(e) => setForm({ ...form, socialImage: e.target.value })}
+                  />
+                </div>
                 <div className="search-preview">
                   <small>SEARCH APPEARANCE</small>
                   <strong>{form.seoTitle}</strong>
@@ -1361,7 +1403,7 @@ function SettingsForm({ data, busy, onSave }) {
             )}
           </section>
         ))}
-        <button className="btn" disabled={busy}>
+        <button className="btn" disabled={busy || uploadingSocialImage}>
           {busy ? "Saving…" : "Save settings"}
           <Check size={16} />
         </button>
@@ -1370,8 +1412,7 @@ function SettingsForm({ data, busy, onSave }) {
   );
 }
 function AdminLogin({ onLogin }) {
-  const [error, setError] = useState(""),
-    [showPassword, setShowPassword] = useState(false),
+  const [showPassword, setShowPassword] = useState(false),
     [busy, setBusy] = useState(false);
   return (
     <div className="admin-login">
@@ -1396,7 +1437,7 @@ function AdminLogin({ onLogin }) {
               throw new Error("This account does not have CMS access.");
             onLogin(r.user);
           } catch (x) {
-            setError(x.message);
+            toast.error(x.message);
           } finally {
             setBusy(false);
           }
@@ -1405,11 +1446,6 @@ function AdminLogin({ onLogin }) {
         <p className="overline">DR. YOGITHA’S · PRIVATE STUDIO</p>
         <h2>Welcome back.</h2>
         <p>Sign in to care for your store.</p>
-        {error && (
-          <p className="cms-alert error" role="alert">
-            {error}
-          </p>
-        )}
         <label>
           Email
           <span className="login-input">

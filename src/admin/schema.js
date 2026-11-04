@@ -23,7 +23,7 @@ export const modules = {
       seoTitle: "SEO title",
       seoDescription: "SEO description",
     },
-    columns: ["name", "sku", "pricePaise", "stock", "status"],
+    columns: ["name", "sku", "pricePaise", "price100Paise", "stock", "stock100", "status"],
     create: true,
   },
   leads: {
@@ -83,9 +83,16 @@ export const modules = {
   },
   reviews: {
     title: "Reviews",
-    subtitle: "Give genuine customer voices a thoughtful review.",
-    fields: { status: "Moderation|pending,approved,rejected" },
-    columns: ["name", "rating", "content", "status"],
+    subtitle: "Add reviews for the home page and choose which ones to publish.",
+    fields: {
+      name: "Customer name",
+      location: "Location",
+      rating: "Rating (1–5)|number",
+      content: "Review|textarea",
+      status: "Visibility|approved,pending,rejected",
+    },
+    columns: ["name", "location", "rating", "content", "status"],
+    create: true,
   },
   posts: {
     title: "Blog posts",
@@ -145,7 +152,10 @@ export const modules = {
 };
 export const labels = {
   image: "Image",
-  pricePaise: "Price",
+  pricePaise: "50 ml price",
+  price100Paise: "100 ml price",
+  stock: "50 ml stock",
+  stock100: "100 ml stock",
   totalPaise: "Total",
   amountPaise: "Amount",
   paymentStatus: "Payment",

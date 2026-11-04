@@ -65,7 +65,13 @@ const schemas = {
     seoTitle: "text",
     seoDescription: "text",
   },
-  reviews: { status: ["pending", "approved", "rejected"] },
+  reviews: {
+    name: "text",
+    location: "text",
+    rating: "int",
+    content: "long",
+    status: ["pending", "approved", "rejected"],
+  },
   settings: {
     instagramUrl: "url",
     facebookUrl: "url",
@@ -96,11 +102,19 @@ export function validate(c, b, old = {}) {
       check(typeof v === "boolean", `Invalid ${k}`);
       d[k] = v;
     } else if (t === "date") {
-      check(v === "" || (typeof v === "string" && Number.isFinite(Date.parse(v))), `Invalid ${k}`);
+      check(
+        v === "" || (typeof v === "string" && Number.isFinite(Date.parse(v))),
+        `Invalid ${k}`,
+      );
       d[k] = v ? new Date(v).toISOString() : "";
     } else if (t === "strings") {
-      check(Array.isArray(v) && v.length <= 20 && v.every(x => typeof x === "string" && x.length <= 100), `Invalid ${k}`);
-      d[k] = [...new Set(v.map(x => text(x, 100)).filter(Boolean))];
+      check(
+        Array.isArray(v) &&
+          v.length <= 20 &&
+          v.every((x) => typeof x === "string" && x.length <= 100),
+        `Invalid ${k}`,
+      );
+      d[k] = [...new Set(v.map((x) => text(x, 100)).filter(Boolean))];
     } else if (t === "int" || t === "number") {
       check(
         Number.isFinite(Number(v)) &&
@@ -141,28 +155,53 @@ export function validate(c, b, old = {}) {
         ? ["title", "slug"]
         : c === "leads"
           ? ["name", "email", "message"]
-          : [])
+          : c === "reviews"
+            ? ["name", "content"]
+            : [])
     check(d[k], `${k} is required`);
+  if (c === "reviews")
+    check(Number.isInteger(d.rating) && d.rating >= 1 && d.rating <= 5, "Rating must be from 1 to 5");
   if (c === "leads" && d.phone)
-    check(/^[6-9]\d{9}$/.test(d.phone), "Enter a 10-digit Indian mobile number");
+    check(
+      /^[6-9]\d{9}$/.test(d.phone),
+      "Enter a 10-digit Indian mobile number",
+    );
   if (c === "products" && d.status === "active")
     check(d.pricePaise > 0, "Set a confirmed price before activation");
   if (c === "products" && d.compareAtPricePaise)
-    check(d.compareAtPricePaise >= d.pricePaise, "Original price must be at least the selling price (or 0 for no discount)");
+    check(
+      d.compareAtPricePaise >= d.pricePaise,
+      "Original price must be at least the selling price (or 0 for no discount)",
+    );
   if (c === "products") {
-    if (d.compareAt100Paise) check(d.compareAt100Paise >= (d.price100Paise || 0), "100 ml original price must be at least its selling price");
-    if (d.stock100 > 0) check(d.price100Paise > 0, "Set the 100 ml price before adding its stock");
+    if (d.compareAt100Paise)
+      check(
+        d.compareAt100Paise >= (d.price100Paise || 0),
+        "100 ml original price must be at least its selling price",
+      );
+    if (d.stock100 > 0)
+      check(
+        d.price100Paise > 0,
+        "Set the 100 ml price before adding its stock",
+      );
   }
   if (["posts", "policies"].includes(c)) {
     if (d.contentFormat === "html") d.content = cleanContent(d.content);
     if (d.status === "published") {
-      check(d.contentFormat === "html" ? contentText(d.content) : d.content, "Published content cannot be empty");
+      check(
+        d.contentFormat === "html" ? contentText(d.content) : d.content,
+        "Published content cannot be empty",
+      );
       if (!d.publishedAt) d.publishedAt = new Date().toISOString();
     }
     if (c === "posts" && d.categoryIds) d.categoryId = d.categoryIds[0] || "";
   }
   if (c === "settings" && d.whatsapp) {
-    check(/^\+?[1-9][\d\s()-]{6,20}$/.test(d.whatsapp) && /^[1-9]\d{6,14}$/.test(d.whatsapp.replace(/\D/g, "")), "Enter a WhatsApp number including country code");
+    check(
+      /^\+?[1-9][\d\s()-]{6,20}$/.test(d.whatsapp) &&
+        /^[1-9]\d{6,14}$/.test(d.whatsapp.replace(/\D/g, "")),
+      "Enter a WhatsApp number including country code",
+    );
   }
   return d;
 }

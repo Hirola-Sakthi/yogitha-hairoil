@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { api } from "../shared/api";
 import RichTextEditor, { editorHtml } from "./RichTextEditor";
@@ -13,7 +14,7 @@ const localDate = value => {
 };
 export default function ContentForm({ module, item, busy, onSave, onDelete }) {
   const post = module === "posts";
-  const [tab, setTab] = useState("content"), [uploading, setUploading] = useState(false), [error, setError] = useState("");
+  const [tab, setTab] = useState("content"), [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState([]), [posts, setPosts] = useState([]);
   const [tag, setTag] = useState("");
   const [slugEdited, setSlugEdited] = useState(!!item.id || !!item.slug);
@@ -24,7 +25,7 @@ export default function ContentForm({ module, item, busy, onSave, onDelete }) {
   useEffect(() => {
     if (!post) return;
     let live = true;
-    Promise.all([api("/admin/categories"), api("/admin/posts")]).then(([c, p]) => { if (live) { setCategories(c); setPosts(p); } }).catch(e => { if (live) setError(e.message); });
+    Promise.all([api("/admin/categories"), api("/admin/posts")]).then(([c, p]) => { if (live) { setCategories(c); setPosts(p); } }).catch(e => { if (live) toast.error(e.message); });
     return () => { live = false; };
   }, [post]);
   const field = (key, label, type = "text") => <label>{label}<input type={type} value={form[key] || ""} onChange={e => update(key, e.target.value)} /></label>;
@@ -34,12 +35,11 @@ export default function ContentForm({ module, item, busy, onSave, onDelete }) {
     setTag("");
   };
   return <form className="content-composer" onSubmit={e => {
-    e.preventDefault(); setError("");
-    if (!form.title.trim() || !form.slug.trim()) { setTab("content"); setError("Title and slug are required."); return; }
+    e.preventDefault();
+    if (!form.title.trim() || !form.slug.trim()) { setTab("content"); toast.error("Title and slug are required."); return; }
     onSave({ ...form, tags: [...new Set([...form.tags, ...(tag.trim() ? [tag.trim().slice(0, 100)] : [])])].slice(0, 20), publishedAt: form.publishedAt ? new Date(form.publishedAt).toISOString() : "" });
   }}>
     <div className="composer-actions"><p>{post ? "Shape your next story." : "Clear information for your customers."}</p><Link className="btn secondary" to={`/admin/${module}`}>Cancel</Link><button className="btn" disabled={busy || uploading}>{uploading ? "Uploading…" : busy ? "Saving…" : item.id ? "Save changes" : "Create post"}</button></div>
-    {error && <p className="cms-alert error" role="alert">{error}</p>}
     <div className="composer-tabs" aria-label="Editor sections">{[["content", "Content"], ...(post ? [["author", "Author & related"]] : []), ["seo", "SEO"]].map(([id, label]) => <button type="button" key={id} aria-pressed={tab === id} onClick={() => setTab(id)}>{label}</button>)}</div>
     <div className="composer-layout"><div className="composer-main">
       <div hidden={tab !== "content"}>
@@ -64,7 +64,7 @@ export default function ContentForm({ module, item, busy, onSave, onDelete }) {
         <div className="composer-tags">{form.tags.map(t => <button type="button" key={t} onClick={() => update("tags", form.tags.filter(x => x !== t))} aria-label={`Remove tag ${t}`}>{t} ×</button>)}</div>
       </div></section>
       <section className="composer-card"><h2>Featured image</h2><div className="composer-fields">{form.image ? <img className="composer-image" src={imageUrl(form.image)} alt="Featured image preview" /> : <div className="composer-image-empty">No image selected</div>}
-        <label>Choose image<input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading} onChange={async e => { const file = e.target.files?.[0]; if (!file) return; setUploading(true); setError(""); try { update("image", await uploadImage(file)); } catch (err) { setError(err.message); } finally { setUploading(false); e.target.value = ""; } }} /></label>
+        <label>Choose image<input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading} onChange={async e => { const file = e.target.files?.[0]; if (!file) return; setUploading(true); try { update("image", await uploadImage(file)); } catch (err) { toast.error(err.message); } finally { setUploading(false); e.target.value = ""; } }} /></label>
         {field("image", "Or image URL")}<small>JPG, PNG or WebP, up to 5 MB. Recommended 1600 × 900.</small>{form.image && <button type="button" className="text-button" onClick={() => update("image", "")}>Remove image</button>}
       </div></section></>}
     </aside></div>

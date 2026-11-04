@@ -1,4 +1,4 @@
-import { requestId } from "./api";
+﻿import { requestId } from "./api";
 import { productForSize } from "./productOptions";
 import { isPublished } from "./publication";
 const at = "2026-10-29T08:00:00Z";
@@ -172,6 +172,8 @@ let user = JSON.parse(sessionStorage.getItem("ambar-demo-user") || "null");
 const save = () =>
   localStorage.setItem("ambar-preview-v2", JSON.stringify(state));
 export async function demo(path, { method = "GET", body: b = {} } = {}) {
+  if (path === "/shipping/quote")
+    return { shippingPaise: state.settings.shippingPaise || 0, courierName: "Preview shipping" };
   if (path === "/cart") {
     const variantId = b.variantId || "50ml";
     const matches = line => line.productId === b.productId && (line.variantId || "50ml") === variantId;
@@ -182,13 +184,14 @@ export async function demo(path, { method = "GET", body: b = {} } = {}) {
       const qty = method === "DELETE" ? 0 : method === "POST" ? (old?.quantity || 0) + b.quantity : b.quantity;
       if (!Number.isSafeInteger(qty) || qty < 0 || qty > 20) throw new Error("Quantity must be between 0 and 20");
       if (qty && (!p || p.status !== "active" || p.stock < qty)) throw new Error("No more stock available for this product");
-      state.cart = state.cart.filter(p => !matches(p));
-      if (qty) state.cart.push({ productId: b.productId, variantId, quantity: qty });
+      state.cart = old
+        ? state.cart.flatMap(line => matches(line) ? (qty ? [{ ...line, quantity: qty }] : []) : [line])
+        : qty ? [...state.cart, { productId: b.productId, variantId, quantity: qty }] : state.cart;
       save();
     }
     const items = state.cart.map(line => {
       const p = productForSize(state.products.find(p => p.id === line.productId), line.variantId || "50ml");
-      return { ...line, variantId: line.variantId || "50ml", name: p ? `${p.name} · ${p.sizeLabel}` : "Unavailable product", image: p?.image,
+      return { ...line, variantId: line.variantId || "50ml", sizeLabel: p?.sizeLabel, name: p ? `${p.name} · ${p.sizeLabel}` : "Unavailable product", image: p?.image,
         pricePaise: p?.pricePaise || 0, stock: p?.stock || 0,
         available: p?.status === "active" && p.stock >= line.quantity,
         totalPaise: (p?.pricePaise || 0) * line.quantity };
@@ -250,29 +253,43 @@ export async function demo(path, { method = "GET", body: b = {} } = {}) {
   if (path === "/orders") {
     if (method === "GET") return state.orders;
     if (!user) throw new Error("Sign in to continue");
-    const base = state.products.find((p) => p.id === b.productId);
-    const p = productForSize(base, b.variantId || "50ml");
-    if (!p || !p.pricePaise || p.stock < b.quantity) throw new Error("Insufficient stock");
+    const requested = b.items || [{ productId: b.productId, variantId: b.variantId, quantity: b.quantity }];
+    if (!requested.length) throw new Error("Add at least one item to your bag");
+    const items = requested.map(line => {
+      const base = state.products.find(p => p.id === line.productId);
+      const p = productForSize(base, line.variantId || "50ml");
+      if (!p || !p.pricePaise || p.stock < line.quantity) throw new Error("Insufficient stock");
+      return { productId: p.id, productName: `${p.name} (${p.sizeLabel})`, name: p.name, image: p.image,
+        variantId: p.variantId, sizeLabel: p.sizeLabel, sku: p.sku, quantity: line.quantity,
+        unitPricePaise: p.pricePaise, subtotalPaise: p.pricePaise * line.quantity,
+        weight: base.weight, length: base.length, breadth: base.breadth, height: base.height };
+    });
+    const first = items[0];
+    const subtotalPaise = items.reduce((sum, item) => sum + item.subtotalPaise, 0);
+    const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
     const o = {
-      ...makeOrder(
-        "DY-" + requestId().slice(0, 8),
-        user.name,
-        b.quantity,
-        "placed",
-      ),
+      ...makeOrder("DY-" + requestId().slice(0, 8), user.name, quantity, "placed"),
       address: b.address,
-      productId: p.id,
-      productName: `${p.name} · ${p.sizeLabel}`,
-      variantId: p.variantId,
-      sku: p.sku,
-      unitPricePaise: p.pricePaise,
-      subtotalPaise: p.pricePaise * b.quantity,
-      totalPaise: p.pricePaise * b.quantity + state.settings.shippingPaise,
+      productId: first.productId,
+      productName: items.map(item => item.productName).join(" + "),
+      variantId: first.variantId,
+      sizeLabel: first.sizeLabel,
+      sku: first.sku,
+      unitPricePaise: first.unitPricePaise,
+      items,
+      subtotalPaise,
+      totalPaise: subtotalPaise + state.settings.shippingPaise,
       shippingPaise: state.settings.shippingPaise,
     };
     state.orders.unshift(o);
-    base[p.variantId === "100ml" ? "stock100" : "stock"] -= b.quantity;
-    state.cart = (state.cart || []).map(line => line.productId === p.id && (line.variantId || "50ml") === p.variantId ? { ...line, quantity: Math.max(0, line.quantity - b.quantity) } : line).filter(line => line.quantity);
+    for (const item of items) {
+      const base = state.products.find(p => p.id === item.productId);
+      base[item.variantId === "100ml" ? "stock100" : "stock"] -= item.quantity;
+    }
+    state.cart = (state.cart || []).map(line => {
+      const item = items.find(p => p.productId === line.productId && p.variantId === (line.variantId || "50ml"));
+      return item ? { ...line, quantity: Math.max(0, line.quantity - item.quantity) } : line;
+    }).filter(line => line.quantity);
     state.payments.unshift({
       id: "PAY-" + o.id,
       orderId: o.id,
@@ -325,7 +342,12 @@ export async function demo(path, { method = "GET", body: b = {} } = {}) {
       return { ok: true };
     }
     if (method === "POST") {
-      const r = { id: requestId(), ...b, createdAt: new Date().toISOString() };
+      const r = {
+        id: requestId(),
+        ...b,
+        ...(c === "reviews" ? { source: "manual" } : {}),
+        createdAt: new Date().toISOString(),
+      };
       state[c].unshift(r);
       save();
       return r;

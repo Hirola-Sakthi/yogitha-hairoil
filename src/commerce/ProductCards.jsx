@@ -7,7 +7,7 @@ import { productForSize } from "../shared/productOptions";
 import { imageUrl } from "../shared/imageUrl";
 import "./product-cards.css";
 
-export function AddToCartButton({ product, quantity = 1 }) {
+export function AddToCartButton({ product, quantity = 1, showFeedback = true }) {
   const { addToCart, cartBusy } = useStore();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +23,7 @@ export function AddToCartButton({ product, quantity = 1 }) {
       {message ? <Check size={17} /> : <ShoppingBag size={17} />}
       {busy ? "Adding…" : product.stock < quantity ? "Out of stock" : "Add to cart"}
     </button>
-    {message && <small className="collection-feedback" role="status">{message}</small>}
+    {showFeedback && message && <small className="collection-feedback" role="status">{message}</small>}
     {error && <small className="collection-error" role="alert">{error}</small>}
   </div>;
 }
@@ -93,19 +93,22 @@ export function ProductPurchase({ product }) {
       <div className="oil-pricing" aria-live="polite"><strong>{p.pricePaise > 0 ? money(p.pricePaise) : "Coming soon"}</strong>
         {discount > 0 && <><del>{money(p.compareAtPricePaise)}</del><span>{discount}% off</span></>}
       </div>
-      <SizeOptions value={size} onChange={changeSize} />
-      <p className="oil-stock" aria-live="polite">{available ? (p.stock <= 5 ? `Only ${p.stock} left in this size` : "In stock · ready for your routine") : "This size is currently unavailable"}</p>
-      <div className="oil-purchase-actions">
-        <div className="oil-quantity" aria-label="Quantity">
-          <button type="button" aria-label="Decrease quantity" disabled={qty <= 1} onClick={() => setQuantity(qty - 1)}>−</button>
-          <output aria-live="polite">{qty}</output>
-          <button type="button" aria-label="Increase quantity" disabled={!available || qty >= Math.min(20, p.stock)} onClick={() => setQuantity(qty + 1)}>+</button>
+      <div className="oil-selection-row">
+        <SizeOptions value={size} onChange={changeSize} />
+        <div className="oil-stock-quantity">
+          <p className="oil-stock" aria-live="polite">{available ? (p.stock <= 5 ? `Only ${p.stock} left in this size` : "In stock · ready for your routine") : "This size is currently unavailable"}</p>
+          <div className="oil-quantity" aria-label="Quantity">
+            <button type="button" aria-label="Decrease quantity" disabled={qty <= 1} onClick={() => setQuantity(qty - 1)}>−</button>
+            <output aria-live="polite">{qty}</output>
+            <button type="button" aria-label="Increase quantity" disabled={!available || qty >= Math.min(20, p.stock)} onClick={() => setQuantity(qty + 1)}>+</button>
+          </div>
         </div>
-        <AddToCartButton key={`${p.id}-${size}-${qty}`} product={p} quantity={qty} />
       </div>
-      {available ? <Link className="oil-buy-now" to={`/checkout?product=${encodeURIComponent(p.id)}&variant=${size}&quantity=${qty}`}>Buy now <ArrowUpRight size={17} /></Link>
-        : <button className="oil-buy-now" disabled>Buy now</button>}
-      <div className="oil-purchase-note"><ShoppingBag size={17} /><span>Choose your size. Make it part of your everyday ritual.</span></div>
+      <div className="oil-purchase-actions">
+        <AddToCartButton key={`${p.id}-${size}-${qty}`} product={p} quantity={qty} showFeedback={false} />
+        {available ? <Link className="oil-buy-now" to={`/checkout?product=${encodeURIComponent(p.id)}&variant=${size}&quantity=${qty}`}>Buy now <ArrowUpRight size={17} /></Link>
+          : <button className="oil-buy-now" disabled>Buy now</button>}
+      </div>      <div className="oil-purchase-note"><ShoppingBag size={17} /><span>Choose your size. Make it part of your everyday ritual.</span></div>
       <p className="oil-sku">SKU {p.sku} <span>Shipping calculated at checkout</span></p>
     </div>
   </div>;

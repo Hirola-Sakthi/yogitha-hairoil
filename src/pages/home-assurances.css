@@ -1,0 +1,76 @@
+.home-assurances {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(1540px, calc(100% - 10%));
+  margin: 10px auto 0;
+  padding: 30px 0;
+  border-top: 1px solid color-mix(in srgb, var(--brand) 16%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--brand) 16%, transparent);
+  color: var(--brand);
+}
+.home-assurance {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  align-content: start;
+  gap: 13px;
+  padding: 9px 22px;
+}
+.home-assurance + .home-assurance { border-left: 1px solid color-mix(in srgb, var(--brand) 12%, transparent); }
+.home-assurance > svg { width: 21px; height: 21px; margin-top: 1px; color: var(--brand); stroke-width: 1.55; }
+.home-assurance h2 { margin: 0 0 8px; font-size: 11px; font-weight: 650; letter-spacing: .16em; line-height: 1.5; text-transform: uppercase; }
+.home-assurance p { max-width: 310px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
+.home-ritual-cta {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr);
+  align-items: center;
+  width: min(1540px, calc(100% - 10%));
+  min-height: 270px;
+  margin: 48px auto 54px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: 14px;
+  background: var(--brand);
+  box-shadow: 0 20px 45px rgb(35 49 34 / 16%);
+  color: var(--surface);
+}
+.home-ritual-cta::before {
+  position: absolute;
+  top: -130px;
+  right: 8%;
+  width: 390px;
+  height: 390px;
+  border: 1px solid rgb(216 197 143 / 17%);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+.home-ritual-cta-copy { position: relative; z-index: 1; max-width: 680px; padding: 38px clamp(28px, 5vw, 72px); }
+.home-ritual-cta-eyebrow { margin: 0 0 11px; color: #e2d3a9; font-size: 10px; font-weight: 600; letter-spacing: .18em; }
+.home-ritual-cta h2 { margin: 0; font-size: clamp(31px, 4vw, 48px); font-weight: 500; letter-spacing: -.04em; line-height: 1.12; }
+.home-ritual-cta h2 span { color: #d7c18e; }
+.home-ritual-cta-copy > p:not(.home-ritual-cta-eyebrow) { max-width: 460px; margin: 13px 0 18px; color: rgb(255 254 249 / 82%); font-size: 13px; line-height: 1.7; }
+.home-ritual-cta-button { display: inline-flex; align-items: center; gap: 15px; padding: 10px 17px; border: 1px solid var(--surface); border-radius: 999px; background: var(--surface); color: var(--brand); font-size: 12px; font-weight: 600; text-decoration: none; transition: gap .2s ease, background-color .2s ease; }
+.home-ritual-cta-button:hover { gap: 21px; background: #e9e5d6; }
+.home-ritual-cta-image { position: absolute; inset: 0 0 0 auto; display: grid; width: 48%; place-items: end center; pointer-events: none; }
+.home-ritual-cta-image img { display: block; width: min(100%, 490px); height: 115%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 16px 20px rgb(13 23 14 / 24%)); }
+@media (max-width: 1000px) {
+  .home-assurances { grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(760px, calc(100% - 10%)); padding: 20px 0; }
+  .home-assurance { padding: 16px 20px; }
+  .home-assurance:nth-child(3) { border-left: 0; }
+  .home-ritual-cta { grid-template-columns: 1fr .65fr; min-height: 250px; }
+  .home-ritual-cta-image { width: 43%; }
+}
+@media (max-width: 560px) {
+  .home-assurances { grid-template-columns: 1fr; width: calc(100% - 40px); padding: 10px 0; }
+  .home-assurance { padding: 16px 10px; }
+  .home-assurance + .home-assurance { border-top: 1px solid color-mix(in srgb, var(--brand) 10%, transparent); border-left: 0; }
+  .home-assurance p { font-size: 12px; }
+  .home-ritual-cta { display: block; width: calc(100% - 40px); min-height: 0; margin: 34px auto 42px; }
+  .home-ritual-cta-copy { max-width: 75%; padding: 26px 0 27px 22px; }
+  .home-ritual-cta-eyebrow { font-size: 8px; letter-spacing: .13em; }
+  .home-ritual-cta h2 { font-size: clamp(25px, 7vw, 34px); }
+  .home-ritual-cta-copy > p:not(.home-ritual-cta-eyebrow) { font-size: 11px; }
+  .home-ritual-cta-image { right: -13%; width: 58%; opacity: .94; }
+  .home-ritual-cta-image img { width: 100%; height: 100%; }
+}

@@ -723,6 +723,7 @@ button:disabled {
 }
 .cms-record-page { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-height: 60vh; }
 .record-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px 32px; border-bottom: 1px solid var(--line); }
+.policy-record-heading { border-bottom: 0; }
 .record-heading h1 { font-size: clamp(26px, 3vw, 38px); letter-spacing: -1px; margin: 6px 0 0; }
 .cms-record-page > .cms-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; padding: 30px 32px; }
 .cms-record-page > .cms-form > div, .cms-record-page > .cms-form > button, .cms-record-page > .cms-form > label:has(textarea) { grid-column: 1 / -1; }
@@ -847,6 +848,68 @@ button:disabled {
 }
 .settings-card label {
   margin-bottom: 20px;
+}
+.settings-social-image {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 22px;
+}
+.settings-social-image > label:first-child,
+.settings-social-image > label[for="settings-social-image-url"] {
+  margin: 0;
+}
+.settings-social-image .product-image-preview {
+  display: block;
+  width: min(100%, 320px);
+  height: 225px;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+}
+.settings-social-image .social-image-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.settings-social-image .social-image-file:focus-visible + .social-image-picker,
+.settings-social-image .social-image-picker:focus-within {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+.settings-social-image .social-image-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--canvas);
+  cursor: pointer;
+}
+.settings-social-image .social-image-picker span {
+  color: var(--brand);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.settings-social-image .social-image-picker small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.settings-social-image > input[type="text"] {
+  width: 100%;
 }
 .search-preview {
   padding: 18px;
