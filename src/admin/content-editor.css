@@ -32,6 +32,7 @@
 .rich-toolbar button[aria-pressed="true"] { background: #e0e6d6; color: #233c27; }
 .rich-toolbar button:disabled { opacity: .35; cursor: default; }
 .rich-editor .tiptap, .rich-source { min-height: 460px; border: 1px solid var(--line); border-top: 0; padding: 20px; outline-color: var(--brand); font-size: 15px; line-height: 1.75; overflow-wrap: anywhere; }
+.rich-editor .tiptap:has(> p:only-child:has(> br.ProseMirror-trailingBreak))::before { content: attr(data-placeholder); display: block; height: 0; color: var(--muted); opacity: .75; pointer-events: none; }
 .rich-editor .tiptap p { margin: 0 0 1em; }
 .rich-editor .tiptap h2, .rich-editor .tiptap h3 { border: 0; padding: 0; margin: 1em 0 .5em; font-size: 1.6em; font-weight: 600; }
 .rich-editor .tiptap h3 { font-size: 1.25em; }

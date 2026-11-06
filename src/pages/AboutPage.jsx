@@ -1,9 +1,40 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BadgeCheck, ChevronLeft, ChevronRight, FlaskConicalOff, Leaf, Recycle, X } from "lucide-react";
 import HomeFaq from "../commerce/HomeFaq";
 import HomeSocialGallery from "../commerce/HomeSocialGallery";
-import RitualCta from "../commerce/RitualCta";
+import AboutIngredientStory from "../commerce/AboutIngredientStory";
+
+const aboutReels = [
+  { video: "/reels/reels-1.mp4", title: "Hair-care reel 1" },
+  { video: "/reels/reels-2.mp4", title: "Hair-care reel 2" },
+  { video: "/reels/reels-1.mp4", title: "Hair-care reel 3" },
+  { video: "/reels/reels-2.mp4", title: "Hair-care reel 4" },
+];
+const aboutStandards = [
+  { title: "100% Natural Botanical", Icon: Leaf },
+  { title: "Chemical Free", Icon: FlaskConicalOff },
+  { title: "Dermatologically Tested", Icon: BadgeCheck },
+  { title: "Recyclable Packaging", Icon: Recycle },
+];
 
 export default function AboutPage() {
+  const [activeReel, setActiveReel] = useState(-1);
+  useEffect(() => {
+    if (activeReel < 0) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setActiveReel(-1);
+      if (event.key === "ArrowRight") setActiveReel((index) => (index + 1) % aboutReels.length);
+      if (event.key === "ArrowLeft") setActiveReel((index) => (index - 1 + aboutReels.length) % aboutReels.length);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [activeReel]);
   return (
     <>
     <section className="info-page about-page">
@@ -31,7 +62,7 @@ export default function AboutPage() {
             <div className="about-journey-image about-journey-image-top"><img src="/routine-2.webp" alt="Pouring hair oil into the palm of a hand" loading="lazy" /></div>
             <div className="about-journey-image about-journey-image-bottom"><img src="/routine-3.webp" alt="Applying oil along the scalp" loading="lazy" /></div>
             <div className="about-journey-image about-journey-image-side"><img src="/routine-4.webp" alt="Massaging oil into the scalp as part of a hair-care ritual" loading="lazy" /></div>
-            <span className="about-journey-seal" aria-hidden="true"><span>DR. YOGITHA&apos;S</span><i>✦</i><span>ROOTED IN CARE</span></span>
+            <span className="about-journey-seal" aria-hidden="true"><span>DR. YOGITHA&apos;S</span><i>&#10022;</i><span>ROOTED IN CARE</span></span>
           </div>
           <div className="about-journey-copy">
             <p className="eyebrow">OUR APPROACH</p>
@@ -45,16 +76,18 @@ export default function AboutPage() {
             <Link className="about-journey-link" to="/#shop">Explore the hair oil <span aria-hidden="true">&rarr;</span></Link>
           </div>
         </section>
+        <AboutIngredientStory />
         <div className="about-doctor" id="about-details">
           <div className="about-doctor-image">
             <img src="/dr-yogitha.jpg" alt="Dr. Yogitha" loading="lazy" />
             <span className="about-doctor-image-caption">DR. YOGITHA&apos;S &middot; PERSONAL CARE, ROOTED IN TRADITION</span>
           </div>
           <div className="about-doctor-copy">
+            <Leaf className="about-doctor-emblem" aria-hidden="true" />
             <p className="eyebrow">A NOTE FROM THE FOUNDER</p>
             <h2>Meet Dr. Yogitha.</h2>
-            <span className="about-doctor-rule" aria-hidden="true" />
             <p className="about-doctor-lead">A thoughtful approach to hair care, inspired by the wisdom of Ayurveda.</p>
+            <span className="about-doctor-rule" aria-hidden="true" />
             <p className="about-doctor-body">
               Dr. Yogitha's Hair Oil was created to bring a little more intention
               to your everyday routine. Inspired by botanical traditions, it is
@@ -68,14 +101,14 @@ export default function AboutPage() {
           <header className="about-purpose-heading">
             <p className="eyebrow">WHAT GUIDES US</p>
             <h2 id="about-purpose-title">Care with intention.</h2>
-            <span className="about-purpose-rule" aria-hidden="true"><i>✦</i></span>
+            <span className="about-purpose-rule" aria-hidden="true"><i>?</i></span>
           </header>
           <div className="about-purpose-grid">
             <article className="about-purpose-panel about-purpose-vision">
               <p className="eyebrow">OUR VISION</p>
               <h3>Make everyday hair care feel like a moment of care.</h3>
               <p>We imagine a more mindful routine, inspired by the wisdom of Ayurveda and a lasting connection to nature.</p>
-              <span className="about-purpose-leaf" aria-hidden="true">✳</span>
+              <span className="about-purpose-leaf" aria-hidden="true">?</span>
             </article>
             <article className="about-purpose-panel about-purpose-mission">
               <p className="eyebrow">OUR MISSION</p>
@@ -85,19 +118,65 @@ export default function AboutPage() {
             </article>
           </div>
         </section>
+        <section className="about-explore" aria-labelledby="about-explore-title">
+          <header className="about-explore-heading">
+            <p className="eyebrow">A RITUAL, ROOTED IN CARE</p>
+            <h2 id="about-explore-title">Explore &amp; Shop</h2>
+            <span aria-hidden="true" />
+          </header>
+          <div className="about-explore-grid">
+            {aboutReels.map((reel, index) => (
+              <button className="about-explore-card" type="button" onClick={() => setActiveReel(index)} key={`${reel.video}-${index}`} aria-label={`Play video: ${reel.title}`}>
+                <video src={reel.video} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="about-standards" aria-labelledby="about-standards-title">
+          <h2 id="about-standards-title"><Leaf size={20} aria-hidden="true" />Indulge In The Goodness Of Non-Toxic Beauty</h2>
+          <div className="about-standards-grid">
+            {aboutStandards.map(({ title, Icon }) => (
+              <div className="about-standard" key={title}>
+                <span className="about-standard-icon"><Icon size={43} strokeWidth={1.7} aria-hidden="true" /></span>
+                <strong>{title}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </section>
     <section className="about-marquee" aria-label="Ayurvedic hair care, botanical oils, mindful rituals, rooted in tradition, made with care">
       <div className="about-marquee-track" aria-hidden="true">
         {[0, 1].map((loop) => <div className="about-marquee-group" key={loop}>
           {["Ayurvedic Hair Care", "Botanical Oils", "Mindful Rituals", "Rooted in Tradition", "Made with Care"].map((item) => (
-            <span className="about-marquee-item" key={item}>{item}<i>✦</i></span>
+            <span className="about-marquee-item" key={item}>{item}<i>?</i></span>
           ))}
         </div>)}
       </div>
     </section>
     <HomeSocialGallery />
-    <RitualCta />
+    <section className="about-ritual-cta" aria-labelledby="about-ritual-cta-title">
+      <div className="about-ritual-cta-copy">
+        <p className="eyebrow">A MORE MINDFUL RITUAL</p>
+        <h2 id="about-ritual-cta-title">A little care, made part of every day.</h2>
+        <p>Discover a thoughtful hair-care ritual inspired by Ayurvedic tradition and botanical ingredients.</p>
+        <Link className="about-ritual-cta-button" to="/#shop">Explore the hair oil <span aria-hidden="true">&rarr;</span></Link>
+      </div>
+      <div className="about-ritual-cta-art" aria-hidden="true">
+        <img src="/about-cta.webp" alt="" loading="lazy" />
+      </div>
+      <span className="about-ritual-cta-note" aria-hidden="true">DR. YOGITHA&apos;S <i>&middot;</i> ROOTED IN CARE</span>
+    </section>
+    {activeReel >= 0 && (
+      <div className="about-reel-backdrop" role="dialog" aria-modal="true" aria-label={aboutReels[activeReel].title} onClick={(event) => { if (event.target === event.currentTarget) setActiveReel(-1); }}>
+        <button className="about-reel-close" type="button" onClick={() => setActiveReel(-1)} aria-label="Close video"><X size={21} /></button>
+        <button className="about-reel-nav about-reel-prev" type="button" onClick={() => setActiveReel((activeReel - 1 + aboutReels.length) % aboutReels.length)} aria-label="Previous video"><ChevronLeft size={32} /></button>
+        <article className="about-reel-modal" onClick={(event) => event.stopPropagation()}>
+          <video key={aboutReels[activeReel].video} src={aboutReels[activeReel].video} controls autoPlay muted playsInline />
+        </article>
+        <button className="about-reel-nav about-reel-next" type="button" onClick={() => setActiveReel((activeReel + 1) % aboutReels.length)} aria-label="Next video"><ChevronRight size={32} /></button>
+      </div>
+    )}
     <HomeFaq variant="about" />
     </>
   );

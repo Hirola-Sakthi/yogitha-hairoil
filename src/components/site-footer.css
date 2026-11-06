@@ -3,7 +3,8 @@
 .store-footer a:hover { color: #dfca99; }
 .store-footer-main { display: grid; grid-template-columns: 2.15fr .85fr .85fr .95fr 1.2fr; gap: clamp(24px, 3vw, 60px); padding-bottom: 56px; }
 .store-footer-brand { padding-right: clamp(0px, 3vw, 55px); }
-.store-footer-wordmark { display: inline-block; font-size: clamp(28px, 2.5vw, 40px); font-weight: 500; letter-spacing: -.04em; line-height: 1.2; }
+.store-footer-wordmark { position: relative; display: block; width: clamp(190px, 17vw, 250px); height: 34px; overflow: hidden; }
+.store-footer-wordmark img { position: absolute; width: 100%; height: auto; left: 0; top: 50%; transform: translateY(-50%); }
 .store-footer-tagline { font-size: 9px; letter-spacing: .19em; color: #d0ba88; margin: 12px 0 32px; }
 .store-footer-description { font-size: 15px; line-height: 1.85; max-width: 390px; margin-bottom: 30px; color: #e0dfcd; }
 .store-footer-column { display: flex; flex-direction: column; gap: 13px; padding-top: 5px; min-width: 0; }

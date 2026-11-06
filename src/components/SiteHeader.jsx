@@ -5,7 +5,7 @@ export default function SiteHeader({ bagQuantity }) {
   return (
     <header className="site-header">
       <Link className="wordmark" to="/" aria-label="Dr. Yogitha's home">
-        Dr. Yogitha's
+        <img src="/main-logo.webp?v=3" alt="Dr. Yogitha's" />
       </Link>
       <nav aria-label="Main navigation">
         <NavLink to="/about">About</NavLink>

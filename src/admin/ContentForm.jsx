@@ -28,7 +28,13 @@ export default function ContentForm({ module, item, busy, onSave, onDelete }) {
     Promise.all([api("/admin/categories"), api("/admin/posts")]).then(([c, p]) => { if (live) { setCategories(c); setPosts(p); } }).catch(e => { if (live) toast.error(e.message); });
     return () => { live = false; };
   }, [post]);
-  const field = (key, label, type = "text") => <label>{label}<input type={type} value={form[key] || ""} onChange={e => update(key, e.target.value)} /></label>;
+  const fieldPlaceholders = {
+    author: "e.g. Dr. Yogitha",
+    seoTitle: "Enter the search result title",
+    publishedAt: "Choose a date and time",
+    image: "https://example.com/image.jpg",
+  };
+  const field = (key, label, type = "text") => <label>{label}<input type={type} value={form[key] || ""} placeholder={fieldPlaceholders[key] || `Enter ${label.toLowerCase()}`} onChange={e => update(key, e.target.value)} /></label>;
   const addTag = () => {
     const next = tag.trim();
     if (next && !form.tags.includes(next) && form.tags.length < 20) update("tags", [...form.tags, next.slice(0, 100)]);
@@ -44,16 +50,16 @@ export default function ContentForm({ module, item, busy, onSave, onDelete }) {
     <div className="composer-layout"><div className="composer-main">
       <div hidden={tab !== "content"}>
         <section className="composer-card composer-fields">
-          <label>Title *<input value={form.title} maxLength={500} onChange={e => { const title = e.target.value; setForm(f => ({ ...f, title, ...(!slugEdited ? { slug: title.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") } : {}) })); }} /></label>
-          <label>Slug *<div className="slug-input"><span>/{post ? "blog" : "policies"}/</span><input value={form.slug} onChange={e => { setSlugEdited(true); update("slug", e.target.value); }} /></div><small>Generated from the title until you edit it.</small></label>
-          {post && <label>Excerpt<textarea rows={3} maxLength={600} value={form.excerpt} onChange={e => update("excerpt", e.target.value)} /><small>{form.excerpt.length} / 600</small></label>}
+          <label>Title *<input value={form.title} placeholder={post ? "e.g. A mindful hair care ritual" : "Enter the policy title"} maxLength={500} onChange={e => { const title = e.target.value; setForm(f => ({ ...f, title, ...(!slugEdited ? { slug: title.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") } : {}) })); }} /></label>
+          <label>Slug *<div className="slug-input"><span>/{post ? "blog" : "policies"}/</span><input value={form.slug} placeholder="e.g. mindful-hair-care-ritual" onChange={e => { setSlugEdited(true); update("slug", e.target.value); }} /></div><small>Generated from the title until you edit it.</small></label>
+          {post && <label>Excerpt<textarea rows={3} maxLength={600} value={form.excerpt} placeholder="Write a short summary for the blog listing" onChange={e => update("excerpt", e.target.value)} /><small>{form.excerpt.length} / 600</small></label>}
         </section>
-        <section className="composer-card"><h2>Body</h2><RichTextEditor value={form.content} onChange={value => update("content", value)} onBusyChange={setUploading} /></section>
+      <section className="composer-card"><h2>Body</h2><RichTextEditor value={form.content} placeholder={post ? "Write your blog post here…" : "Write the policy information for customers…"} onChange={value => update("content", value)} onBusyChange={setUploading} /></section>
       </div>
       {post && <section className="composer-card composer-fields" hidden={tab !== "author"}><h2>Author & related stories</h2>{field("author", "Author name")}
         <fieldset><legend>Related posts</legend>{posts.filter(p => p.id !== item.id).map(p => <label className="composer-check" key={p.id}><input type="checkbox" checked={form.relatedPostIds.includes(p.id)} onChange={e => update("relatedPostIds", e.target.checked ? [...form.relatedPostIds, p.id] : form.relatedPostIds.filter(id => id !== p.id))} />{p.title}</label>)}{posts.filter(p => p.id !== item.id).length === 0 && <small>No other posts yet.</small>}</fieldset>
       </section>}
-      <section className="composer-card composer-fields" hidden={tab !== "seo"}><h2>Search appearance</h2>{field("seoTitle", "SEO title")}<label>SEO description<textarea rows={4} maxLength={500} value={form.seoDescription} onChange={e => update("seoDescription", e.target.value)} /></label><small>Leave blank to use the page title and excerpt.</small></section>
+      <section className="composer-card composer-fields" hidden={tab !== "seo"}><h2>Search appearance</h2>{field("seoTitle", "SEO title")}<label>SEO description<textarea rows={4} maxLength={500} value={form.seoDescription} placeholder="Write a concise description for search results" onChange={e => update("seoDescription", e.target.value)} /></label><small>Leave blank to use the page title and excerpt.</small></section>
     </div><aside className="composer-sidebar">
       <section className="composer-card"><h2>Publishing</h2><div className="composer-fields"><label>Status<select value={form.status} onChange={e => update("status", e.target.value)}><option value="draft">Draft</option><option value="published">Published</option></select></label>
         {field("publishedAt", "Publish date", "datetime-local")}<small>Local time. Leave empty to use the time of publishing. A future date keeps published content hidden until that time.</small>

@@ -17,7 +17,9 @@ export default function SiteFooter() {
   return <footer className="store-footer">
     <div className="store-footer-main">
       <div className="store-footer-brand">
-        <Link className="store-footer-wordmark" to="/">{brand}</Link>
+        <Link className="store-footer-wordmark" to="/" aria-label={`${brand} home`}>
+          <img src="/main-logo.webp?v=3" alt={brand} />
+        </Link>
         <p className="store-footer-tagline">NATURE, IN YOUR EVERYDAY RITUAL.</p>
         <p className="store-footer-description">{contact?.description || "Ayurvedic hair oil inspired by botanical traditions. A mindful ritual for your hair."}</p>
         <div className="store-footer-social"><h2>FOLLOW US</h2><div>

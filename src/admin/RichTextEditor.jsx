@@ -11,13 +11,13 @@ export function editorHtml(content, format) {
   return (content || "").split(/\n\n+/).map(p => `<p>${p.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</p>`).join("");
 }
 
-export default function RichTextEditor({ value, onChange, onBusyChange }) {
+export default function RichTextEditor({ value, onChange, onBusyChange, placeholder }) {
   const [source, setSource] = useState(false), [panel, setPanel] = useState(""), [url, setUrl] = useState(""), [alt, setAlt] = useState("");
   const editor = useEditor({
     extensions: [StarterKit.configure({ heading: { levels: [2, 3] }, link: { openOnClick: false } }), Image],
     content: value,
     shouldRerenderOnTransaction: true,
-    editorProps: { attributes: { "aria-label": "Body", role: "textbox", "aria-multiline": "true" } },
+    editorProps: { attributes: { "aria-label": "Body", role: "textbox", "aria-multiline": "true", "data-placeholder": placeholder || "Write your content here…" } },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
   });
   if (!editor) return <p>Opening editor…</p>;
@@ -45,7 +45,7 @@ export default function RichTextEditor({ value, onChange, onBusyChange }) {
     </div>
     {panel && <div className="rich-insert" onKeyDown={e => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); e.currentTarget.querySelector("button")?.click(); } }}>
       <label>{panel === "link" ? "Link URL" : "Image URL"}<input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://…" /></label>
-      {panel === "image" && <label>Image description<input value={alt} onChange={e => setAlt(e.target.value)} /></label>}
+      {panel === "image" && <label>Image description<input value={alt} placeholder="Describe the image for accessibility" onChange={e => setAlt(e.target.value)} /></label>}
       <button type="button" className="btn secondary" onClick={() => {
         if (!/^(https?:\/\/|mailto:|\/(?!\/))/.test(url) || (panel === "image" && url.startsWith("mailto:"))) { toast.error("Use a website URL or a local /path."); return; }
         if (panel === "link") editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
@@ -60,7 +60,7 @@ export default function RichTextEditor({ value, onChange, onBusyChange }) {
       }} /></label>}
       <button type="button" className="text-button" onClick={() => setPanel("")}>Cancel</button>
     </div>}
-    {source && <textarea className="rich-source" aria-label="Body HTML source" value={value} onChange={e => onChange(e.target.value)} />}
+    {source && <textarea className="rich-source" aria-label="Body HTML source" placeholder="Paste or edit the article HTML" value={value} onChange={e => onChange(e.target.value)} />}
     <div hidden={source}><EditorContent editor={editor} /></div>
   </div>;
 }

@@ -44,7 +44,7 @@ const schemas = {
     categoryIds: "strings",
     relatedPostIds: "strings",
     title: "text",
-    slug: "slug",
+    slug: "slug", 
     excerpt: "long",
     content: "long",
     author: "text",

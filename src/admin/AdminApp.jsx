@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -35,6 +35,12 @@ import {
   LockKeyhole,
   Eye,
   EyeOff,
+  CalendarDays,
+  BadgeCheck,
+  MapPin,
+  Clock3,
+  Store,
+  Info,
 } from "lucide-react";
 import { imageUrl } from "../shared/imageUrl";
 import toast from "react-hot-toast";
@@ -81,7 +87,8 @@ export default function AdminApp() {
     [size, setSize] = useState(10),
     [version, setVersion] = useState(0),
     [busy, setBusy] = useState(false),
-    [mobile, setMobile] = useState(false);
+    [mobile, setMobile] = useState(false),
+    [pendingDelete, setPendingDelete] = useState(null);
   useEffect(() => {
     if (error) toast.error(error);
   }, [error]);
@@ -148,9 +155,7 @@ export default function AdminApp() {
   function deleteRecord(record) {
     if (busy) return;
     const name = record.name || record.title || record.id;
-    if (confirm(`Delete "${name}"? This cannot be undone.`)) {
-      mutate("/admin/" + module + "/" + encodeURIComponent(record.id), "DELETE");
-    }
+    setPendingDelete({ id: record.id, name });
   }
   if (user === undefined)
     return <div className="cms-loading">Opening your workspace…</div>;
@@ -224,6 +229,7 @@ export default function AdminApp() {
     <div className="cms">
       <aside className={"cms-sidebar " + (mobile ? "is-open" : "")}>
         <Link className="cms-logo" to="/admin">
+          <img src={imageUrl("/admin-logo.webp")} alt="Dr. Yogitha's" />
           <span>
             <Leaf size={21} />
           </span>
@@ -326,7 +332,7 @@ export default function AdminApp() {
                 Interactive preview · Sample data. No live payments, emails or
                 shipments.
               </span>
-              <Link to="/">View website ↗</Link>
+              <Link to="/">View website ?</Link>
             </div>
           )}
           {recordId ? (selected && def ? (
@@ -336,11 +342,11 @@ export default function AdminApp() {
           >
             <div className={`record-heading${module === "policies" ? " policy-record-heading" : ""}`}>
               <div>
-                {!(["products", "policies", "payments", "orders", "leads", "reviews"].includes(module)) && (
+                {!(["products", "posts", "policies", "payments", "orders", "leads", "reviews", "refunds", "shiprocket", "webhooks", "audit", "customers", "categories", "users"].includes(module)) && (
                   <p className="overline">{def.title}</p>
                 )}
                 <h1 id="record-title">
-                  {module === "posts" ? (selected.id ? "Edit post" : "New post") : module === "policies" ? "Edit policy" : selected.id ? "Record details" : "Create new"}
+                  {module === "posts" ? (selected.id ? "Edit post" : "New post") : module === "policies" ? "Edit policy" : module === "products" ? (selected.id ? "Edit product" : "New product") : selected.id ? "Record details" : "Create new"}
                 </h1>
               </div>
               <button
@@ -368,6 +374,7 @@ export default function AdminApp() {
                 }
                 onDelete={
                   selected.id &&
+                  module !== "leads" &&
                   deletableModules.includes(module)
                     ? () => deleteRecord(selected)
                     : null
@@ -446,7 +453,7 @@ export default function AdminApp() {
                     <Search size={17} />
                     <input
                       aria-label="Search records"
-                      placeholder={"Search " + def.title.toLowerCase() + "…"}
+                      placeholder={"Search " + def.title.toLowerCase()}
                       value={query}
                       onChange={(e) => {
                         setQuery(e.target.value);
@@ -619,6 +626,25 @@ export default function AdminApp() {
             <span>Thoughtfully made. Simply managed.</span>
           </div>
         </main>
+        {pendingDelete && (
+          <div className="admin-confirm-backdrop" onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !busy) setPendingDelete(null);
+          }}>
+            <section className="admin-confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-description">
+              <span className="admin-confirm-icon"><Trash2 size={20} /></span>
+              <h2 id="delete-confirm-title">Delete this record?</h2>
+              <p id="delete-confirm-description">“{pendingDelete.name}” will be permanently deleted. This action cannot be undone.</p>
+              <div className="admin-confirm-actions">
+                <button type="button" className="btn secondary" disabled={busy} onClick={() => setPendingDelete(null)}>Cancel</button>
+                <button type="button" className="btn danger" disabled={busy} onClick={() => {
+                  const record = pendingDelete;
+                  setPendingDelete(null);
+                  mutate("/admin/" + module + "/" + encodeURIComponent(record.id), "DELETE");
+                }}>{busy ? "Deleting…" : "Delete record"}</button>
+              </div>
+            </section>
+          </div>
+        )}
       </div>
 
     </div>
@@ -630,7 +656,7 @@ function Dashboard({ data }) {
       <div className="page-heading">
         <div>
           <h1>Your store, at a glance.</h1>
-          <p>Welcome back. Here’s what’s happening with your store.</p>
+          <p>Welcome back. Here's what's happening with your store.</p>
         </div>
         <Link className="btn secondary" to="/" target="_blank">
           View storefront <ArrowUpRight size={16} />
@@ -703,7 +729,7 @@ function Dashboard({ data }) {
               <h2>Recent orders</h2>
               <p>A little progress, with every order.</p>
             </div>
-            <Link to="/admin/orders">View all →</Link>
+            <Link to="/admin/orders">View all ?</Link>
           </div>
           <div className="table-scroll">
             <table>
@@ -815,9 +841,124 @@ function Dashboard({ data }) {
   );
 }
 function RecordForm(props) {
+  if (props.module === "products") return <ProductRecordForm {...props} />;
   return ["posts", "policies"].includes(props.module) ? <ContentForm {...props} /> : <GenericRecordForm {...props} />;
 }
+function ProductRecordForm({ item, busy, onSave }) {
+  const [values, setValues] = useState({
+    name: "", slug: "", sku: "", description: "", pricePaise: 0, stock: 0,
+    compareAtPricePaise: 0, price100Paise: 0, compareAt100Paise: 0, stock100: 0,
+    image: "", image100: "", status: "draft", weight: 0, length: 0, breadth: 0,
+    height: 0, seoTitle: "", seoDescription: "", ...item,
+    ...Object.fromEntries(["pricePaise", "compareAtPricePaise", "price100Paise", "compareAt100Paise"].map((key) => [key, (item[key] || 0) / 100])),
+  });
+  const [faq, setFaq] = useState(item.faq || []);
+  const [uploading, setUploading] = useState({});
+  const set = (key, value) => setValues((current) => ({ ...current, [key]: value }));
+  const upload = async (key, file, input) => {
+    if (!file) return;
+    setUploading((current) => ({ ...current, [key]: true }));
+    try { set(key, await uploadImage(file)); }
+    catch (error) { toast.error(error.message); }
+    finally { setUploading((current) => ({ ...current, [key]: false })); input.value = ""; }
+  };
+  const textField = (key, label, placeholder, type = "text") => (
+    <label key={key} className={`product-input-field product-field-${key}`}>
+      {label}
+      {type === "textarea" ? <textarea value={values[key] ?? ""} placeholder={placeholder} rows={2} onChange={(event) => set(key, event.target.value)} />
+        : <input type={type} min={type === "number" ? "0" : undefined} step={type === "number" && ["weight", "length", "breadth", "height"].includes(key) ? ".01" : "1"} value={values[key] ?? ""} placeholder={placeholder} onChange={(event) => set(key, type === "number" ? Number(event.target.value) : event.target.value)} />}
+    </label>
+  );
+  const imageField = (key, label) => (
+    <label key={key} className={`product-input-field product-upload-field product-field-${key}`}>
+      {key !== "image" && <span>{label}</span>}
+      {key === "image" ? <span className="product-upload-control product-main-upload">
+        {values[key] ? <img src={imageUrl(values[key])} alt={`${label} preview`} /> : <span className="product-image-empty"><Package size={25} /></span>}
+        <span className="product-main-upload-copy">
+          <strong>{label}</strong>
+          <small>{uploading[key] ? "Uploading…" : "Upload JPG, PNG or WebP up to 5 MB."}</small>
+          <span className="product-choose-file">Choose file</span>
+          <input className="product-hidden-file-input" type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading[key] || busy} onChange={(event) => upload(key, event.currentTarget.files?.[0], event.currentTarget)} />
+        </span>
+      </span> : <span className="product-upload-control product-optional-upload">
+        {values[key] && <img src={imageUrl(values[key])} alt={`${label} preview`} />}
+        <span><input className="product-native-file" type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading[key] || busy} onChange={(event) => upload(key, event.currentTarget.files?.[0], event.currentTarget)} /><small>{uploading[key] ? "Uploading…" : "JPG, PNG or WebP; up to 5 MB."}</small></span>
+      </span>}
+    </label>
+  );
+  const groups = [
+    { title: "Basic information", fields: [textField("name", "Product name *", "e.g. Ayurvedic Hair Oil"), textField("slug", "URL slug *", "e.g. ayurvedic-hair-oil"), textField("sku", "SKU", "e.g. AYU-001"), textField("description", "Description *", "Describe the product and how to use it", "textarea")] },
+    { title: "Pricing & inventory", fields: [textField("pricePaise", "50 ml price (₹)", "e.g. 599", "number"), textField("stock", "50 ml stock", "e.g. 25", "number"), textField("compareAtPricePaise", "50 ml original price (₹)", "0 for no discount", "number"), textField("price100Paise", "100 ml price (₹)", "e.g. 999", "number"), textField("compareAt100Paise", "100 ml original price (₹)", "0 for no discount", "number"), textField("stock100", "100 ml stock", "e.g. 25", "number"), imageField("image100", "100 ml image (optional)"), <label key="status" className="product-input-field">Status<select value={values.status} onChange={(event) => set("status", event.target.value)}><option value="draft">Draft</option><option value="active">Active</option><option value="archived">Archived</option></select></label>] },
+    { title: "Product image", fields: [imageField("image", "50 ml product image")] },
+    { title: "Dimensions & weight", fields: [textField("length", "Length (cm)", "e.g. 10", "number"), textField("breadth", "Breadth (cm)", "e.g. 6", "number"), textField("height", "Height (cm)", "e.g. 6", "number"), textField("weight", "Weight (kg)", "e.g. 0.25", "number"), textField("seoDescription", "SEO description", "Write a short search result description"), textField("seoTitle", "SEO title", "Enter the search result title")] },
+  ];
+  return (
+    <form className="product-record-form" onSubmit={(event) => {
+      event.preventDefault();
+      if (Object.values(uploading).some(Boolean)) return;
+      if (!values.name.trim() || !values.slug.trim()) { toast.error("Product name and URL slug are required."); return; }
+      onSave({ ...values, ...Object.fromEntries(["pricePaise", "compareAtPricePaise", "price100Paise", "compareAt100Paise"].map((key) => [key, Math.round(Number(values[key] || 0) * 100)])), faq });
+    }}>
+      {groups.map((group) => <section className={`product-form-section product-${group.title.toLowerCase().replaceAll(/[^a-z]+/g, "-")}`} key={group.title}><h2><Leaf size={15} />{group.title}</h2><div className="product-form-grid">{group.fields}</div></section>)}
+      <section className="product-form-section product-faq-section"><h2><Leaf size={15} />Product questions & answers</h2>
+        <div className="product-faq-list">{faq.map((entry, index) => <div className="product-faq-item" key={index}>
+          <label>Question<input value={entry.question} placeholder="e.g. How often should I use the hair oil?" onChange={(event) => setFaq(faq.map((current, row) => row === index ? { ...current, question: event.target.value } : current))} /></label>
+          <label>Answer<textarea value={entry.answer} placeholder="Write a helpful answer for customers" rows={2} onChange={(event) => setFaq(faq.map((current, row) => row === index ? { ...current, answer: event.target.value } : current))} /></label>
+          <button type="button" className="text-button danger" onClick={() => setFaq(faq.filter((_, row) => row !== index))}>Remove question</button>
+        </div>)}</div>
+        <button type="button" className="btn secondary product-add-question" onClick={() => setFaq([...faq, { question: "", answer: "" }])}><Plus size={15} />Add question</button>
+      </section>
+      <div className="product-form-actions"><Link className="btn secondary" to="/admin/products">Cancel</Link><button className="btn" disabled={busy || Object.values(uploading).some(Boolean)}>{Object.values(uploading).some(Boolean) ? "Uploading…" : busy ? "Saving…" : item.id ? "Save changes" : "Create product"}<Check size={16} /></button></div>
+    </form>
+  );
+}
 function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
+  const examples = {
+    "products.name": "e.g. Ayurvedic Hair Oil",
+    "products.slug": "e.g. ayurvedic-hair-oil",
+    "products.sku": "e.g. DY-HO-50",
+    "products.description": "Describe the product, its ingredients and how to use it",
+    "products.pricePaise": "e.g. 599",
+    "products.stock": "e.g. 25",
+    "products.compareAtPricePaise": "e.g. 699, or 0 for no discount",
+    "products.price100Paise": "e.g. 999",
+    "products.compareAt100Paise": "e.g. 1199, or 0 for no discount",
+    "products.stock100": "e.g. 25",
+    "products.weight": "e.g. 0.25",
+    "products.length": "e.g. 10",
+    "products.breadth": "e.g. 6",
+    "products.height": "e.g. 6",
+    "products.seoTitle": "Enter the search result title",
+    "products.seoDescription": "Enter a short search result description",
+    "leads.name": "e.g. Priya Sharma",
+    "leads.email": "e.g. priya@example.com",
+    "leads.phone": "e.g. +91 98765 43210",
+    "leads.subject": "What is the enquiry about?",
+    "leads.message": "Enter the customer’s message",
+    "reviews.name": "e.g. Priya Sharma",
+    "reviews.location": "e.g. Bengaluru, Karnataka",
+    "reviews.rating": "Choose a rating from 1 to 5",
+    "reviews.content": "Write the customer review",
+    "posts.title": "Enter the blog post title",
+    "posts.slug": "e.g. mindful-hair-care-ritual",
+    "posts.excerpt": "Write a short summary for the blog listing",
+    "posts.content": "Write the article content",
+    "posts.author": "e.g. Dr. Yogitha",
+    "posts.image": "Paste an image URL",
+    "posts.seoTitle": "Enter the search result title",
+    "posts.seoDescription": "Enter a short search result description",
+    "categories.name": "e.g. Hair Care",
+    "categories.slug": "e.g. hair-care",
+    "categories.description": "Describe this blog category",
+    "policies.title": "e.g. Shipping Policy",
+    "policies.slug": "e.g. shipping-policy",
+    "policies.content": "Enter the policy information for customers",
+    "policies.seoTitle": "Enter the search result title",
+    "policies.seoDescription": "Enter a short search result description",
+    "users.name": "e.g. Priya Sharma",
+    "users.email": "e.g. priya@example.com",
+    "users.password": "Enter an initial password (at least 10 characters)",
+  };
   const [values, setValues] = useState({
       ...Object.fromEntries(
         Object.entries(fields).map(([k, s]) => [
@@ -872,14 +1013,6 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
         });
       }}
     >
-      {module === "reviews" && (
-        <div className="detail-box">
-          <strong>
-            {item.name} | {item.rating}/5
-          </strong>
-          <p>{item.content}</p>
-        </div>
-      )}
       {Object.entries(fields)
         .filter(
           ([k]) =>
@@ -894,6 +1027,9 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
           const props = {
             id: "field-" + k,
             value: values[k] ?? "",
+            placeholder:
+              examples[`${module}.${k}`] ||
+              (type === "textarea" ? `Enter ${label.toLowerCase()}` : undefined),
             onChange: (e) =>
               setValues({
                 ...values,
@@ -905,7 +1041,7 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
             <label key={k} htmlFor={props.id}>
               {label}
               {type === "textarea" ? (
-                <textarea {...props} rows={k === "content" ? 12 : 3} />
+                <textarea {...props} rows={k === "content" ? (module === "reviews" ? 4 : 12) : 3} />
               ) : type === "image-upload" ? (
                 <>
                   {values[k] && (
@@ -989,6 +1125,7 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
                 Question
                 <input
                   value={f.question}
+                  placeholder="e.g. How often should I use the hair oil?"
                   onChange={(e) =>
                     setFaq(
                       faq.map((x, n) =>
@@ -1002,6 +1139,7 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
                 Answer
                 <textarea
                   value={f.answer}
+                  placeholder="Write a helpful answer for customers"
                   onChange={(e) =>
                     setFaq(
                       faq.map((x, n) =>
@@ -1035,7 +1173,7 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
         {Object.values(uploadingImages).some(Boolean) ? "Uploading image…" : busy ? "Saving…" : "Save changes"}
           <Check size={16} />
         </button>
-        {onDelete && (
+        {onDelete && module !== "categories" && (
           <button
             type="button"
             className="text-button danger"
@@ -1072,6 +1210,44 @@ function Details({ module, item, busy, onAction }) {
           ? ["paid"]
           : [];
   const action = (a) => onAction({}, "/admin/shiprocket/" + item.id + "/" + a);
+  if (module === "payments") {
+    return <PaymentDetails item={item} choices={choices} status={status} setStatus={setStatus} reference={reference} setReference={setReference} busy={busy} onAction={onAction} />;
+  }
+  if (module === "refunds") {
+    return <RefundDetails item={item} choices={choices} status={status} setStatus={setStatus} reference={reference} setReference={setReference} busy={busy} onAction={onAction} />;
+  }
+  if (module === "shiprocket") {
+    return <ShiprocketDetails item={item} />;
+  }
+  if (module === "webhooks") {
+    return <WebhookDetails item={item} />;
+  }
+  if (module === "audit") {
+    return <AuditDetails item={item} />;
+  }
+  if (module === "orders") {
+    return <OrderDetails item={item} choices={choices} status={status} setStatus={setStatus} busy={busy} onAction={onAction} action={action} />;
+  }
+  if (module === "customers") {
+    const customerEntries = Object.entries(item).filter(
+      ([key, value]) => !["userId", "idempotencyKey"].includes(key) && value !== undefined && value !== null && (typeof value !== "object" || key === "address"),
+    );
+    return (
+      <div className="customer-details-view">
+        <section className="customer-details-card">
+          <h2><Users size={21} /> Customer details</h2>
+          <dl className="detail-list">
+            {customerEntries.map(([key, value]) => (
+              <div key={key}>
+                <dt>{labels[key] || key}</dt>
+                <dd>{key.endsWith("Paise") ? money(value) : key.endsWith("At") ? date(value) : key === "address" && typeof value === "object" ? Object.values(value).filter(Boolean).join(", ") : String(value)}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      </div>
+    );
+  }
   return (
     <div className="cms-form">
       <dl className="detail-list">
@@ -1145,6 +1321,7 @@ function Details({ module, item, busy, onAction }) {
               Actual transaction / collection reference
               <input
                 value={reference}
+                placeholder="e.g. payment or refund reference ID"
                 onChange={(e) => setReference(e.target.value)}
                 required={module === "payments" || status === "processed"}
               />
@@ -1255,6 +1432,228 @@ function Details({ module, item, busy, onAction }) {
     </div>
   );
 }
+function AuditDetails({ item }) {
+  const fields = [
+    ["Action", item.action],
+    ["User", item.userId],
+    ["Date and time", item.createdAt ? date(item.createdAt) : ""],
+  ].filter(([, value]) => value !== undefined && value !== "");
+  const known = new Set(["id", "action", "userId", "createdAt"]);
+  const extraFields = Object.entries(item).filter(([key, value]) => !known.has(key) && typeof value !== "object" && value !== "").map(([key, value]) => [key.replace(/([A-Z])/g, " $1").replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase()), key.endsWith("At") ? date(value) : String(value)]);
+  return (
+    <div className="shiprocket-details-view audit-details-view">
+      <section className="shiprocket-info-card audit-info-card">
+        <h2><ScrollText size={19} /> Activity details</h2>
+        <dl>{[...fields, ...extraFields].map(([label, value], index) => <div key={`${label}-${index}`}><dt>{label}</dt><dd>{String(value)}</dd></div>)}</dl>
+      </section>
+    </div>
+  );
+}
+function WebhookDetails({ item }) {
+  const fields = [
+    ["Provider", item.provider],
+    ["Event type", item.eventType],
+    ["Status", item.status],
+    ["Event reference", item.providerEventId],
+    ["Received", item.createdAt ? date(item.createdAt) : ""],
+    ["Processed", item.processedAt ? date(item.processedAt) : ""],
+    ["Error", item.error],
+  ].filter(([, value]) => value !== undefined && value !== "");
+  return (
+    <div className="shiprocket-details-view webhook-details-view">
+      <section className="shiprocket-info-card webhook-info-card">
+        <h2><Webhook size={19} /> Webhook event details</h2>
+        <dl>{fields.map(([label, value]) => <div key={label}><dt>{label}</dt><dd className={label === "Status" ? "webhook-status-value" : ""}>{label === "Status" ? <span>{String(value).replaceAll("_", " ")}</span> : String(value)}</dd></div>)}</dl>
+      </section>
+      {item.payload && <section className="shiprocket-info-card webhook-payload-card">
+        <h2><FileText size={19} /> Event payload</h2>
+        <pre>{JSON.stringify(item.payload, null, 2)}</pre>
+      </section>}
+    </div>
+  );
+}
+function ShiprocketDetails({ item }) {
+  const fields = [
+    ["Order", item.orderId],
+    ["Customer", item.customer],
+    ["Order status", item.status],
+    ["Shipment ID", item.shipment_id],
+    ["AWB", item.awb],
+    ["Courier", item.courier],
+    ["Pickup status", item.pickup_status],
+    ["Tracking URL", item.tracking_url],
+    ["Created", item.created_at ? date(item.created_at) : ""],
+    ["Updated", item.updated_at ? date(item.updated_at) : ""],
+  ].filter(([, value]) => value !== undefined && value !== "");
+  const known = new Set(["id", "orderId", "customer", "status", "shipment_id", "awb", "courier", "pickup_status", "tracking_url", "created_at", "updated_at"]);
+  const extraFields = Object.entries(item).filter(([key, value]) => !known.has(key) && typeof value !== "object" && value !== "").map(([key, value]) => [key.replace(/([A-Z])/g, " $1").replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase()), key.endsWith("At") ? date(value) : String(value)]);
+  return (
+    <div className="shiprocket-details-view">
+      <section className="shiprocket-info-card">
+        <h2><Truck size={19} /> Shipment details</h2>
+        <dl>{[...fields, ...extraFields].map(([label, value], index) => <div key={`${label}-${index}`}><dt>{label}</dt><dd className={label.toLowerCase().includes("status") ? "shiprocket-status-value" : ""}>{label.toLowerCase().includes("status") ? <span>{String(value).replaceAll("_", " ")}</span> : String(value)}</dd></div>)}</dl>
+      </section>
+    </div>
+  );
+}
+function RefundDetails({ item, choices, status, setStatus, reference, setReference, busy, onAction }) {
+  const details = [
+    ["Order", item.orderId],
+    ["Customer", item.customer],
+    ["Amount", item.amountPaise != null ? money(item.amountPaise) : ""],
+    ["Reason", item.reason],
+    ["Status", item.status],
+    ["Created", item.createdAt ? date(item.createdAt) : ""],
+    ["Reference", item.reference],
+    ["Updated", item.updatedAt ? date(item.updatedAt) : ""],
+  ].filter(([, value]) => value !== undefined && value !== "");
+  return (
+    <div className="refund-details-view">
+      <section className="refund-info-card">
+        <h2><FileText size={19} /> Refund request details</h2>
+        <dl>{details.map(([label, value]) => <div key={label}><dt>{label}</dt><dd className={label === "Status" ? "refund-status-value" : ""}>{label === "Status" ? <span>{String(value).replaceAll("_", " ")}</span> : String(value)}</dd></div>)}</dl>
+      </section>
+      {choices.length > 0 && <form className="refund-update-card" onSubmit={(event) => { event.preventDefault(); onAction({ status: status || choices[0], reference }); }}>
+        <h2><RotateCcw size={19} /> Update refund status</h2>
+        <label>Next status<select value={status || choices[0]} onChange={(event) => setStatus(event.target.value)}>{choices.map((choice) => <option key={choice}>{choice}</option>)}</select></label>
+        <label>Actual transaction / collection reference<input value={reference} placeholder="e.g. payment or refund reference ID" onChange={(event) => setReference(event.target.value)} required={status === "processed" || (!status && choices[0] === "processed")} /></label>
+        <p className="refund-update-note"><Info size={16} /> This records money already collected or refunded. It does not move money.</p>
+        <button className="btn" disabled={busy}>{busy ? "Updating…" : "Update status"}<ArrowRight size={15} /></button>
+      </form>}
+    </div>
+  );
+}
+function PaymentDetails({ item, choices, status, setStatus, reference, setReference, busy, onAction }) {
+  const details = [
+    ["Amount", money(item.amountPaise)],
+    ["Method", item.method],
+    ["Status", item.status],
+    ["Created", item.createdAt ? date(item.createdAt) : ""],
+    ["Updated", item.updatedAt ? date(item.updatedAt) : ""],
+    ["Provider order ID", item.providerOrderId],
+    ["Provider payment ID", item.providerPaymentId],
+    ["Reference", item.reference],
+  ].filter(([, value]) => value !== undefined && value !== "");
+  return (
+    <div className="payment-details-view">
+      <section className="payment-overview-strip" aria-label="Payment overview">
+        <div><Store size={20} /><p><strong>{item.customer || "Customer"}</strong><span>Customer</span></p></div>
+        <div><CreditCard size={20} /><p><strong className="payment-method-chip">{item.method || "—"}</strong><span>Method</span></p></div>
+        <div><BadgeCheck size={21} /><p><strong className="payment-status-chip">{String(item.status || "pending").replaceAll("_", " ")}</strong><span>Status</span></p></div>
+        <div className="payment-overview-amount"><p><strong>{money(item.amountPaise || 0)}</strong><span>Amount</span></p></div>
+      </section>
+
+      <section className="payment-record-card">
+        <h2><CreditCard size={19} /> Payment record</h2>
+        <div className="payment-record-identity">
+          <div><span>Reference</span><strong>{item.id || "—"}</strong></div>
+          <div><span>Order</span><strong>{item.orderId || "—"}</strong></div>
+          <div className="payment-customer-summary"><span className="payment-customer-icon"><Store size={18} /></span><p><strong>{item.customer || "Customer"}</strong><small>Customer</small></p></div>
+        </div>
+        <dl className="payment-record-grid">
+          {details.map(([label, value]) => (
+            <div key={label}><dt>{label}</dt><dd className={label === "Status" ? "payment-status-value" : ""}>{label === "Status" ? <span>{String(value).replaceAll("_", " ")}</span> : String(value)}</dd></div>
+          ))}
+        </dl>
+      </section>
+
+      {choices.length > 0 && <form className="payment-update-card" onSubmit={(event) => { event.preventDefault(); onAction({ status: status || choices[0], reference }); }}>
+        <div className="payment-update-copy"><h2>Update payment status</h2><p>Record the actual payment confirmation and its reference.</p></div>
+        <label>Next status<select value={status || choices[0]} onChange={(event) => setStatus(event.target.value)}>{choices.map((choice) => <option key={choice}>{choice}</option>)}</select></label>
+        <label>Transaction reference<input value={reference} placeholder="e.g. Razorpay payment ID" onChange={(event) => setReference(event.target.value)} required /></label>
+        <button className="btn" disabled={busy}>{busy ? "Updating…" : "Update status"}<ArrowRight size={15} /></button>
+      </form>}
+    </div>
+  );
+}
+function OrderDetails({ item, choices, status, setStatus, busy, onAction, action }) {
+  const items = item.items?.length ? item.items : [{
+    productName: item.productName || "Order item",
+    quantity: item.quantity || 1,
+    unitPricePaise: item.unitPricePaise || 0,
+    subtotalPaise: item.subtotalPaise || item.totalPaise || 0,
+    image: item.image || "",
+    sizeLabel: item.sizeLabel,
+  }];
+  const subtotal = item.subtotalPaise ?? items.reduce((sum, line) => sum + (line.subtotalPaise || 0), 0);
+  const shipping = item.shippingPaise || 0;
+  const address = item.address || {};
+  const hasShiprocket = ["confirmed", "processing", "shipped"].includes(item.status);
+  return (
+    <div className="order-details-view">
+      <section className="order-overview-strip" aria-label="Order overview">
+        <div><Package size={22} /><p><span>Order number</span><strong>#{item.id}</strong></p></div>
+        <div><CalendarDays size={21} /><p><span>Order date</span><strong>{date(item.createdAt)}</strong></p></div>
+        <div><BadgeCheck size={23} /><p><span>Status</span><strong className="order-status-chip">{String(item.status || "pending").replaceAll("_", " ")}</strong></p></div>
+      </section>
+
+      <div className="order-primary-grid">
+        <section className="order-card order-info-card">
+          <h2><FileText size={18} /> Order information</h2>
+          <dl>
+            {[["Customer", item.customer], ["Email", item.email], ["Product", item.productName], ["Quantity", item.quantity], ["Payment method", item.paymentMethod], ["Payment status", item.paymentStatus]].filter(([, value]) => value !== undefined && value !== "").map(([label, value]) => (
+              <div key={label}><dt>{label}</dt><dd>{String(value).replaceAll("_", " ")}</dd></div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="order-card order-summary-card">
+          <h2><ShoppingBag size={18} /> Order summary</h2>
+          <div className="order-line-items">
+            {items.map((line, index) => (
+              <div className="order-line-item" key={line.id || line.variantId || index}>
+                {line.image ? <img src={imageUrl(line.image)} alt="" /> : <span className="order-item-placeholder"><Package size={19} /></span>}
+                <p><strong>{line.productName || line.name || "Product"}</strong><span>{line.sizeLabel || line.variantLabel || ""}{line.quantity ? ` · Qty ${line.quantity}` : ""}</span></p>
+                <strong>{money(line.subtotalPaise ?? line.unitPricePaise ?? 0)}</strong>
+              </div>
+            ))}
+          </div>
+          <div className="order-total-lines">
+            <p><span>Subtotal</span><strong>{money(subtotal)}</strong></p>
+            <p><span>Shipping</span><strong>{shipping ? money(shipping) : "Free"}</strong></p>
+            <p className="order-total"><span>Total</span><strong>{money(item.totalPaise || 0)}</strong></p>
+          </div>
+        </section>
+      </div>
+
+      <div className="order-secondary-grid">
+        {Object.keys(address).length > 0 && <section className="order-card order-address-card">
+          <h2><MapPin size={18} /> Delivery address</h2>
+          <p>{[address.name, address.phone, address.line1, address.line2, address.city, address.state, address.pincode].filter(Boolean).join(", ")}</p>
+        </section>}
+        {item.timeline?.length > 0 && <section className="order-card order-timeline-card">
+          <h2><Clock3 size={18} /> Order timeline</h2>
+          <ol>{item.timeline.map((event, index) => <li key={`${event.status}-${event.at}-${index}`}><span className="order-timeline-marker" /><div><strong>{String(event.status).replaceAll("_", " ")}</strong><time>{date(event.at)}</time></div></li>)}</ol>
+        </section>}
+        {item.shipment && <section className="order-card order-shipment-card">
+          <h2><Truck size={18} /> Shipment details</h2>
+          <pre>{JSON.stringify(item.shipment, null, 2)}</pre>
+        </section>}
+      </div>
+
+      {choices.length > 0 && <form className="order-action-card" onSubmit={(event) => { event.preventDefault(); onAction({ status: status || choices[0] }); }}>
+        <label>Update status<select value={status || choices[0]} onChange={(event) => setStatus(event.target.value)}>{choices.map((choice) => <option key={choice}>{choice}</option>)}</select></label>
+        <button className="btn" disabled={busy}>{busy ? "Updating…" : "Update status"}<ArrowRight size={15} /></button>
+      </form>}
+
+      {hasShiprocket && <section className="order-card order-fulfilment-card">
+        <h2><Truck size={18} /> Shipping & fulfilment</h2>
+        <p>Manage the shipment and shipping documents for this order.</p>
+        <div className="order-fulfilment-actions">
+          {!item.shipment ? <button className="btn secondary" disabled={busy} onClick={() => action("create")}>Create shipment</button>
+            : !item.shipment.awb && item.shipment.shipment_id ? <button className="btn secondary" disabled={busy} onClick={() => action("awb")}>Assign courier & AWB</button>
+              : item.shipment.awb ? <>
+                {!item.shipment.pickup && <button className="btn secondary" disabled={busy} onClick={() => action("pickup")}>Request pickup</button>}
+                <button className="btn secondary" disabled={busy} onClick={() => action("label")}>Generate label</button>
+                {item.shipment.pickup && <button className="btn secondary" disabled={busy} onClick={() => action("manifest")}>Generate manifest</button>}
+                <button className="btn secondary" disabled={busy} onClick={() => action("track")}>Refresh tracking</button>
+                {[ ["label", "label_url"], ["manifest", "manifest_url"] ].map(([key, field]) => item.shipment[key]?.[field]?.startsWith("https://") && <a className="btn secondary" key={key} href={item.shipment[key][field]} target="_blank" rel="noreferrer">Download {key}</a>)}
+              </> : <><span className="order-reconcile-note">Reconcile this booking in Shiprocket before continuing.</span>{item.shipment.status === "needs-reconciliation" && <button className="btn secondary" disabled={busy} onClick={() => { if (confirm("Confirm you checked Shiprocket and this order has no shipment. This clears the pending marker so you can try booking again.")) action("retry"); }}>Confirm not found and allow retry</button>}</>}
+        </div>
+      </section>}
+    </div>
+  );
+}
 function SettingsForm({ data, busy, onSave }) {
   const [form, setForm] = useState(null),
     [uploadingSocialImage, setUploadingSocialImage] = useState(false),
@@ -1295,7 +1694,7 @@ function SettingsForm({ data, busy, onSave }) {
               ["youtubeUrl", "YouTube channel URL"],
               ["linkedinUrl", "LinkedIn profile URL"],
               ["address", "Business address"],
-              ["shippingPaise", "Flat shipping fee (₹)"],
+              ["shippingPaise", "Flat shipping fee (?)"],
             ],
           ],
           [
@@ -1325,6 +1724,17 @@ function SettingsForm({ data, busy, onSave }) {
                   min="0"
                   step=".01"
                   value={form[k] ?? ""}
+                  placeholder={
+                    k === "brand" ? "e.g. Dr. Yogitha’s" :
+                    k === "description" ? "Describe your brand and products" :
+                    k === "email" ? "e.g. support@example.com" :
+                    k === "phone" || k === "whatsapp" ? "e.g. +91 98765 43210" :
+                    k.endsWith("Url") ? "https://example.com/your-profile" :
+                    k === "address" ? "Enter your business address" :
+                    k === "shippingPaise" ? "e.g. 50, or 0 for free shipping" :
+                    k === "seoTitle" ? "Enter the search result title" :
+                    k === "seoDescription" ? "Enter a short search result description" : undefined
+                  }
                   onChange={(e) =>
                     setForm({
                       ...form,
@@ -1379,6 +1789,7 @@ function SettingsForm({ data, busy, onSave }) {
                   <input
                     id="settings-social-image-url"
                     type="text"
+                    placeholder="https://example.com/social-image.jpg"
                     value={form.socialImage ?? ""}
                     onChange={(e) => setForm({ ...form, socialImage: e.target.value })}
                   />
@@ -1476,7 +1887,7 @@ function AdminLogin({ onLogin }) {
         </button>
         <div className="login-links">
           <Link to="/forgot-password">Forgot password?</Link>
-          <Link to="/">← Back to storefront</Link>
+          <Link to="/">? Back to storefront</Link>
         </div>
       </form>
     </div>
