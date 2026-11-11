@@ -1,12 +1,26 @@
 import { readFile, readdir } from "node:fs/promises";
 import { basename, dirname, extname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { client, db } from "./mongo.js";
-import { hostImageKitUrl, imageKitConfigured, uploadImageKitFile } from "./imagekit.js";
+import { client, db } from "../config/mongo.js";
+import {
+  hostImageKitUrl,
+  imageKitConfigured,
+  uploadImageKitFile,
+} from "../services/imagekit.js";
 
 const apply = process.argv.includes("--apply");
-const publicRoot = resolve(fileURLToPath(new URL("../../public/", import.meta.url)));
-const imageExtensions = new Set([".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
+const publicRoot = resolve(
+  fileURLToPath(new URL("../../public/", import.meta.url)),
+);
+const imageExtensions = new Set([
+  ".avif",
+  ".gif",
+  ".jpeg",
+  ".jpg",
+  ".png",
+  ".svg",
+  ".webp",
+]);
 const imageFields = /image|avatar|logo|thumbnail|cover|poster/i;
 const pathMap = new Map();
 const remoteMap = new Map();
@@ -14,10 +28,12 @@ let migratedReferences = 0;
 
 async function filesUnder(folder) {
   const entries = await readdir(folder, { withFileTypes: true });
-  const nested = await Promise.all(entries.map((entry) => {
-    const path = resolve(folder, entry.name);
-    return entry.isDirectory() ? filesUnder(path) : [path];
-  }));
+  const nested = await Promise.all(
+    entries.map((entry) => {
+      const path = resolve(folder, entry.name);
+      return entry.isDirectory() ? filesUnder(path) : [path];
+    }),
+  );
   return nested.flat();
 }
 
@@ -29,7 +45,9 @@ function mediaBytes(value) {
 }
 
 function extensionForType(type) {
-  return { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp" }[type];
+  return { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp" }[
+    type
+  ];
 }
 
 function endpointAlreadyHosts(url) {
@@ -42,7 +60,9 @@ function endpointAlreadyHosts(url) {
 }
 
 async function uploadRemoteImage(sourceUrl) {
-  const normalizedUrl = sourceUrl.startsWith("//") ? `https:${sourceUrl}` : sourceUrl;
+  const normalizedUrl = sourceUrl.startsWith("//")
+    ? `https:${sourceUrl}`
+    : sourceUrl;
   if (endpointAlreadyHosts(normalizedUrl)) return normalizedUrl;
   if (remoteMap.has(normalizedUrl)) return remoteMap.get(normalizedUrl);
   const parsed = new URL(normalizedUrl);
@@ -72,7 +92,11 @@ async function imageUrl(value) {
 }
 
 function localImagePath(value) {
-  if (typeof value !== "string" || !value.trim() || /^(https?:|data:|blob:|\/\/)/i.test(value)) {
+  if (
+    typeof value !== "string" ||
+    !value.trim() ||
+    /^(https?:|data:|blob:|\/\/)/i.test(value)
+  ) {
     return null;
   }
   const suffixIndex = value.search(/[?#]/);
@@ -94,7 +118,13 @@ function collectImagePaths(value, key, paths) {
     }
     return;
   }
-  if (!value || typeof value !== "object" || value instanceof Date || Buffer.isBuffer(value) || value._bsontype) {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    value instanceof Date ||
+    Buffer.isBuffer(value) ||
+    value._bsontype
+  ) {
     return;
   }
   if (Array.isArray(value)) {
@@ -102,7 +132,8 @@ function collectImagePaths(value, key, paths) {
     return;
   }
   for (const [childKey, child] of Object.entries(value)) {
-    if (childKey !== "_id" && childKey !== "bytes") collectImagePaths(child, childKey, paths);
+    if (childKey !== "_id" && childKey !== "bytes")
+      collectImagePaths(child, childKey, paths);
   }
 }
 
@@ -115,7 +146,10 @@ async function rewriteHtml(html) {
     const url = await imageUrl(source[2].replace(/&amp;/g, "&"));
     if (url !== source[2]) {
       const escapedUrl = url.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-      result = result.replace(tag, tag.replace(source[0], `src="${escapedUrl}"`));
+      result = result.replace(
+        tag,
+        tag.replace(source[0], `src="${escapedUrl}"`),
+      );
     }
   }
   return result;
@@ -126,7 +160,13 @@ async function rewriteValue(value, key = "") {
     if (key === "content") return rewriteHtml(value);
     return imageFields.test(key) ? imageUrl(value) : value;
   }
-  if (!value || typeof value !== "object" || value instanceof Date || Buffer.isBuffer(value) || value._bsontype) {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    value instanceof Date ||
+    Buffer.isBuffer(value) ||
+    value._bsontype
+  ) {
     return value;
   }
   if (Array.isArray(value)) {
@@ -134,17 +174,21 @@ async function rewriteValue(value, key = "") {
   }
   const result = {};
   for (const [childKey, child] of Object.entries(value)) {
-    result[childKey] = childKey === "_id" || childKey === "bytes"
-      ? child
-      : await rewriteValue(child, childKey);
+    result[childKey] =
+      childKey === "_id" || childKey === "bytes"
+        ? child
+        : await rewriteValue(child, childKey);
   }
   return result;
 }
 
 async function run() {
-  const publicFiles = (await filesUnder(publicRoot))
-    .filter((file) => imageExtensions.has(extname(file).toLowerCase()));
-  const collections = await db.listCollections({}, { nameOnly: true }).toArray();
+  const publicFiles = (await filesUnder(publicRoot)).filter((file) =>
+    imageExtensions.has(extname(file).toLowerCase()),
+  );
+  const collections = await db
+    .listCollections({}, { nameOnly: true })
+    .toArray();
   const documents = [];
   for (const { name } of collections) {
     if (name === "media" || name.startsWith("system.")) continue;
@@ -154,19 +198,26 @@ async function run() {
   }
   const referencedPaths = new Set();
   for (const { collection, document } of documents) {
-    if (collection !== "products") collectImagePaths(document, "", referencedPaths);
+    if (collection !== "products")
+      collectImagePaths(document, "", referencedPaths);
   }
   const referencedFiles = publicFiles.filter((file) => {
     const path = `/${relative(publicRoot, file).split(sep).join("/")}`;
     return referencedPaths.has(path);
   });
-  console.log(`Backend-referenced local public images: ${referencedFiles.length}`);
+  console.log(
+    `Backend-referenced local public images: ${referencedFiles.length}`,
+  );
   if (!apply) {
-    console.log("Dry run only. Back up MongoDB, configure ImageKit credentials, then pass --apply to migrate backend-referenced images.");
+    console.log(
+      "Dry run only. Back up MongoDB, configure ImageKit credentials, then pass --apply to migrate backend-referenced images.",
+    );
     return;
   }
   if (!imageKitConfigured()) {
-    throw new Error("Configure IMAGEKIT_PRIVATE_KEY and IMAGEKIT_URL_ENDPOINT before migration.");
+    throw new Error(
+      "Configure IMAGEKIT_PRIVATE_KEY and IMAGEKIT_URL_ENDPOINT before migration.",
+    );
   }
 
   for (const file of referencedFiles) {
@@ -180,7 +231,9 @@ async function run() {
     });
     pathMap.set(`/${rel.split(sep).join("/")}`, uploaded.url);
   }
-  console.log(`Uploaded ${referencedFiles.length} backend-referenced public images.`);
+  console.log(
+    `Uploaded ${referencedFiles.length} backend-referenced public images.`,
+  );
 
   const mediaCollection = db.collection("media");
   const mediaRecords = await mediaCollection.find({}).toArray();
@@ -190,7 +243,8 @@ async function run() {
       continue;
     }
     const extension = extensionForType(record.type);
-    if (!extension) throw new Error(`Unsupported legacy image type: ${record.type}`);
+    if (!extension)
+      throw new Error(`Unsupported legacy image type: ${record.type}`);
     const uploaded = await uploadImageKitFile({
       bytes: mediaBytes(record.bytes),
       fileName: `${record._id}${extension}`,
@@ -209,11 +263,15 @@ async function run() {
     if (collection === "products") continue;
     const rewritten = await rewriteValue(document);
     if (JSON.stringify(document) !== JSON.stringify(rewritten)) {
-      await db.collection(collection).replaceOne({ _id: document._id }, rewritten);
+      await db
+        .collection(collection)
+        .replaceOne({ _id: document._id }, rewritten);
       updatedDocuments += 1;
     }
   }
-  console.log(`Updated ${updatedDocuments} MongoDB records; migrated ${migratedReferences} image references.`);
+  console.log(
+    `Updated ${updatedDocuments} MongoDB records; migrated ${migratedReferences} image references.`,
+  );
 }
 
 try {

@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { check } from "./validate.js";
+import { check } from "../utils/validate.js";
 
 export function razorpayStatus() {
   const keyId = process.env.RAZORPAY_KEY_ID || "";
@@ -20,8 +20,12 @@ export function secureEqualHex(expected, actual) {
     typeof actual !== "string" ||
     !/^[a-f\d]+$/i.test(actual) ||
     expected.length !== actual.length
-  ) return false;
-  return timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(actual, "hex"));
+  )
+    return false;
+  return timingSafeEqual(
+    Buffer.from(expected, "hex"),
+    Buffer.from(actual, "hex"),
+  );
 }
 
 export function secureEqual(expected, actual) {

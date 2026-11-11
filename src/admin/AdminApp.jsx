@@ -332,7 +332,7 @@ export default function AdminApp() {
                 Interactive preview · Sample data. No live payments, emails or
                 shipments.
               </span>
-              <Link to="/">View website ?</Link>
+              <Link to="/">View website &rarr;</Link>
             </div>
           )}
           {recordId ? (selected && def ? (
@@ -729,7 +729,7 @@ function Dashboard({ data }) {
               <h2>Recent orders</h2>
               <p>A little progress, with every order.</p>
             </div>
-            <Link to="/admin/orders">View all ?</Link>
+            <Link to="/admin/orders">View all &rarr;</Link>
           </div>
           <div className="table-scroll">
             <table>
@@ -1694,7 +1694,7 @@ function SettingsForm({ data, busy, onSave }) {
               ["youtubeUrl", "YouTube channel URL"],
               ["linkedinUrl", "LinkedIn profile URL"],
               ["address", "Business address"],
-              ["shippingPaise", "Flat shipping fee (?)"],
+              ["shippingPaise", "Flat shipping fee (INR)"],
             ],
           ],
           [
@@ -1887,7 +1887,7 @@ function AdminLogin({ onLogin }) {
         </button>
         <div className="login-links">
           <Link to="/forgot-password">Forgot password?</Link>
-          <Link to="/">? Back to storefront</Link>
+          <Link to="/">&larr; Back to storefront</Link>
         </div>
       </form>
     </div>

@@ -56,6 +56,19 @@ export default function AboutPage() {
             <img src="/about-main-img.webp" alt="Dr. Yogitha's Ayurvedic hair oil with botanical ingredients" />
           </div>
         </div>
+      </div>
+    </section>
+    <section className="about-marquee" aria-label="Ayurvedic hair care, botanical oils, mindful rituals, rooted in tradition, made with care">
+      <div className="about-marquee-track" aria-hidden="true">
+        {[0, 1].map((loop) => <div className="about-marquee-group" key={loop}>
+          {["Ayurvedic Hair Care", "Botanical Oils", "Mindful Rituals", "Rooted in Tradition", "Made with Care"].map((item) => (
+            <span className="about-marquee-item" key={item}>{item}<i>&#10022;</i></span>
+          ))}
+        </div>)}
+      </div>
+    </section>
+    <section className="info-page about-page about-page-body">
+      <div className="info-page-inner">
         <section className="about-journey" aria-labelledby="about-journey-title">
           <div className="about-journey-collage" aria-label="Moments from a mindful hair-care ritual">
             <div className="about-journey-image about-journey-image-main"><img src="/routine-1.webp" alt="Long, healthy-looking hair in a botanical setting" loading="lazy" /></div>
@@ -76,7 +89,6 @@ export default function AboutPage() {
             <Link className="about-journey-link" to="/#shop">Explore the hair oil <span aria-hidden="true">&rarr;</span></Link>
           </div>
         </section>
-        <AboutIngredientStory />
         <div className="about-doctor" id="about-details">
           <div className="about-doctor-image">
             <img src="/dr-yogitha.jpg" alt="Dr. Yogitha" loading="lazy" />
@@ -101,14 +113,14 @@ export default function AboutPage() {
           <header className="about-purpose-heading">
             <p className="eyebrow">WHAT GUIDES US</p>
             <h2 id="about-purpose-title">Care with intention.</h2>
-            <span className="about-purpose-rule" aria-hidden="true"><i>?</i></span>
+            <span className="about-purpose-rule" aria-hidden="true"><i>&#10022;</i></span>
           </header>
           <div className="about-purpose-grid">
             <article className="about-purpose-panel about-purpose-vision">
               <p className="eyebrow">OUR VISION</p>
               <h3>Make everyday hair care feel like a moment of care.</h3>
               <p>We imagine a more mindful routine, inspired by the wisdom of Ayurveda and a lasting connection to nature.</p>
-              <span className="about-purpose-leaf" aria-hidden="true">?</span>
+              <span className="about-purpose-leaf" aria-hidden="true"><Leaf size={230} strokeWidth={1} /></span>
             </article>
             <article className="about-purpose-panel about-purpose-mission">
               <p className="eyebrow">OUR MISSION</p>
@@ -132,6 +144,11 @@ export default function AboutPage() {
             ))}
           </div>
         </section>
+
+      </div>
+    </section>
+
+    <div className="about-standards-wrap">
         <section className="about-standards" aria-labelledby="about-standards-title">
           <h2 id="about-standards-title"><Leaf size={20} aria-hidden="true" />Indulge In The Goodness Of Non-Toxic Beauty</h2>
           <div className="about-standards-grid">
@@ -143,17 +160,8 @@ export default function AboutPage() {
             ))}
           </div>
         </section>
-      </div>
-    </section>
-    <section className="about-marquee" aria-label="Ayurvedic hair care, botanical oils, mindful rituals, rooted in tradition, made with care">
-      <div className="about-marquee-track" aria-hidden="true">
-        {[0, 1].map((loop) => <div className="about-marquee-group" key={loop}>
-          {["Ayurvedic Hair Care", "Botanical Oils", "Mindful Rituals", "Rooted in Tradition", "Made with Care"].map((item) => (
-            <span className="about-marquee-item" key={item}>{item}<i>?</i></span>
-          ))}
-        </div>)}
-      </div>
-    </section>
+    </div>
+    <AboutIngredientStory />
     <HomeSocialGallery />
     <section className="about-ritual-cta" aria-labelledby="about-ritual-cta-title">
       <div className="about-ritual-cta-copy">

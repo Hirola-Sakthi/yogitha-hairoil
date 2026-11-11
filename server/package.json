@@ -3,11 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node --env-file-if-exists=.env src/index.js",
-    "dev": "node --watch --env-file-if-exists=.env src/index.js",
-    "admin": "node --env-file-if-exists=.env src/admin.js",
-    "migrate:imagekit": "node --env-file-if-exists=.env src/migrate-imagekit.js",
-    "test": "node --test tests/*.js"
+    "start": "node --env-file-if-exists=.env index.js",
+    "dev": "node --watch --env-file-if-exists=.env index.js",
+    "admin": "node --env-file-if-exists=.env utils/admin.js",
+    "migrate:imagekit": "node --env-file-if-exists=.env utils/migrate-imagekit.js",
+    "test": "node --test tests/*.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "mongodb": "^7.7.0",
@@ -15,6 +17,7 @@
     "sanitize-html": "^2.18.1"
   },
   "devDependencies": {
-    "mongodb-memory-server": "^11.3.0"
+    "mongodb-memory-server": "^11.3.0",
+    "prettier": "3.9.10"
   }
 }

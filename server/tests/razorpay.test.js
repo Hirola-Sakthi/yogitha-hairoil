@@ -6,7 +6,7 @@ import {
   razorpayStatus,
   secureEqual,
   verifyRazorpayWebhook,
-} from "../src/razorpay.js";
+} from "../services/razorpay.js";
 
 test("Razorpay checkout signatures are generated from the provider order and payment IDs", () => {
   process.env.RAZORPAY_KEY_SECRET = "test-key-secret";
@@ -23,7 +23,10 @@ test("Razorpay webhook signatures verify the exact raw request body", () => {
     .update(body)
     .digest("hex");
   assert.equal(verifyRazorpayWebhook(body, signature), true);
-  assert.equal(verifyRazorpayWebhook(Buffer.from(body.toString() + "\n"), signature), false);
+  assert.equal(
+    verifyRazorpayWebhook(Buffer.from(body.toString() + "\n"), signature),
+    false,
+  );
   assert.equal(verifyRazorpayWebhook(body, `${signature}00`), false);
 });
 

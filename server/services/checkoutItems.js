@@ -1,5 +1,5 @@
-import { get, put } from "./db.js";
-import { check, text } from "./validate.js";
+import { get, put } from "../models/db.js";
+import { check, text } from "../utils/validate.js";
 import { productForSize } from "../../src/shared/productOptions.js";
 
 export async function resolveCheckoutItems(body) {

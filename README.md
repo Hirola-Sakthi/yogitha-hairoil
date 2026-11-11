@@ -142,7 +142,7 @@ The hosted private preview uses fictional sample records and ₹699 sample prici
 - `src/commerce`: public customer pages and store context.
 - `src/shared/theme.css`: central palette and Jost font; legacy tint tokens preserve original shades.
 - `src/shared/api.js`: real API client; `demo.js` is preview-only.
-- `server/src`: API, permissions, sessions, validation, MongoDB, integrations and SEO.
+- `server/`: Backend organized into config, controllers, cors, cron, middleware, models, routes, services and utils. See `server/README.md`.
 - `server/tests`: integration tests against an isolated temporary MongoDB replica set.
 
 All original public assets, animation frames and homepage sections are retained. Deliberate storefront changes: Jost, central colors, shop/account navigation, functioning Blog/Contact pages, links to published policies, and replacement of the original fake phone/address with Settings-driven contact details. Original CSS is retained with centralized values; new screens use scoped CSS and Tailwind utilities. Image colors do not change with CSS tokens.

@@ -44,7 +44,7 @@ const schemas = {
     categoryIds: "strings",
     relatedPostIds: "strings",
     title: "text",
-    slug: "slug", 
+    slug: "slug",
     excerpt: "long",
     content: "long",
     author: "text",
@@ -160,7 +160,10 @@ export function validate(c, b, old = {}) {
             : [])
     check(d[k], `${k} is required`);
   if (c === "reviews")
-    check(Number.isInteger(d.rating) && d.rating >= 1 && d.rating <= 5, "Rating must be from 1 to 5");
+    check(
+      Number.isInteger(d.rating) && d.rating >= 1 && d.rating <= 5,
+      "Rating must be from 1 to 5",
+    );
   if (c === "leads" && d.phone)
     check(
       /^[6-9]\d{9}$/.test(d.phone),

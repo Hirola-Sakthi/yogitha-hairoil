@@ -2,66 +2,17 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { api } from "./api.js";
-import { discovery, render } from "./seo.js";
-import { check } from "./validate.js";
-import { media } from "./media.js";
-const dist = resolve(fileURLToPath(new URL("../../dist/", import.meta.url)));
+import { route } from "./routes/index.js";
+import { discovery, render } from "./services/seo.js";
+import { check } from "./utils/validate.js";
+const dist = resolve(fileURLToPath(new URL("../dist/", import.meta.url)));
 export const server = http.createServer(async (req, res) => {
   try {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("X-Frame-Options", "DENY");
     res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
     const url = new URL(req.url, "http://localhost");
-    if (
-      url.pathname === "/api/media" ||
-      url.pathname.startsWith("/api/media/")
-    ) {
-      await media(req, res, url);
-      return;
-    }
-    if (url.pathname.startsWith("/api/")) {
-      res.setHeader("Content-Type", "application/json");
-      res.setHeader("Cache-Control", "no-store");
-      res.setHeader("X-Robots-Tag", "noindex");
-      if (!["GET", "HEAD"].includes(req.method)) {
-        check(
-          !req.headers.origin ||
-            req.headers.origin ===
-              new URL(process.env.SITE_URL || "http://localhost:5173").origin,
-          "Origin not allowed",
-          403,
-        );
-        check(
-          req.headers["content-type"]?.startsWith("application/json"),
-          "JSON required",
-          415,
-        );
-      }
-      const chunks = [];
-      let rawLength = 0;
-      for await (const c of req) {
-        chunks.push(c);
-        rawLength += c.length;
-        check(rawLength <= 128000, "Request too large", 413);
-      }
-      const rawBody = Buffer.concat(chunks);
-      req.rawBody = rawBody;
-      let b = {};
-      if (rawBody.length) {
-        try {
-          b = JSON.parse(rawBody.toString("utf8"));
-        } catch {
-          check(false, "Invalid JSON");
-        }
-      }
-      check(
-        b && typeof b === "object" && !Array.isArray(b),
-        "JSON object required",
-      );
-      res.end(JSON.stringify(await api(req, res, url, b)));
-      return;
-    }
+    if (await route(req, res, url)) return;
     const d = await discovery(url.pathname);
     if (d !== null) {
       res.setHeader(

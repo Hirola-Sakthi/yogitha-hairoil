@@ -11,7 +11,13 @@ export function imageKitConfigured() {
 
 export function imageKitUrl(path) {
   const endpoint = process.env.IMAGEKIT_URL_ENDPOINT?.replace(/\/+$/, "");
-  if (!endpoint || typeof path !== "string" || !path.startsWith("/") || path.startsWith("/api/")) return path;
+  if (
+    !endpoint ||
+    typeof path !== "string" ||
+    !path.startsWith("/") ||
+    path.startsWith("/api/")
+  )
+    return path;
   return `${endpoint}${path}`;
 }
 
@@ -48,7 +54,9 @@ export async function uploadImageKitFile({ bytes, file, fileName, folder }) {
     throw new Error("ImageKit returned an unreadable upload response.");
   }
   if (!response.ok) {
-    throw new Error(result.message || `ImageKit upload failed (${response.status}).`);
+    throw new Error(
+      result.message || `ImageKit upload failed (${response.status}).`,
+    );
   }
   if (typeof result.url !== "string" || typeof result.filePath !== "string") {
     throw new Error("ImageKit returned an incomplete upload response.");
@@ -66,8 +74,20 @@ export async function hostImageKitUrl(sourceUrl) {
   }
   if (!/^https?:\/\//i.test(sourceUrl)) return sourceUrl;
   const parsed = new URL(sourceUrl);
-  if (parsed.hostname === "imagekit.io" || parsed.hostname.endsWith(".imagekit.io")) return sourceUrl;
-  const extension = [".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"].includes(extname(parsed.pathname).toLowerCase())
+  if (
+    parsed.hostname === "imagekit.io" ||
+    parsed.hostname.endsWith(".imagekit.io")
+  )
+    return sourceUrl;
+  const extension = [
+    ".avif",
+    ".gif",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".svg",
+    ".webp",
+  ].includes(extname(parsed.pathname).toLowerCase())
     ? extname(parsed.pathname).toLowerCase()
     : ".webp";
   const hash = createHash("sha256").update(sourceUrl).digest("hex");
@@ -88,7 +108,10 @@ export async function hostImageKitHtml(html) {
     const hosted = await hostImageKitUrl(source[2].replace(/&amp;/g, "&"));
     if (hosted !== source[2]) {
       const escapedUrl = hosted.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-      result = result.replace(tag, tag.replace(source[0], `src="${escapedUrl}"`));
+      result = result.replace(
+        tag,
+        tag.replace(source[0], `src="${escapedUrl}"`),
+      );
     }
   }
   return result;

@@ -1065,6 +1065,9 @@ dialog small {
 .about-page .info-page-inner {
   width: min(100%, 1380px);
 }
+.about-page.about-page-body {
+  padding-top: 0;
+}
 .about-intro {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -1247,7 +1250,8 @@ dialog small {
 .about-purpose-leaf { position: absolute; right: -13px; bottom: -65px; color: rgb(255 255 255 / 5%); font-size: 230px; line-height: 1; transform: rotate(-18deg); pointer-events: none; }
 .about-purpose-signoff { margin-top: 27px; color: var(--color-526841); font-size: 8px; font-weight: 650; letter-spacing: .18em; }
 .about-purpose-signoff i { padding: 0 5px; color: #c9b477; font-style: normal; }
-.about-standards { margin: 26px auto 0; padding: clamp(30px, 4.5vw, 52px) clamp(20px, 3vw, 38px); border: 1px solid color-mix(in srgb, var(--brand) 10%, transparent); border-radius: 18px; background: var(--color-f7f5ed, #f7f5ed); box-shadow: 0 10px 28px rgb(39 52 38 / 5%); }
+.about-standards-wrap { padding: 26px clamp(6%, 8vw, 11%) clamp(40px, 4vw, 72px); background: var(--cream); }
+.about-standards { max-width: 1380px; margin: 0 auto; padding: clamp(30px, 4.5vw, 52px) clamp(20px, 3vw, 38px); border: 1px solid color-mix(in srgb, var(--brand) 10%, transparent); border-radius: 18px; background: var(--color-f7f5ed, #f7f5ed); box-shadow: 0 10px 28px rgb(39 52 38 / 5%); }
 .about-standards h2 { display: flex; align-items: center; justify-content: center; gap: 11px; margin: 0 0 36px; color: var(--brand); font-size: clamp(22px, 2.8vw, 31px); font-weight: 500; letter-spacing: -.025em; line-height: 1.25; text-align: center; }
 .about-standards h2 svg { flex: 0 0 auto; color: var(--color-526841); }
 .about-standards-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: clamp(10px, 2vw, 26px); }

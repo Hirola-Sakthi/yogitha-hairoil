@@ -9,15 +9,16 @@ import {
   update,
   insert,
   now,
-} from "./db.js";
-import { check, address as validateAddress } from "./validate.js";
+} from "../models/db.js";
+import { check, address as validateAddress } from "../utils/validate.js";
 import { mail, quoteShiprocketShipping } from "./integrations.js";
-import {
-  createRazorpayOrder,
-  verifyCheckoutPayment,
-} from "./razorpay.js";
+import { createRazorpayOrder, verifyCheckoutPayment } from "./razorpay.js";
 import { cartIdentifier, consumeCartById } from "./cart.js";
-import { adjustCheckoutStock, legacyOrderFields, resolveCheckoutItems } from "./checkoutItems.js";
+import {
+  adjustCheckoutStock,
+  legacyOrderFields,
+  resolveCheckoutItems,
+} from "./checkoutItems.js";
 
 const paymentRecordId = (id) => "PAY-" + id;
 
@@ -25,7 +26,18 @@ async function releaseReservation(order, status) {
   await tx(async () => {
     const current = await get("orders", order.id);
     if (current?.status !== "awaiting_payment") return;
-    await adjustCheckoutStock(current.items || [{ productId: current.productId, variantId: current.variantId, quantity: current.quantity, name: current.productName, sizeLabel: current.sizeLabel }], 1);
+    await adjustCheckoutStock(
+      current.items || [
+        {
+          productId: current.productId,
+          variantId: current.variantId,
+          quantity: current.quantity,
+          name: current.productName,
+          sizeLabel: current.sizeLabel,
+        },
+      ],
+      1,
+    );
     const at = now();
     await put("orders", {
       ...current,
@@ -59,7 +71,10 @@ export async function expireRazorpayReservations() {
 export async function createOnlinePayment(user, body, req) {
   await expireRazorpayReservations();
   const idempotencyKey = String(body.idempotencyKey || "").trim();
-  check(idempotencyKey.length >= 16 && idempotencyKey.length <= 100, "Checkout request key required");
+  check(
+    idempotencyKey.length >= 16 && idempotencyKey.length <= 100,
+    "Checkout request key required",
+  );
   const existing = await findOne("orders", {
     userId: user.id,
     idempotencyKey,
@@ -94,7 +109,10 @@ export async function createOnlinePayment(user, body, req) {
   });
   const shippingPaise = shippingQuote.shippingPaise;
   const totalPaise = orderFields.subtotalPaise + shippingPaise;
-  check(Number.isSafeInteger(totalPaise) && totalPaise >= 100, "Invalid payment amount");
+  check(
+    Number.isSafeInteger(totalPaise) && totalPaise >= 100,
+    "Invalid payment amount",
+  );
   const id = "DY-" + randomBytes(6).toString("hex").toUpperCase();
   const order = await tx(async () => {
     check(
@@ -137,11 +155,9 @@ export async function createOnlinePayment(user, body, req) {
 
   let razorpayOrder;
   try {
-    razorpayOrder = await createRazorpayOrder(
-      order.totalPaise,
-      order.id,
-      { orderId: order.id },
-    );
+    razorpayOrder = await createRazorpayOrder(order.totalPaise, order.id, {
+      orderId: order.id,
+    });
     check(
       razorpayOrder.id &&
         razorpayOrder.amount === order.totalPaise &&
@@ -151,7 +167,11 @@ export async function createOnlinePayment(user, body, req) {
     );
     await tx(async () => {
       const current = await get("orders", order.id);
-      check(current?.status === "awaiting_payment", "Payment attempt expired", 409);
+      check(
+        current?.status === "awaiting_payment",
+        "Payment attempt expired",
+        409,
+      );
       await put("orders", { ...current, razorpayOrderId: razorpayOrder.id });
       const payment = await get("payments", paymentRecordId(order.id));
       await put("payments", {
@@ -173,7 +193,10 @@ export async function createOnlinePayment(user, body, req) {
 }
 
 async function acceptCapturedPayment(payment) {
-  check(payment?.order_id && payment.id, "Razorpay payment details are incomplete");
+  check(
+    payment?.order_id && payment.id,
+    "Razorpay payment details are incomplete",
+  );
   const localPayment = await findOne("payments", {
     providerOrderId: payment.order_id,
   });
@@ -201,10 +224,7 @@ async function acceptCapturedPayment(payment) {
       status: orderStatus,
       paymentStatus: "paid",
       razorpayPaymentId: payment.id,
-      timeline: [
-        ...(current.timeline || []),
-        { status: orderStatus, at },
-      ],
+      timeline: [...(current.timeline || []), { status: orderStatus, at }],
     });
     await put("payments", {
       ...storedPayment,
@@ -213,7 +233,16 @@ async function acceptCapturedPayment(payment) {
       reference: payment.id,
       updatedAt: at,
     });
-    await consumeCartById(current.cartId, current.items || [{ productId: current.productId, quantity: current.quantity, variantId: current.variantId }]);
+    await consumeCartById(
+      current.cartId,
+      current.items || [
+        {
+          productId: current.productId,
+          quantity: current.quantity,
+          variantId: current.variantId,
+        },
+      ],
+    );
     await put("audit", {
       userId: "system",
       action: `Razorpay payment captured for ${current.id}${late ? " (review required)" : ""}`,
@@ -222,7 +251,11 @@ async function acceptCapturedPayment(payment) {
   });
   if (updatedOrder.status === "placed") {
     try {
-      const summary = updatedOrder.items?.map(item => `${item.quantity} × ${item.productName}`).join(", ") || `${updatedOrder.quantity} × ${updatedOrder.productName}`;
+      const summary =
+        updatedOrder.items
+          ?.map((item) => `${item.quantity} × ${item.productName}`)
+          .join(", ") ||
+        `${updatedOrder.quantity} × ${updatedOrder.productName}`;
       await mail(
         updatedOrder.email,
         `Order ${updatedOrder.id} received`,
@@ -258,7 +291,11 @@ export async function verifyOnlinePayment(user, body) {
     payment.providerPaymentId === body.razorpay_payment_id
   )
     return { order: localOrder, paymentStatus: "paid" };
-  check(payment?.status === "pending", "Payment has already been processed", 409);
+  check(
+    payment?.status === "pending",
+    "Payment has already been processed",
+    409,
+  );
   const verified = await verifyCheckoutPayment(
     localOrder.razorpayOrderId,
     String(body.razorpay_payment_id || ""),
@@ -280,8 +317,7 @@ export async function processRazorpayWebhook(event) {
   const payment = event?.payload?.payment?.entity;
   if (event.event === "payment.captured" && payment?.status === "captured")
     await acceptCapturedPayment(payment);
-  else if (event.event === "payment.failed")
-    await acceptFailedPayment(payment);
+  else if (event.event === "payment.failed") await acceptFailedPayment(payment);
 }
 
 export async function processShiprocketWebhook(event) {
@@ -311,7 +347,9 @@ export async function processShiprocketWebhook(event) {
 }
 
 export async function receiveWebhook(provider, providerEventId, event) {
-  const eventType = String(event.event || event.event_name || event.current_status || "unknown").slice(0, 120);
+  const eventType = String(
+    event.event || event.event_name || event.current_status || "unknown",
+  ).slice(0, 120);
   let record = await findOne("webhooks", { provider, providerEventId });
   if (record?.status === "processed") return { ok: true, duplicate: true };
   if (!record) {
