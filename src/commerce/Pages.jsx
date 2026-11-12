@@ -496,7 +496,7 @@ export function CheckoutPage() {
                   {...(k === "pincode" ? { value: deliveryPincode, onChange: e => setDeliveryPincode(e.target.value.replace(/\D/g, "").slice(0, 6)) } : {})}
                   autoComplete={autoComplete}
                   type={k === "phone" ? "tel" : "text"}
-                  defaultValue={k === "name" ? user.name : ""}
+                  {...(k === "name" ? { defaultValue: user.name } : {})}
                   required={k !== "line2"}
                   pattern={
                     k === "phone"
