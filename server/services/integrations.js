@@ -29,6 +29,17 @@ export async function mail(to, subject, text) {
 }
 let token,
   expires = 0;
+
+function shiprocketMessage(data, fallback) {
+  const message =
+    typeof data?.message === "string"
+      ? data.message
+      : typeof data?.error === "string"
+        ? data.error
+        : "";
+  return message ? `${fallback}: ${message}` : fallback;
+}
+
 export async function ship(path, body) {
   if (!status().shiprocket)
     throw Object.assign(new Error("Configure Shiprocket credentials first"), {
@@ -47,11 +58,12 @@ export async function ship(path, body) {
         signal: AbortSignal.timeout(15000),
       },
     );
-    const d = await r.json();
+    const d = await r.json().catch(() => ({}));
     if (!r.ok || !d.token)
-      throw Object.assign(new Error("Shiprocket authentication failed"), {
-        status: 502,
-      });
+      throw Object.assign(
+        new Error(shiprocketMessage(d, "Shiprocket authentication failed")),
+        { status: 502 },
+      );
     token = d.token;
     expires = Date.now() + 3600000;
   }
@@ -64,11 +76,14 @@ export async function ship(path, body) {
     body: body ? JSON.stringify(body) : undefined,
     signal: AbortSignal.timeout(20000),
   });
-  const d = await r.json();
+  const d = await r.json().catch(() => ({}));
   if (!r.ok)
     throw Object.assign(
       new Error(
-        "Shiprocket rejected the request. Verify the address and package details.",
+        shiprocketMessage(
+          d,
+          "Shiprocket rejected the request. Verify the address and package details",
+        ),
       ),
       { status: 502 },
     );

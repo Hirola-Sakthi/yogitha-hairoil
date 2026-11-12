@@ -769,13 +769,26 @@ export async function api(req, res, url, b) {
         data = await ship("courier/assign/awb", {
           shipment_id: o.shipment.shipment_id,
         });
-        check(data.response?.data?.awb_code, "No AWB returned", 502);
+        const awbData = data.response?.data || data.data || data;
+        const awb = awbData.awb_code || awbData.awb;
+        const shiprocketReason = [
+          data.message,
+          data.response?.message,
+          data.data?.message,
+          awbData.message,
+        ].find((message) => typeof message === "string" && message.trim());
+        check(
+          awb,
+          shiprocketReason ||
+            "Shiprocket could not assign an AWB to this shipment",
+          422,
+        );
         return await put("orders", {
           ...(await get("orders", id)),
           shipment: {
             ...(await get("orders", id)).shipment,
-            awb: data.response.data.awb_code,
-            courier: data.response.data.courier_name,
+            awb,
+            courier: awbData.courier_name,
           },
         });
       }
