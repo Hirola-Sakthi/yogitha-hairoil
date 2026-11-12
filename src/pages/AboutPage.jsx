@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { BadgeCheck, ChevronLeft, ChevronRight, FlaskConicalOff, Leaf, Recycle, X } from "lucide-react";
+import { BadgeCheck, Brush, ChevronLeft, ChevronRight, Flame, FlaskConicalOff, Hand, Leaf, Pipette, Recycle, Repeat2, ShowerHead, Timer, Wind, X } from "lucide-react";
 import HomeFaq from "../commerce/HomeFaq";
 import HomeSocialGallery from "../commerce/HomeSocialGallery";
 import AboutIngredientStory from "../commerce/AboutIngredientStory";
@@ -16,6 +16,16 @@ const aboutStandards = [
   { title: "Chemical Free", Icon: FlaskConicalOff },
   { title: "Dermatologically Tested", Icon: BadgeCheck },
   { title: "Recyclable Packaging", Icon: Recycle },
+];
+const ritualSteps = [
+  { title: "Warm", note: "Optional", text: "Gently warm the oil. Keep it comfortably warm—never hot.", Icon: Flame },
+  { title: "Apply", text: "Use the dropper to place the oil directly on your scalp, or dispense it into your fingertips.", Icon: Pipette },
+  { title: "Massage", text: "Massage your scalp with your fingertips for at least 10 to 15 minutes.", Icon: Hand },
+  { title: "Rest", text: "Leave the oil on for at least 45 minutes so the ritual has time to work.", Icon: Timer },
+  { title: "Wash", text: "Cleanse with a good clarifying shampoo, then rinse thoroughly.", Icon: ShowerHead },
+  { title: "Dry", text: "Treat wet hair gently. Pat dry with a soft towel—do not rub, pull, or detangle roughly.", Icon: Wind },
+  { title: "Comb", text: "Use a wide-toothed comb to detangle. Avoid sharp or narrow wooden combs on a wet scalp.", Icon: Brush },
+  { title: "Repeat", text: "Use 2 to 3 times a week and stay consistent for at least 90 days.", Icon: Repeat2 },
 ];
 
 export default function AboutPage() {
@@ -128,6 +138,34 @@ export default function AboutPage() {
               <p>We create thoughtful hair care that invites you to slow down, care for your hair, and make the ritual your own.</p>
               <span className="about-purpose-signoff">DR. YOGITHA&apos;S <i>·</i> ROOTED IN TRADITION</span>
             </article>
+          </div>
+        </section>
+        <section className="about-ritual-guide" aria-labelledby="about-ritual-guide-title">
+          <header className="about-ritual-guide-heading">
+            <div>
+              <p className="eyebrow">THE OILING RITUAL</p>
+              <h2 id="about-ritual-guide-title">How to use</h2>
+              <p>A simple, considered ritual for healthier-looking hair and a calmer moment for yourself.</p>
+            </div>
+            <div className="about-ritual-guide-art" aria-hidden="true">
+              <img src="/about-main-img.webp" alt="" loading="lazy" />
+            </div>
+          </header>
+          <div className="about-ritual-guide-grid">
+            {ritualSteps.map(({ title, note, text, Icon }, index) => (
+              <article className="about-ritual-step" key={title}>
+                <span className="about-ritual-step-number">{String(index + 1).padStart(2, "0")}</span>
+                <span className="about-ritual-step-icon"><Icon aria-hidden="true" strokeWidth={1.35} /></span>
+                <div>
+                  <h3>{title}{note && <small>{note}</small>}</h3>
+                  <p>{text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="about-ritual-guide-signature" aria-hidden="true">
+            <Leaf />
+            <span>Rooted in Ayurveda</span><i>&bull;</i><span>Backed by science</span><i>&bull;</i><span>Made with care</span>
           </div>
         </section>
         <section className="about-explore" aria-labelledby="about-explore-title">

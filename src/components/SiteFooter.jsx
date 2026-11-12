@@ -30,7 +30,6 @@ export default function SiteFooter() {
       </div>
       <nav className="store-footer-column" aria-label="Shop links"><h2>SHOP</h2>
         {product && <Link to={`/products/${product.slug}`}>50 ml & 100 ml</Link>}
-        <Link to="/#shop">Your hair ritual</Link>
         <Link to="/cart">Shopping bag</Link>
         <Link to="/blog">The journal</Link>
       </nav>
@@ -40,9 +39,7 @@ export default function SiteFooter() {
       </nav>
       <nav className="store-footer-column" aria-label="Customer help"><h2>HELP</h2>
         <Link to="/account">My account</Link><Link to="/account">Track your order</Link>
-        {product?.faq?.length > 0 && <Link to={`/products/${product.slug}#product-questions`}>Product questions</Link>}
         {policies.filter(p => ["shipping", "returns"].includes(p.slug)).map(p => <Link key={p.slug} to={`/policies/${p.slug}`}>{p.title}</Link>)}
-        <Link to="/contact">Customer support</Link>
       </nav>
       <div className="store-footer-column store-footer-contact"><h2>CONTACT</h2>
         {contact?.email && <a href={`mailto:${contact.email}`}><Mail size={16} /><span>{contact.email}</span></a>}

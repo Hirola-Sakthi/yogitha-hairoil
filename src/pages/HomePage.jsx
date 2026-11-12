@@ -19,7 +19,7 @@ export default function HomePage() {
         <img className="shop-leaves shop-leaves-right" src={imageUrl(`${import.meta.env.BASE_URL}botanical-corner-foliage.png`)} alt="" aria-hidden="true" />
         <div className="shop-image shop-product-art">
           <img
-            src={imageUrl(`${import.meta.env.BASE_URL}ayurvedic-hair-oil-display.png`)}
+            src={imageUrl(`${import.meta.env.BASE_URL}ayurvedic-hair-oil-display.webp`)}
             alt="Dr. Yogitha's Ayurvedic hair oil bottle surrounded by green leaves, botanicals, and a red flower"
             width="1074"
             height="1024"

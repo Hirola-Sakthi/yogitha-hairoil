@@ -831,7 +831,7 @@ dialog small {
   object-position: center;
 }
 .film-stage {
-  min-height: 0;
+  min-height: 300px;
 }
 .film-shade {
   background: linear-gradient(
@@ -1250,6 +1250,32 @@ dialog small {
 .about-purpose-leaf { position: absolute; right: -13px; bottom: -65px; color: rgb(255 255 255 / 5%); font-size: 230px; line-height: 1; transform: rotate(-18deg); pointer-events: none; }
 .about-purpose-signoff { margin-top: 27px; color: var(--color-526841); font-size: 8px; font-weight: 650; letter-spacing: .18em; }
 .about-purpose-signoff i { padding: 0 5px; color: #c9b477; font-style: normal; }
+.about-ritual-guide { position: relative; width: min(1120px, 100%); margin: clamp(34px, 5vw, 72px) auto clamp(62px, 7vw, 100px); overflow: hidden; border: 1px solid color-mix(in srgb, #d0ba88 42%, transparent); border-radius: 28px 8px 28px 8px; background: var(--brand-dark); color: var(--cream); box-shadow: 0 26px 70px rgb(24 39 26 / 18%); isolation: isolate; }
+.about-ritual-guide::before { position: absolute; z-index: -1; top: -240px; right: -160px; width: 620px; height: 620px; border: 1px solid rgb(216 199 150 / 13%); border-radius: 50%; content: ""; }
+.about-ritual-guide::after { position: absolute; z-index: -1; bottom: -210px; left: -180px; width: 470px; height: 470px; border: 1px solid rgb(216 199 150 / 10%); border-radius: 50%; content: ""; }
+.about-ritual-guide-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .72fr); align-items: end; gap: clamp(32px, 8vw, 110px); padding: clamp(42px, 6vw, 72px) clamp(28px, 6vw, 72px) clamp(34px, 4vw, 50px); border-bottom: 1px solid rgb(216 199 150 / 20%); }
+.about-ritual-guide-heading .eyebrow { margin: 0 0 15px; color: #d8c796; font-size: 9px; font-weight: 650; letter-spacing: .28em; }
+.about-ritual-guide-heading h2 { margin: 0; color: var(--cream); font-size: clamp(42px, 5.4vw, 68px); font-weight: 500; letter-spacing: -.055em; line-height: .98; }
+.about-ritual-guide-heading h2 span { color: #d8c796; font-style: italic; font-weight: 400; }
+.about-ritual-guide-heading > p { max-width: 410px; margin: 0 0 4px; color: rgb(255 250 237 / 72%); font-size: 14px; line-height: 1.8; }
+.about-ritual-guide-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.about-ritual-step { position: relative; display: grid; min-height: 190px; grid-template-columns: 72px 1fr; align-items: center; gap: clamp(20px, 3vw, 34px); padding: clamp(28px, 4vw, 46px) clamp(25px, 5vw, 62px); border-bottom: 1px solid rgb(216 199 150 / 16%); transition: background-color .3s ease; }
+.about-ritual-step:nth-child(odd) { border-right: 1px solid rgb(216 199 150 / 16%); }
+.about-ritual-step:nth-last-child(-n + 2) { border-bottom: 0; }
+.about-ritual-step:hover { background: rgb(255 250 237 / 4%); }
+.about-ritual-step-number { position: absolute; top: 17px; right: 20px; color: rgb(216 199 150 / 38%); font-size: 10px; font-weight: 650; letter-spacing: .18em; }
+.about-ritual-step-icon { position: relative; display: grid; width: 68px; height: 68px; place-items: center; border: 1px solid rgb(216 199 150 / 55%); border-radius: 50%; color: #d8c796; }
+.about-ritual-step-icon::after { position: absolute; inset: 5px; border: 1px solid rgb(216 199 150 / 16%); border-radius: inherit; content: ""; }
+.about-ritual-step-icon svg { width: 29px; height: 29px; }
+.about-ritual-step h3 { display: flex; align-items: baseline; gap: 10px; margin: 0; color: var(--cream); font-size: clamp(22px, 2.3vw, 29px); font-weight: 500; letter-spacing: -.03em; }
+.about-ritual-step h3 small { color: #d8c796; font-size: 9px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; }
+.about-ritual-step p { max-width: 360px; margin: 9px 0 0; color: rgb(255 250 237 / 68%); font-size: 12px; line-height: 1.7; }
+.about-ritual-guide-note { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 22px clamp(25px, 5vw, 62px); border-top: 1px solid rgb(216 199 150 / 20%); background: rgb(216 199 150 / 7%); }
+.about-ritual-guide-note > svg { width: 21px; color: #d8c796; }
+.about-ritual-guide-note p { margin: 0; color: rgb(255 250 237 / 67%); font-size: 11px; line-height: 1.55; }
+.about-ritual-guide-note p span { color: var(--cream); font-weight: 650; }
+.about-ritual-guide-note a { display: inline-flex; align-items: center; gap: 12px; color: #e2d5ae; font-size: 11px; font-weight: 650; letter-spacing: .05em; white-space: nowrap; transition: gap .2s ease; }
+.about-ritual-guide-note a:hover { gap: 17px; }
 .about-standards-wrap { padding: 26px clamp(6%, 8vw, 11%) clamp(40px, 4vw, 72px); background: var(--cream); }
 .about-standards { max-width: 1380px; margin: 0 auto; padding: clamp(30px, 4.5vw, 52px) clamp(20px, 3vw, 38px); border: 1px solid color-mix(in srgb, var(--brand) 10%, transparent); border-radius: 18px; background: var(--color-f7f5ed, #f7f5ed); box-shadow: 0 10px 28px rgb(39 52 38 / 5%); }
 .about-standards h2 { display: flex; align-items: center; justify-content: center; gap: 11px; margin: 0 0 36px; color: var(--brand); font-size: clamp(22px, 2.8vw, 31px); font-weight: 500; letter-spacing: -.025em; line-height: 1.25; text-align: center; }
@@ -1319,6 +1345,20 @@ dialog small {
   .about-purpose-mission { border-radius: 12px 12px 42px 12px; }
   .about-purpose-panel h3 { max-width: 340px; font-size: clamp(25px, 7vw, 33px); }
   .about-purpose-panel > p:not(.eyebrow) { max-width: 350px; font-size: 12px; }
+  .about-ritual-guide { margin: 28px auto 58px; border-radius: 20px 6px 20px 6px; }
+  .about-ritual-guide-heading { grid-template-columns: 1fr; gap: 19px; padding: 40px 25px 30px; }
+  .about-ritual-guide-heading h2 { font-size: clamp(39px, 11vw, 54px); }
+  .about-ritual-guide-heading > p { font-size: 13px; }
+  .about-ritual-guide-grid { grid-template-columns: 1fr; }
+  .about-ritual-step { min-height: 0; grid-template-columns: 58px 1fr; gap: 18px; padding: 25px; border-right: 0 !important; border-bottom: 1px solid rgb(216 199 150 / 16%) !important; }
+  .about-ritual-step:last-child { border-bottom: 0 !important; }
+  .about-ritual-step-icon { width: 56px; height: 56px; }
+  .about-ritual-step-icon svg { width: 25px; height: 25px; }
+  .about-ritual-step h3 { font-size: 23px; }
+  .about-ritual-step p { font-size: 11px; }
+  .about-ritual-step-number { top: 12px; right: 14px; font-size: 8px; }
+  .about-ritual-guide-note { grid-template-columns: auto 1fr; gap: 13px; padding: 22px 25px 25px; }
+  .about-ritual-guide-note a { grid-column: 2; width: max-content; }
   .about-standards { padding: 27px 18px; }
   .about-standards h2 { margin-bottom: 27px; }
   .about-standards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 25px; }
@@ -1560,6 +1600,306 @@ dialog small {
     height: 100svh;
     min-height: 0;
   }
+}
+
+/* About: a quiet, editorial guide to the oiling ritual. */
+.about-ritual-guide {
+  width: min(1120px, 100%);
+  margin: clamp(40px, 6vw, 82px) auto clamp(62px, 8vw, 110px);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--brand-dark);
+  box-shadow: none;
+}
+.about-ritual-guide::before,
+.about-ritual-guide::after {
+  display: none;
+}
+.about-ritual-guide-heading {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(280px, .65fr);
+  align-items: end;
+  gap: clamp(34px, 9vw, 130px);
+  padding: 0 0 clamp(30px, 4vw, 48px);
+  border-bottom: 1px solid color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.about-ritual-guide-heading .eyebrow {
+  margin: 0 0 10px;
+  color: var(--color-526841);
+  font-size: 9px;
+  letter-spacing: .24em;
+}
+.about-ritual-guide-heading h2 {
+  color: var(--brand);
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1;
+}
+.about-ritual-guide-heading > p {
+  max-width: 410px;
+  margin: 0;
+  color: var(--color-52604f);
+  font-size: 14px;
+  line-height: 1.75;
+}
+.about-ritual-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(42px, 8vw, 105px);
+}
+.about-ritual-step {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  padding: 27px 0 25px;
+  border-right: 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--brand) 12%, transparent) !important;
+  background: transparent;
+}
+.about-ritual-step:hover { background: transparent; }
+.about-ritual-step-number {
+  top: 29px;
+  right: 0;
+  color: color-mix(in srgb, var(--brand) 35%, transparent);
+  font-size: 9px;
+}
+.about-ritual-step-icon {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 0;
+  color: var(--brand);
+}
+.about-ritual-step-icon::after { display: none; }
+.about-ritual-step-icon svg { width: 24px; height: 24px; }
+.about-ritual-step h3 {
+  color: var(--brand-dark);
+  font-size: 21px;
+  font-weight: 550;
+  letter-spacing: -.025em;
+}
+.about-ritual-step h3 small {
+  color: var(--color-526841);
+  font-size: 8px;
+}
+.about-ritual-step p {
+  max-width: 390px;
+  margin-top: 7px;
+  color: var(--color-52604f);
+  font-size: 12px;
+  line-height: 1.65;
+}
+@media (max-width: 700px) {
+  .about-ritual-guide { margin: 28px auto 62px; }
+  .about-ritual-guide-heading {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 0 27px;
+  }
+  .about-ritual-guide-heading h2 { font-size: clamp(40px, 12vw, 54px); }
+  .about-ritual-guide-heading > p { font-size: 13px; }
+  .about-ritual-guide-grid { grid-template-columns: 1fr; }
+  .about-ritual-step {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 14px;
+    padding: 23px 0 21px;
+  }
+  .about-ritual-step-icon { width: 38px; height: 38px; }
+  .about-ritual-step-icon svg { width: 22px; height: 22px; }
+  .about-ritual-step h3 { font-size: 20px; }
+  .about-ritual-step-number { top: 25px; }
+}
+
+/* Reference-inspired premium ritual panel. */
+.about-ritual-guide {
+  padding: 0 clamp(20px, 4vw, 54px) 22px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, #c9a955 38%, transparent);
+  border-radius: 3px;
+  background: #f6f0e2;
+  box-shadow: 0 22px 60px rgb(52 61 42 / 11%);
+}
+.about-ritual-guide-heading {
+  position: relative;
+  display: block;
+  min-height: 0;
+  padding: clamp(46px, 6vw, 74px) 0 40px;
+  overflow: hidden;
+  border-bottom: 0;
+}
+.about-ritual-guide-heading > div:first-child {
+  position: relative;
+  z-index: 2;
+  width: 52%;
+  padding-left: clamp(10px, 2vw, 26px);
+}
+.about-ritual-guide-heading .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 18px;
+  color: var(--brand);
+}
+.about-ritual-guide-heading .eyebrow::after {
+  width: 115px;
+  height: 1px;
+  background: #c9a955;
+  content: "";
+}
+.about-ritual-guide-heading h2 {
+  color: var(--brand-dark);
+  font-size: clamp(55px, 7vw, 86px);
+  font-weight: 500;
+  letter-spacing: -.055em;
+}
+.about-ritual-guide-heading h2::first-letter { color: var(--brand); }
+.about-ritual-guide-heading > div:first-child > p:last-child {
+  max-width: 420px;
+  margin: 18px 0 0;
+  color: var(--color-52604f);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.about-ritual-guide-art {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: calc(clamp(20px, 4vw, 54px) * -1);
+  width: 58%;
+  height: 100%;
+  overflow: hidden;
+}
+.about-ritual-guide-art::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(90deg, #f6f0e2 0%, rgb(246 240 226 / 72%) 14%, transparent 45%);
+  content: "";
+}
+.about-ritual-guide-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 54%;
+}
+.about-ritual-guide-grid {
+  position: relative;
+  z-index: 3;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: -16px;
+}
+.about-ritual-step {
+  display: block;
+  min-height: 164px;
+  padding: 43px 18px 22px;
+  border: 1px solid color-mix(in srgb, #c9a955 54%, transparent) !important;
+  border-radius: 12px 3px 12px 3px;
+  background: rgb(255 252 244 / 88%);
+  box-shadow: 0 8px 22px rgb(69 65 40 / 7%);
+  text-align: center;
+}
+.about-ritual-step:hover {
+  background: #fffaf0;
+  box-shadow: 0 12px 28px rgb(69 65 40 / 11%);
+  transform: translateY(-2px);
+}
+.about-ritual-step-number {
+  top: 14px;
+  right: auto;
+  left: 17px;
+  color: #a77c24;
+  font-family: Georgia, serif;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.about-ritual-step-icon {
+  position: absolute;
+  top: -23px;
+  left: 50%;
+  width: 54px;
+  height: 54px;
+  transform: translateX(-50%);
+  border: 2px solid #c9a955;
+  border-radius: 50%;
+  background: var(--brand-dark);
+  color: #e2c66f;
+  box-shadow: 0 4px 10px rgb(34 49 31 / 22%);
+}
+.about-ritual-step-icon::after {
+  display: block;
+  inset: 4px;
+  border-color: rgb(226 198 111 / 35%);
+}
+.about-ritual-step-icon svg { width: 23px; height: 23px; }
+.about-ritual-step h3 {
+  display: flex;
+  min-height: 29px;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-dark);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+.about-ritual-step h3 small {
+  position: absolute;
+  top: 71px;
+  color: #a77c24;
+  font-family: inherit;
+  font-size: 7px;
+  letter-spacing: .2em;
+}
+.about-ritual-step p {
+  max-width: 230px;
+  margin: 9px auto 0;
+  color: #4f584b;
+  font-size: 10px;
+  line-height: 1.65;
+}
+.about-ritual-guide-signature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin: 24px auto 0;
+  padding: 11px 20px;
+  border-top: 1px solid color-mix(in srgb, #c9a955 42%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, #c9a955 42%, transparent);
+  color: var(--brand);
+  font-size: 8px;
+  font-weight: 650;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+.about-ritual-guide-signature svg { width: 18px; height: 18px; color: #a77c24; }
+.about-ritual-guide-signature i { color: #a77c24; font-style: normal; }
+@media (max-width: 900px) {
+  .about-ritual-guide-heading { min-height: 270px; }
+  .about-ritual-guide-heading > div:first-child { width: 58%; }
+  .about-ritual-guide-art { width: 54%; }
+  .about-ritual-guide-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 16px; }
+  .about-ritual-step { min-height: 155px; }
+}
+@media (max-width: 600px) {
+  .about-ritual-guide { padding: 0 16px 18px; }
+  .about-ritual-guide-heading { min-height: 330px; padding: 35px 3px 30px; }
+  .about-ritual-guide-heading > div:first-child { width: 100%; padding-left: 4px; }
+  .about-ritual-guide-heading h2 { font-size: clamp(48px, 16vw, 68px); }
+  .about-ritual-guide-heading > div:first-child > p:last-child { max-width: 78%; font-size: 12px; }
+  .about-ritual-guide-art { top: 112px; right: -16px; width: 72%; height: 218px; opacity: .72; }
+  .about-ritual-guide-art::before { background: linear-gradient(90deg, #f6f0e2 0%, rgb(246 240 226 / 58%) 28%, transparent 68%); }
+  .about-ritual-guide-grid { grid-template-columns: 1fr; gap: 38px; margin-top: 2px; }
+  .about-ritual-step { min-height: 145px; padding: 41px 20px 20px; }
+  .about-ritual-step p { max-width: 270px; font-size: 10px; }
+  .about-ritual-guide-signature { flex-wrap: wrap; gap: 7px 10px; padding: 12px 8px; font-size: 6px; letter-spacing: .17em; text-align: center; }
+  .about-ritual-guide-signature svg { display: none; }
 }
 
 .bag-button {
