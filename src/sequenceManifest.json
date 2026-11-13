@@ -1,12 +1,12 @@
 {
-  "frameCount": 235,
+  "frameCount": 236,
   "width": 3840,
   "height": 2160,
   "directory": "scenes/herbal-oil-advertisement-2",
-  "revision": "hair-oil-ad-2-4k-skip4-webp-q95",
+  "revision": "hair-oil-ad-2-4k-skip4-webp-q95-v2",
   "fps": 24.0,
-  "durationSeconds": 9.791666666666666,
-  "source": "hair_oil_ad_2_4k.mp4",
+  "durationSeconds": 9.833333333333334,
+  "source": "imp3_gwr_video_mvp_4k (1).mp4",
   "processing": "First 4 source frames removed; remaining native 3840x2160 frames exported as contiguous high-quality WebP at quality 95; no resizing or retouching",
   "phases": [
     {
@@ -37,7 +37,7 @@
     {
       "name": "hero",
       "start": 200,
-      "end": 234
+      "end": 235
     }
   ]
 }
