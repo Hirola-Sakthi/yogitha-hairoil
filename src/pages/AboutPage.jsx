@@ -148,7 +148,7 @@ export default function AboutPage() {
               <p>A simple, considered ritual for healthier-looking hair and a calmer moment for yourself.</p>
             </div>
             <div className="about-ritual-guide-art" aria-hidden="true">
-              <img src="/about-main-img.webp" alt="" loading="lazy" />
+              <img src="/how-to-use-banner.png" alt="" loading="lazy" />
             </div>
           </header>
           <div className="about-ritual-guide-grid">

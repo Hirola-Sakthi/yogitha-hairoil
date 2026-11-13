@@ -32,6 +32,9 @@ export default function ProductSequence() {
     const requests = new Set();
     const panels = sectionEl.querySelectorAll(".scene-copy");
     let desired = 0;
+    let preloadTarget = 0;
+    const frameState = { value: 0 };
+    let frameTween;
     let drawn = -1;
     let direction = 1;
     let raf = 0;
@@ -62,11 +65,13 @@ export default function ProductSequence() {
 
     const pump = () => {
       if (disposed) return;
-      const candidates = [desired];
+      // Keep the frame under the scroll position and the frames just ahead of
+      // it warm in the cache. This prevents a visible jump during faster swipes.
+      const candidates = [desired, preloadTarget];
       if (!reducedMotion.matches) {
         const radius = Math.floor((cacheLimit - 1) / 2);
         for (let offset = 1; offset <= radius; offset += 1) {
-          candidates.push(desired + offset * direction, desired - offset * direction);
+          candidates.push(preloadTarget + offset * direction, preloadTarget - offset * direction);
         }
       }
       for (const index of candidates) {
@@ -81,7 +86,7 @@ export default function ProductSequence() {
           loading.delete(index);
           if (disposed) return;
           cache.set(index, image);
-          const farthest = [...cache.keys()].sort((a, b) => Math.abs(b - desired) - Math.abs(a - desired));
+          const farthest = [...cache.keys()].sort((a, b) => Math.abs(b - preloadTarget) - Math.abs(a - preloadTarget));
           while (cache.size > cacheLimit) cache.delete(farthest.shift());
           schedule();
           pump();
@@ -124,6 +129,13 @@ export default function ProductSequence() {
     resize();
     updatePanels(0);
 
+    const updateDisplayedFrame = () => {
+      const next = Math.round(frameState.value);
+      if (next !== desired) desired = next;
+      schedule();
+      pump();
+    };
+
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", () => {
       const trigger = ScrollTrigger.create({
@@ -132,11 +144,18 @@ export default function ProductSequence() {
         end: "bottom bottom",
         onUpdate: (self) => {
           const next = frameAtProgress(self.progress, sequence);
-          if (next !== desired) direction = next > desired ? 1 : -1;
-          desired = next;
+          if (next !== preloadTarget) direction = next > preloadTarget ? 1 : -1;
+          preloadTarget = next;
+          frameTween?.kill();
+          frameTween = gsap.to(frameState, {
+            value: next,
+            duration: mobile.matches ? 0.12 : 0.18,
+            ease: "power1.out",
+            overwrite: true,
+            onUpdate: updateDisplayedFrame,
+          });
           sectionEl.style.setProperty("--progress", self.progress);
           updatePanels(self.progress);
-          schedule();
           pump();
         },
       });
@@ -146,6 +165,7 @@ export default function ProductSequence() {
 
     return () => {
       disposed = true;
+      frameTween?.kill();
       media.revert();
       observer.disconnect();
       cancelAnimationFrame(raf);

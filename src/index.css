@@ -1727,7 +1727,7 @@ dialog small {
   display: block;
   min-height: 0;
   padding: clamp(46px, 6vw, 74px) 0 40px;
-  overflow: hidden;
+  overflow: visible;
   border-bottom: 0;
 }
 .about-ritual-guide-heading > div:first-child {
@@ -1767,7 +1767,7 @@ dialog small {
   position: absolute;
   z-index: 0;
   top: 0;
-  right: calc(clamp(20px, 4vw, 54px) * -1);
+  right: -54px;
   width: 58%;
   height: 100%;
   overflow: hidden;
