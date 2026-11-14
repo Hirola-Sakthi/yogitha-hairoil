@@ -1,27 +1,20 @@
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { useStore } from "./commerce/StoreContext";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
-import "lenis/dist/lenis.css";
-import AboutPage from "./pages/AboutPage";
-
 import HomePage from "./pages/HomePage";
-import CartPage from "./commerce/CartPage";
 import SiteFooter from "./components/SiteFooter";
 import SiteHeader from "./components/SiteHeader";
 
-import {
-  AuthPage,
-  CheckoutPage,
-  AccountPage,
-  JournalPage,
-  ContentPage,
-  ContactForm,
-} from "./commerce/Pages";
-
-gsap.registerPlugin(ScrollTrigger);
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const CartPage = lazy(() => import("./commerce/CartPage"));
+const commercePage = (name) => lazy(() => import("./commerce/Pages").then((module) => ({ default: module[name] })));
+const AuthPage = commercePage("AuthPage");
+const CheckoutPage = commercePage("CheckoutPage");
+const AccountPage = commercePage("AccountPage");
+const JournalPage = commercePage("JournalPage");
+const ContentPage = commercePage("ContentPage");
+const ContactForm = commercePage("ContactForm");
+const RouteFallback = () => <div className="route-loading" aria-live="polite">Loading page…</div>;
 
 export default function App() {
   const lenisRef = useRef(null);
@@ -29,20 +22,40 @@ export default function App() {
   const { cart } = useStore();
 
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({
-      lerp: 0.12,
-      smoothWheel: true,
-      syncTouch: false,
-    });
-    lenisRef.current = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
-    const tick = (time) => lenis.raf(time * 1000);
-    gsap.ticker.add(tick);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    let disposed = false;
+    let idleId;
+    let removeLoadListener;
+    let destroy = () => {};
+    const start = async () => {
+      const [{ default: gsap }, { ScrollTrigger }, { default: Lenis }] = await Promise.all([
+        import("gsap"), import("gsap/ScrollTrigger"), import("lenis"),
+      ]);
+      if (disposed) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const lenis = new Lenis({ lerp: 0.12, smoothWheel: true, syncTouch: false });
+      lenisRef.current = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+      const tick = (time) => lenis.raf(time * 1000);
+      gsap.ticker.add(tick);
+      destroy = () => { gsap.ticker.remove(tick); lenis.destroy(); lenisRef.current = null; };
+    };
+    const schedule = () => {
+      if ("requestIdleCallback" in window) idleId = window.requestIdleCallback(start, { timeout: 2500 });
+      else idleId = window.setTimeout(start, 1200);
+    };
+    if (document.readyState === "complete") schedule();
+    else {
+      const onLoad = () => schedule();
+      window.addEventListener("load", onLoad, { once: true });
+      removeLoadListener = () => window.removeEventListener("load", onLoad);
+    }
     return () => {
-      gsap.ticker.remove(tick);
-      lenis.destroy();
-      lenisRef.current = null;
+      disposed = true;
+      removeLoadListener?.();
+      if ("cancelIdleCallback" in window) window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+      destroy();
     };
   }, []);
 
@@ -102,6 +115,7 @@ export default function App() {
       </a>
       <SiteHeader bagQuantity={cart.count} />
       <main id="main-content" tabIndex={-1}>
+        <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -143,6 +157,7 @@ export default function App() {
             }
           />
         </Routes>
+        </Suspense>
       </main>
       <SiteFooter />
     </div>

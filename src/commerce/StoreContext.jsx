@@ -32,13 +32,23 @@ export function StoreProvider({ children }) {
       api("/public").then(r => { setData(r); setError(""); }).catch(e => setError(e.message));
     };
     refresh();
-    refreshCart().catch(() => {});
-    api("/auth/me")
-      .then((r) => setUser(r.user))
-      .catch(() => setUser(null));
+    // Cart and session state are not needed for the first paint. Delay them so
+    // the public product request and the LCP image keep the network priority.
+    let privateStateTimer;
+    const loadPrivateState = () => {
+      refreshCart().catch(() => {});
+      api("/auth/me").then((r) => setUser(r.user)).catch(() => setUser(null));
+    };
+    if (document.readyState === "complete") privateStateTimer = window.setTimeout(loadPrivateState, 1200);
+    else window.addEventListener("load", loadPrivateState, { once: true });
     window.addEventListener("focus", refresh);
-    const timer = setInterval(refresh, 30000);
-    return () => { window.removeEventListener("focus", refresh); clearInterval(timer); };
+    const refreshTimer = window.setInterval(refresh, 30000);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("load", loadPrivateState);
+      window.clearTimeout(privateStateTimer);
+      window.clearInterval(refreshTimer);
+    };
   }, [refreshCart]);
   return (
     <Context.Provider value={{ data, user, setUser, error, cart, cartError, cartBusy: cartPending > 0, refreshCart,

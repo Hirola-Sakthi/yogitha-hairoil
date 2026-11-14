@@ -8,6 +8,13 @@
   "durationSeconds": 9.833333333333334,
   "source": "imp3_gwr_video_mvp_4k (1).mp4",
   "processing": "First 4 source frames removed; remaining native 3840x2160 frames exported as contiguous high-quality WebP at quality 95; no resizing or retouching",
+  "mobile": {
+    "width": 768,
+    "height": 432,
+    "directory": "scenes/herbal-oil-advertisement-2-mobile",
+    "revision": "hair-oil-ad-2-mobile-768w-webp-q60-v1",
+    "frameCount": 236
+  },
   "phases": [
     {
       "name": "empty-bowl",

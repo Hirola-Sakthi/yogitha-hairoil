@@ -47,6 +47,8 @@ export const server = http.createServer(async (req, res) => {
             ".json": "application/json",
           }[extname(p)] || "application/octet-stream",
         );
+        const immutableAsset = /\/assets\//.test(url.pathname) && /\.(?:js|css)$/.test(url.pathname);
+        res.setHeader("Cache-Control", immutableAsset ? "public, max-age=31536000, immutable" : "public, max-age=86400");
         res.end(bytes);
         return;
       } catch {

@@ -1,22 +1,68 @@
 ﻿import { Droplets, Flower2, HandHeart, Leaf, ShieldCheck, Truck, MessageCircle } from "lucide-react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import ProductSequence from "../ProductSequence";
-import ProductCollection from "../commerce/ProductCards";
-import RecentBlogs from "../commerce/RecentBlogs";
-import CustomerReviews from "../commerce/CustomerReviews";
-import IngredientStoryCards from "../commerce/IngredientStoryCards";
-import HomeFaq from "../commerce/HomeFaq";
-import RitualCta from "../commerce/RitualCta";
 import { imageUrl } from "../shared/imageUrl";
 import "./home-assurances.css";
 
+const ProductCollection = lazy(() => import("../commerce/ProductCards"));
+const ProductSequence = lazy(() => import("../ProductSequence"));
+const IngredientStoryCards = lazy(() => import("../commerce/IngredientStoryCards"));
+const CustomerReviews = lazy(() => import("../commerce/CustomerReviews"));
+const RecentBlogs = lazy(() => import("../commerce/RecentBlogs"));
+const RitualCta = lazy(() => import("../commerce/RitualCta"));
+const HomeFaq = lazy(() => import("../commerce/HomeFaq"));
+
+function DeferredSection({ children, minHeight = 240 }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: "700px 0px" });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={ref} style={visible ? undefined : { minHeight }}><Suspense fallback={null}>{visible ? children : null}</Suspense></div>;
+}
+
+function HeroFallback() {
+  return <section className="sequence" aria-label="The Ayurvedic hair oil story">
+    <div className="film-stage">
+      <picture>
+        <source media="(max-width: 600px)" srcSet={`${import.meta.env.BASE_URL}scenes/herbal-oil-advertisement-2-mobile/poster.webp?v=hair-oil-ad-2-mobile-768w-webp-q60-v1`} />
+        <img className="film-poster" src={`${import.meta.env.BASE_URL}scenes/herbal-oil-advertisement-2/poster.webp?v=hair-oil-ad-2-4k-skip4-webp-q95-v2`} alt="Dr. Yogitha's Ayurvedic hair oil advertisement" width="3840" height="2160" fetchPriority="high" decoding="async" />
+      </picture>
+    </div>
+  </section>;
+}
+
 export default function HomePage() {
+  const [sequenceActive, setSequenceActive] = useState(() => !matchMedia("(max-width: 600px)").matches);
+  useEffect(() => {
+    if (!matchMedia("(max-width: 600px)").matches) return undefined;
+    const activate = () => setSequenceActive(true);
+    // Keep the visual frame-scroll feature, but defer its JavaScript and canvas
+    // work until the visitor starts interacting with the mobile page.
+    window.addEventListener("touchstart", activate, { once: true, passive: true });
+    window.addEventListener("wheel", activate, { once: true, passive: true });
+    window.addEventListener("keydown", activate, { once: true });
+    return () => {
+      window.removeEventListener("touchstart", activate);
+      window.removeEventListener("wheel", activate);
+      window.removeEventListener("keydown", activate);
+    };
+  }, []);
   return (
     <>
-      <ProductSequence />
+      {sequenceActive ? <Suspense fallback={<HeroFallback />}><ProductSequence /></Suspense> : <HeroFallback />}
       <section className="shop-section shop-hero">
-        <img className="shop-leaves shop-leaves-left" src={imageUrl(`${import.meta.env.BASE_URL}botanical-corner-foliage.png`)} alt="" aria-hidden="true" />
-        <img className="shop-leaves shop-leaves-right" src={imageUrl(`${import.meta.env.BASE_URL}botanical-corner-foliage.png`)} alt="" aria-hidden="true" />
+        <img className="shop-leaves shop-leaves-left" src={imageUrl(`${import.meta.env.BASE_URL}botanical-corner-foliage.png`)} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+        <img className="shop-leaves shop-leaves-right" src={imageUrl(`${import.meta.env.BASE_URL}botanical-corner-foliage.png`)} alt="" aria-hidden="true" loading="lazy" decoding="async" />
         <div className="shop-image shop-product-art">
           <img
             src={imageUrl(`${import.meta.env.BASE_URL}ayurvedic-hair-oil-display.webp`)}
@@ -24,6 +70,7 @@ export default function HomePage() {
             width="1074"
             height="1024"
             loading="lazy"
+            decoding="async"
           />
         </div>
         <div className="shop-copy">
@@ -58,9 +105,9 @@ export default function HomePage() {
           <Link className="shop-discover" to="/about">Discover More <span aria-hidden="true">&rarr;</span></Link>
         </div>
       </section>
-      <ProductCollection />
-      <IngredientStoryCards />
-      <CustomerReviews />
+      <DeferredSection minHeight={760}><ProductCollection /></DeferredSection>
+      <DeferredSection minHeight={500}><IngredientStoryCards /></DeferredSection>
+      <DeferredSection minHeight={400}><CustomerReviews /></DeferredSection>
       <section className="home-assurances" aria-label="Shopping with confidence">
         <article className="home-assurance">
           <ShieldCheck aria-hidden="true" />
@@ -79,9 +126,9 @@ export default function HomePage() {
           <div><h2>Botanical Inspiration</h2><p>An everyday hair oil inspired by Ayurvedic tradition.</p></div>
         </article>
       </section>
-      <RecentBlogs />
-      <RitualCta />
-      <HomeFaq />
+      <DeferredSection minHeight={300}><RecentBlogs /></DeferredSection>
+      <DeferredSection minHeight={360}><RitualCta /></DeferredSection>
+      <DeferredSection minHeight={500}><HomeFaq /></DeferredSection>
     </>
   );
 }

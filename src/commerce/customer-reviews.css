@@ -168,6 +168,7 @@
 }
 .review-arrow {
   position: absolute;
+  z-index: 10;
   top: 50%;
   display: grid;
   width: 44px;
@@ -178,6 +179,7 @@
   border-radius: 50%;
   background: var(--brand);
   color: var(--surface);
+  box-shadow: 0 5px 16px rgb(24 45 28 / 30%);
   cursor: pointer;
   transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
 }
@@ -186,8 +188,12 @@
   color: var(--surface);
 }
 .review-arrow:disabled {
-  opacity: 0.72;
+  opacity: 0.48;
   cursor: default;
+}
+.review-arrow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 .review-arrow-left { left: max(0px, calc(50% - 510px)); }
 .review-arrow-right { right: max(0px, calc(50% - 510px)); }

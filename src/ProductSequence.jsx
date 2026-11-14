@@ -7,8 +7,8 @@ import { imageUrl } from "./shared/imageUrl";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const frameUrl = (index) => imageUrl(
-  `${import.meta.env.BASE_URL}${sequence.directory}/frame_${String(index + 1).padStart(4, "0")}.webp?v=${sequence.revision}`,
+const frameUrl = (index, source) => imageUrl(
+  `${import.meta.env.BASE_URL}${source.directory}/frame_${String(index + 1).padStart(4, "0")}.webp?v=${source.revision}`,
 );
 
 export default function ProductSequence() {
@@ -23,6 +23,7 @@ export default function ProductSequence() {
     if (!sectionEl || !canvasEl || !context) return;
 
     const mobile = matchMedia("(max-width: 600px)");
+    const mediaSequence = mobile.matches ? { ...sequence, ...sequence.mobile } : sequence;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const cacheLimit = mobile.matches ? 16 : 24;
     const concurrency = mobile.matches ? 4 : 6;
@@ -38,6 +39,7 @@ export default function ProductSequence() {
     let drawn = -1;
     let direction = 1;
     let raf = 0;
+    let initialLoadTimer = 0;
     let disposed = false;
 
     const draw = () => {
@@ -76,10 +78,11 @@ export default function ProductSequence() {
       }
       for (const index of candidates) {
         if (loading.size >= concurrency) break;
-        if (index < 0 || index >= sequence.frameCount || cache.has(index) || loading.has(index) || failures.has(index)) continue;
+        if (index < 0 || index >= mediaSequence.frameCount || cache.has(index) || loading.has(index) || failures.has(index)) continue;
         loading.add(index);
         const image = new Image();
         image.decoding = "async";
+        image.fetchPriority = "low";
         requests.add(image);
         image.onload = () => {
           requests.delete(image);
@@ -98,7 +101,7 @@ export default function ProductSequence() {
           if (failures.size > 8 && !cache.size) setFailed(true);
           pump();
         };
-        image.src = frameUrl(index);
+        image.src = frameUrl(index, mediaSequence);
       }
     };
 
@@ -143,7 +146,7 @@ export default function ProductSequence() {
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
-          const next = frameAtProgress(self.progress, sequence);
+          const next = frameAtProgress(self.progress, mediaSequence);
           if (next !== preloadTarget) direction = next > preloadTarget ? 1 : -1;
           preloadTarget = next;
           frameTween?.kill();
@@ -161,7 +164,9 @@ export default function ProductSequence() {
       });
       return () => trigger.kill();
     });
-    pump();
+    // The poster is the LCP image. Let it paint before the decorative frame
+    // sequence begins using bandwidth and decoding time.
+    initialLoadTimer = window.setTimeout(pump, 600);
 
     return () => {
       disposed = true;
@@ -169,6 +174,7 @@ export default function ProductSequence() {
       media.revert();
       observer.disconnect();
       cancelAnimationFrame(raf);
+      window.clearTimeout(initialLoadTimer);
       requests.forEach((image) => { image.onload = image.onerror = null; image.src = ""; });
       cache.clear();
     };
@@ -180,10 +186,13 @@ export default function ProductSequence() {
       <span id="craft" className="scene-anchor anchor-craft" />
       <span id="result" className="scene-anchor anchor-result" />
       <div className="film-stage">
-        <img className="film-poster" src={imageUrl(`${import.meta.env.BASE_URL}${sequence.directory}/poster.webp?v=${sequence.revision}`)} alt="Dr. Yogitha's Ayurvedic hair oil advertisement" fetchPriority="high" />
+        <picture>
+          <source media="(max-width: 600px)" srcSet={imageUrl(`${import.meta.env.BASE_URL}${sequence.mobile.directory}/poster.webp?v=${sequence.mobile.revision}`)} width={sequence.mobile.width} height={sequence.mobile.height} />
+          <img className="film-poster" src={imageUrl(`${import.meta.env.BASE_URL}${sequence.directory}/poster.webp?v=${sequence.revision}`)} alt="Dr. Yogitha's Ayurvedic hair oil advertisement" width={sequence.width} height={sequence.height} fetchPriority="high" decoding="async" />
+        </picture>
         <canvas ref={canvas} className="film-canvas" aria-hidden="true" />
         <div className="film-shade" />
-        <div className="scene-copy intro-copy"><p className="eyebrow">DR. YOGITHA'S · AYURVEDIC HAIR OIL</p><h2>Ayurvedic hair care, rooted in tradition.</h2><p>A golden blend of botanical oils, inspired by Ayurvedic traditions.<br />Make hair care a considered ritual—and a little time for yourself.</p><a className="pill-button" href="#shop">Discover the oil <span aria-hidden="true">↗</span></a><a className="underlined" href="#formula">Follow the ingredients</a></div>
+        <div className="scene-copy intro-copy"><p className="eyebrow">DR. YOGITHA'S · AYURVEDIC HAIR OIL</p><h2>Ayurvedic hair care, rooted in tradition.</h2><p>A golden blend of botanical oils, inspired by Ayurvedic traditions.<br />Make hair care a considered ritual—and a little time for yourself.</p><a className="pill-button" href="#shop">Discover the oil <span aria-hidden="true">↗</span></a></div>
         <div className="scene-copy formula-copy"><p className="eyebrow">THE BOTANICAL STORY</p><h2>Botanical oils,<br /><span>rooted in tradition.</span></h2><p>A golden blend of botanical oils,<br />inspired by Ayurvedic traditions.</p></div>
         <div className="scene-copy filling-copy"><p className="eyebrow">THE GOLDEN POUR</p><h2>From bowl<br /><span>to bottle.</span></h2><p>Watch the golden oil come together,<br />ready for your hair-care ritual.</p></div>
         <div className="scene-copy packaging-copy"><p className="eyebrow">THE FINAL TOUCH</p><h2>A considered<br /><span>final touch.</span></h2><p>A clear bottle, finished with a black cap<br />and a botanical label.</p></div>

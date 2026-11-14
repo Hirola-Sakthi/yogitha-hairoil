@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;450;500;550;600;650;700&display=swap");
+/* A system-first font stack avoids a render-blocking third-party font request. */
 /* Shared palette. Change these brand, background and type tokens in one place. */
 :root {
   --brand: #344c35;
@@ -13,7 +13,7 @@
   --soft: #edf1e7;
   --danger: #ad413b;
   --orange: var(--brand);
-  --font: "Jost", sans-serif;
+  --font: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-family: var(--font);
 }
 body,
