@@ -5,6 +5,7 @@ import { imageUrl } from "../shared/imageUrl";
 import "./home-assurances.css";
 
 const ProductCollection = lazy(() => import("../commerce/ProductCards"));
+const HomeRitualGuide = lazy(() => import("../commerce/HomeRitualGuide"));
 const ProductSequence = lazy(() => import("../ProductSequence"));
 const IngredientStoryCards = lazy(() => import("../commerce/IngredientStoryCards"));
 const CustomerReviews = lazy(() => import("../commerce/CustomerReviews"));
@@ -74,7 +75,7 @@ export default function HomePage() {
           />
         </div>
         <div className="shop-copy">
-          <div className="shop-hero-eyebrow"><Leaf aria-hidden="true" /><p className="eyebrow">THE COLLECTION</p></div>
+          <div className="shop-hero-eyebrow"><p className="eyebrow">THE COLLECTION</p></div>
           <h2>
             Ayurvedic<br /><span>Hair Oil</span>
           </h2>
@@ -106,7 +107,8 @@ export default function HomePage() {
         </div>
       </section>
       <DeferredSection minHeight={760}><ProductCollection /></DeferredSection>
-      <DeferredSection minHeight={500}><IngredientStoryCards /></DeferredSection>
+      <DeferredSection minHeight={860}><HomeRitualGuide /></DeferredSection>
+      <DeferredSection minHeight={760}><IngredientStoryCards /></DeferredSection>
       <DeferredSection minHeight={400}><CustomerReviews /></DeferredSection>
       <section className="home-assurances" aria-label="Shopping with confidence">
         <article className="home-assurance">

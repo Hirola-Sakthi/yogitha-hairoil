@@ -58,6 +58,8 @@ const initial = {
     description: "Ayurvedic hair oil inspired by botanical traditions.",
     email: "",
     phone: "",
+    whatsapp: "",
+    whatsappMessage: "Hello Dr. Yogitha's Team, I would like to inquire about the Intensive Hair Ampoule",
     address: "",
     shippingPaise: 0,
     seoTitle: "Dr. Yogitha's — Ayurvedic Hair Oil",

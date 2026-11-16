@@ -94,6 +94,86 @@ const ingredients = [
       "Mindful ritual",
     ],
   },
+  {
+    name: "Curry Leaf",
+    botanical: "Murraya koenigii",
+    image: "ing-6.webp",
+    note: "Glossy leaves. A fragrant green ritual.",
+    description:
+      "Curry leaves bring a fresh, verdant chapter to our botanical library, celebrating the beauty of simple leaves and their place in Indian botanical traditions.",
+    details:
+      "Murraya koenigii is recognised for its glossy, aromatic leaflets and branching form. We include it here as part of a broader story of botanical texture and mindful care.",
+    traits: [
+      "Aromatic leaves",
+      "Glossy foliage",
+      "Garden grown",
+      "Quiet ritual",
+    ],
+  },
+  {
+    name: "Moringa",
+    botanical: "Moringa oleifera",
+    image: "ing-7.webp",
+    note: "Leaf by leaf. Naturally considered.",
+    description:
+      "Moringa's rounded leaflets and branching silhouette offer another connection to the richness of plant-led personal-care traditions.",
+    details:
+      "Known as a fast-growing tree with delicate compound leaves, Moringa is a familiar part of many botanical landscapes and rituals of everyday care.",
+    traits: [
+      "Compound leaves",
+      "Green botanical",
+      "Tree inspired",
+      "Everyday care",
+    ],
+  },
+  {
+    name: "Lotus",
+    botanical: "Nelumbo nucifera",
+    image: "ing-8.webp",
+    note: "A bloom that invites stillness.",
+    description:
+      "Soft pink petals and a golden centre make lotus a beautiful symbol of pause, care, and considered personal rituals.",
+    details:
+      "The lotus is admired for its generous petals and distinctive central seed pod. Its graceful form brings a sense of calm to this botanical collection.",
+    traits: [
+      "Pink petals",
+      "Floral beauty",
+      "Calm ritual",
+      "Golden centre",
+    ],
+  },
+  {
+    name: "Almond",
+    botanical: "Prunus dulcis",
+    image: "ing-9.webp",
+    note: "A familiar nut. A thoughtful touch.",
+    description:
+      "Almond is a recognisable natural ingredient whose warm colour and tactile form belong beautifully in a story of everyday care.",
+    details:
+      "With its textured shell and warm, earthy tones, almond is a longstanding part of botanical and culinary traditions across many cultures.",
+    traits: [
+      "Earthy texture",
+      "Natural nut",
+      "Warm tones",
+      "Botanical story",
+    ],
+  },
+  {
+    name: "Black Seed",
+    botanical: "Nigella sativa",
+    image: "ing-10.webp",
+    note: "Tiny seeds. A deep-rooted story.",
+    description:
+      "Black seed adds a bold, textural contrast to our botanical library and reflects a long history of plant-based traditions.",
+    details:
+      "Nigella sativa is recognised by its small, dark seeds. Here it is celebrated for its distinctive appearance and connection to traditional botanical practices.",
+    traits: [
+      "Dark seeds",
+      "Textural detail",
+      "Heritage inspired",
+      "Botanical ritual",
+    ],
+  },
 ];
 const traitIcons = [Leaf, Flower2, Sprout, Sparkles];
 const asset = (name) => imageUrl(`${import.meta.env.BASE_URL}${name}`);
@@ -147,10 +227,7 @@ export default function AboutIngredientStory() {
       />
       <div className="botanical-inner">
         <header className="botanical-heading">
-          <Sprout size={25} strokeWidth={1.3} aria-hidden="true" />
-          <p className="botanical-eyebrow">
-            <span /> POWERED BY NATURE <span />
-          </p>
+          <p className="eyebrow botanical-eyebrow">POWERED BY NATURE</p>
           <h2 id="botanical-title">
             Rooted in Ayurveda.
             <br className="botanical-mobile-break" /> <em>Rich in nature.</em>

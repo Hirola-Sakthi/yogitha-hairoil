@@ -87,7 +87,7 @@ export function ProductPurchase({ product }) {
       </div>
     </div>
     <div className="oil-details">
-      <p className="eyebrow">DR. YOGITHA’S · BOTANICAL HAIR CARE</p>
+      <p className="eyebrow">BOTANICAL HAIR CARE</p>
       <h2>{p.name}</h2>
       <p className="oil-intro">{p.description}</p>
       <div className="oil-pricing" aria-live="polite"><strong>{p.pricePaise > 0 ? money(p.pricePaise) : "Coming soon"}</strong>
@@ -108,8 +108,7 @@ export function ProductPurchase({ product }) {
         <AddToCartButton key={`${p.id}-${size}-${qty}`} product={p} quantity={qty} showFeedback={false} />
         {available ? <Link className="oil-buy-now" to={`/checkout?product=${encodeURIComponent(p.id)}&variant=${size}&quantity=${qty}`}>Buy now <ArrowUpRight size={17} /></Link>
           : <button className="oil-buy-now" disabled>Buy now</button>}
-      </div>      <div className="oil-purchase-note"><ShoppingBag size={17} /><span>Choose your size. Make it part of your everyday ritual.</span></div>
-      <p className="oil-sku">SKU {p.sku} <span>Shipping calculated at checkout</span></p>
+      </div>
     </div>
   </div>;
 }

@@ -105,7 +105,6 @@ export default function AboutPage() {
             <span className="about-doctor-image-caption">DR. YOGITHA&apos;S &middot; PERSONAL CARE, ROOTED IN TRADITION</span>
           </div>
           <div className="about-doctor-copy">
-            <Leaf className="about-doctor-emblem" aria-hidden="true" />
             <p className="eyebrow">A NOTE FROM THE FOUNDER</p>
             <h2>Meet Dr. Yogitha.</h2>
             <p className="about-doctor-lead">A thoughtful approach to hair care, inspired by the wisdom of Ayurveda.</p>

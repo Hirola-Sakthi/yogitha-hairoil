@@ -192,7 +192,7 @@ export default function ProductSequence() {
         </picture>
         <canvas ref={canvas} className="film-canvas" aria-hidden="true" />
         <div className="film-shade" />
-        <div className="scene-copy intro-copy"><p className="eyebrow">DR. YOGITHA'S · AYURVEDIC HAIR OIL</p><h2>Ayurvedic hair care, rooted in tradition.</h2><p>A golden blend of botanical oils, inspired by Ayurvedic traditions.<br />Make hair care a considered ritual—and a little time for yourself.</p><a className="pill-button" href="#shop">Discover the oil <span aria-hidden="true">↗</span></a></div>
+        <div className="scene-copy intro-copy"><p className="eyebrow">DR. YOGITHA&apos;S</p><h2>Ayurvedic hair care, rooted in tradition.</h2><p>A golden blend of botanical oils, inspired by Ayurvedic traditions.<br />Make hair care a considered ritual—and a little time for yourself.</p><a className="pill-button" href="#shop">Discover the oil <span aria-hidden="true">↗</span></a></div>
         <div className="scene-copy formula-copy"><p className="eyebrow">THE BOTANICAL STORY</p><h2>Botanical oils,<br /><span>rooted in tradition.</span></h2><p>A golden blend of botanical oils,<br />inspired by Ayurvedic traditions.</p></div>
         <div className="scene-copy filling-copy"><p className="eyebrow">THE GOLDEN POUR</p><h2>From bowl<br /><span>to bottle.</span></h2><p>Watch the golden oil come together,<br />ready for your hair-care ritual.</p></div>
         <div className="scene-copy packaging-copy"><p className="eyebrow">THE FINAL TOUCH</p><h2>A considered<br /><span>final touch.</span></h2><p>A clear bottle, finished with a black cap<br />and a botanical label.</p></div>

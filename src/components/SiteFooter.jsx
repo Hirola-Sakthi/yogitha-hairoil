@@ -1,7 +1,7 @@
 import { useStore } from "../commerce/StoreContext";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MessageCircle, Truck, HeartHandshake } from "lucide-react";
-import { FaInstagram, FaFacebookF, FaYoutube, FaLinkedinIn, FaMoneyBillWave } from "react-icons/fa6";
+import { Mail, Phone, Truck, HeartHandshake } from "lucide-react";
+import { FaInstagram, FaFacebookF, FaYoutube, FaLinkedinIn, FaMoneyBillWave, FaWhatsapp } from "react-icons/fa6";
 import { storeContact, policyNavigation } from "../shared/storeDefaults";
 import "./site-footer.css";
 
@@ -14,7 +14,9 @@ export default function SiteFooter() {
   const product = data?.products.find(p => p.id === "hair-oil") || data?.products[0];
   const socials = [["Instagram", "instagramUrl", FaInstagram], ["Facebook", "facebookUrl", FaFacebookF], ["YouTube", "youtubeUrl", FaYoutube], ["LinkedIn", "linkedinUrl", FaLinkedinIn]];
   const whatsApp = contact?.whatsapp?.replace(/\D/g, "");
-  return <footer className="store-footer">
+  const whatsAppMessage = contact?.whatsappMessage?.trim() || "Hello Dr. Yogitha's Team, I would like to inquire about the Intensive Hair Ampoule";
+  return <>
+  <footer className="store-footer">
     <div className="store-footer-main">
       <div className="store-footer-brand">
         <Link className="store-footer-wordmark" to="/" aria-label={`${brand} home`}>
@@ -44,7 +46,6 @@ export default function SiteFooter() {
       <div className="store-footer-column store-footer-contact"><h2>CONTACT</h2>
         {contact?.email && <a href={`mailto:${contact.email}`}><Mail size={16} /><span>{contact.email}</span></a>}
         {contact?.phone && <a href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`}><Phone size={16} /><span>{contact.phone}</span></a>}
-        {whatsApp && <a href={`https://wa.me/${whatsApp}`} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /><span>WhatsApp</span></a>}
         {contact?.address && <address>{contact.address}</address>}
       </div>
     </div>
@@ -58,5 +59,7 @@ export default function SiteFooter() {
       <p className="footer-payment-label"><FaMoneyBillWave aria-hidden="true" /> {[data?.checkout.cod && "CASH ON DELIVERY", data?.checkout.onlinePayments && "RAZORPAY"].filter(Boolean).join(" · ") || "ONLINE PAYMENTS ARE NOT ENABLED"}</p>
     </div>
     <div className="store-footer-bottom"><p>© {new Date().getFullYear()} {brand}. All rights reserved.</p><Link to="/#top">Back to top ↑</Link></div>
-  </footer>;
+  </footer>
+  {whatsApp && <a className="whatsapp-float" href={`https://wa.me/${whatsApp}?text=${encodeURIComponent(whatsAppMessage)}`} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" title="Chat with us on WhatsApp"><FaWhatsapp aria-hidden="true" /></a>}
+  </>;
 }

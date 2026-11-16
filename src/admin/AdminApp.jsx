@@ -1689,6 +1689,7 @@ function SettingsForm({ data, busy, onSave }) {
               ["email", "Support email"],
               ["phone", "Phone"],
               ["whatsapp", "WhatsApp number with country code (optional)"],
+              ["whatsappMessage", "WhatsApp prefilled message"],
               ["instagramUrl", "Instagram profile URL"],
               ["facebookUrl", "Facebook page URL"],
               ["youtubeUrl", "YouTube channel URL"],
@@ -1711,6 +1712,14 @@ function SettingsForm({ data, busy, onSave }) {
             <p>Publish only confirmed business information.</p>
             {fields.map(([k, l]) => (
               k === "socialImage" ? null :
+              k === "whatsappMessage" ? <label key={k}>
+                {l}
+                <textarea
+                  value={form[k] ?? ""}
+                  placeholder="Hello Dr. Yogitha's Team, I would like to inquire about the Intensive Hair Ampoule"
+                  onChange={(e) => setForm({ ...form, [k]: e.target.value })}
+                />
+              </label> :
               <label key={k}>
                 {l}
                 <input

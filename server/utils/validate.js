@@ -78,6 +78,7 @@ const schemas = {
     youtubeUrl: "url",
     linkedinUrl: "url",
     whatsapp: "text",
+    whatsappMessage: "long",
     brand: "text",
     description: "long",
     email: "optionalEmail",

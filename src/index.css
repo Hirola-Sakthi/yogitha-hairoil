@@ -223,11 +223,55 @@ canvas {
   margin-top: 23px;
 }
 .eyebrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  width: fit-content;
+  padding: 0 0 17px;
+  color: var(--brand);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  line-height: 1.6;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  line-height: 1.25;
   margin-bottom: 21px;
+  text-transform: uppercase;
+}
+.eyebrow::before,
+.eyebrow::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+.eyebrow::before {
+  display: none;
+}
+.eyebrow::after {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 12px;
+  background:
+    radial-gradient(circle at center, #bf8b22 0 6px, transparent 6.8px),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--brand) 58%, transparent) 12%, color-mix(in srgb, var(--brand) 58%, transparent) 88%, transparent);
+  background-size: 100% 100%, 100% 1px;
+  background-position: center, center;
+  background-repeat: no-repeat;
+}
+.scene-copy .eyebrow,
+.about-purpose-panel > .eyebrow,
+.about-ritual-cta-copy .eyebrow {
+  color: #f0db9d;
+}
+.scene-copy .eyebrow::after,
+.about-purpose-panel > .eyebrow::after,
+.about-ritual-cta-copy .eyebrow::after {
+  background:
+    radial-gradient(circle at center, #d19a26 0 6px, transparent 6.8px),
+    linear-gradient(90deg, transparent, rgb(225 236 210 / 72%) 12%, rgb(225 236 210 / 72%) 88%, transparent);
+  background-size: 100% 100%, 100% 1px;
+  background-position: center, center;
+  background-repeat: no-repeat;
 }
 .intro-copy h1 {
   font-size: clamp(40px, 4.1vw, 74px);
@@ -744,6 +788,22 @@ dialog small {
     gap: 8px;
   }
 }
+
+/* One consistent eyebrow scale across all home-page sections. */
+.scene-copy .eyebrow,
+.shop-copy .eyebrow,
+.oil-details .eyebrow,
+.keystones .eyebrow,
+.customer-reviews .eyebrow,
+.home-faq-section .eyebrow,
+.home-social-gallery .eyebrow,
+.home-recent-blogs .eyebrow,
+.home-ritual-cta .eyebrow {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: .3em !important;
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   .sequence {
@@ -1402,9 +1462,6 @@ dialog small {
   text-align: center;
 }
 .about-doctor-copy { position: relative; z-index: 1; max-width: 570px; }
-.about-doctor-emblem { display: block; width: 23px; height: 23px; margin: 0 auto 13px; color: var(--color-526841); stroke-width: 1.5; }
-.about-doctor-copy > .eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 18px; color: var(--color-526841); letter-spacing: .24em; text-align: center; }
-.about-doctor-copy > .eyebrow::before, .about-doctor-copy > .eyebrow::after { height: 1px; flex: 1; background: color-mix(in srgb, #c9b477 58%, transparent); content: ""; }
 .about-doctor-copy h2 { margin: 0; color: var(--brand); font-size: clamp(42px, 5vw, 68px); font-weight: 500; letter-spacing: -.05em; line-height: 1.03; }
 .about-doctor-rule { display: block; width: 72px; height: 1px; margin: 21px 0; background: color-mix(in srgb, var(--brand) 55%, transparent); }
 .about-doctor-lead { max-width: 470px; margin: 0; color: var(--brand); font-size: clamp(18px, 1.8vw, 23px); line-height: 1.55; }
@@ -1423,6 +1480,13 @@ dialog small {
 .about-purpose-mission { border: 1px solid color-mix(in srgb, var(--brand) 13%, transparent); border-radius: 14px 14px 58px 14px; background: var(--color-f7f5ed, #f7f5ed); color: var(--brand); box-shadow: 0 12px 32px rgb(39 52 38 / 6%); }
 .about-purpose-panel > .eyebrow { margin: 0 0 15px; color: #d8c796; font-size: 9px; font-weight: 650; letter-spacing: .2em; }
 .about-purpose-mission > .eyebrow { color: var(--color-526841); }
+.about-purpose-panel > .eyebrow {
+  min-height: 0;
+  padding: 0;
+}
+.about-purpose-panel > .eyebrow::after {
+  display: none;
+}
 .about-purpose-panel h3 { position: relative; z-index: 1; max-width: 420px; margin: 0; font-size: clamp(24px, 2.7vw, 35px); font-weight: 500; letter-spacing: -.035em; line-height: 1.2; }
 .about-purpose-vision h3 { color: var(--color-fff2e2); }
 .about-purpose-mission h3 { color: var(--brand); }
@@ -1435,7 +1499,7 @@ dialog small {
 .about-ritual-guide::before { position: absolute; z-index: -1; top: -240px; right: -160px; width: 620px; height: 620px; border: 1px solid rgb(216 199 150 / 13%); border-radius: 50%; content: ""; }
 .about-ritual-guide::after { position: absolute; z-index: -1; bottom: -210px; left: -180px; width: 470px; height: 470px; border: 1px solid rgb(216 199 150 / 10%); border-radius: 50%; content: ""; }
 .about-ritual-guide-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .72fr); align-items: end; gap: clamp(32px, 8vw, 110px); padding: clamp(42px, 6vw, 72px) clamp(28px, 6vw, 72px) clamp(34px, 4vw, 50px); border-bottom: 1px solid rgb(216 199 150 / 20%); }
-.about-ritual-guide-heading .eyebrow { margin: 0 0 15px; color: #d8c796; font-size: 9px; font-weight: 650; letter-spacing: .28em; }
+.about-ritual-guide-heading .eyebrow { margin: 0 0 15px; color: var(--brand); font-size: 10px; font-weight: 700; letter-spacing: .3em; }
 .about-ritual-guide-heading h2 { margin: 0; color: var(--cream); font-size: clamp(42px, 5.4vw, 68px); font-weight: 500; letter-spacing: -.055em; line-height: .98; }
 .about-ritual-guide-heading h2 span { color: #d8c796; font-style: italic; font-weight: 400; }
 .about-ritual-guide-heading > p { max-width: 410px; margin: 0 0 4px; color: rgb(255 250 237 / 72%); font-size: 14px; line-height: 1.8; }
@@ -1916,19 +1980,6 @@ dialog small {
   z-index: 2;
   width: 52%;
   padding-left: clamp(10px, 2vw, 26px);
-}
-.about-ritual-guide-heading .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin-bottom: 18px;
-  color: var(--brand);
-}
-.about-ritual-guide-heading .eyebrow::after {
-  width: 115px;
-  height: 1px;
-  background: #c9a955;
-  content: "";
 }
 .about-ritual-guide-heading h2 {
   color: var(--brand-dark);
@@ -2834,24 +2885,16 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
   margin-bottom: 14px;
   color: var(--brand);
 }
 .shop-hero-eyebrow:before,
 .shop-hero-eyebrow:after {
-  width: clamp(18px, 2vw, 40px);
-  height: 1px;
-  background: var(--accent);
-  content: "";
-}
-.shop-hero-eyebrow svg {
-  width: 22px;
-  height: 22px;
-  fill: var(--brand);
-  stroke-width: 1.4;
+  display: none;
 }
 .shop-copy .eyebrow {
+  min-height: 42px;
+  padding: 0 0 17px;
   margin: 0;
   color: var(--brand);
   font-size: 12px;
