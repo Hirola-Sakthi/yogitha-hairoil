@@ -1,6 +1,6 @@
 .home-ritual-story { padding: clamp(40px, 4vw, 72px) clamp(5%, 7.2vw, 140px); background: var(--cream); color: var(--ink); font-family: var(--font); }
 .home-ritual-story-inner { display: grid; grid-template-columns: minmax(300px, .82fr) minmax(0, 1fr); gap: clamp(44px, 8vw, 130px); width: min(1280px, 100%); margin: 0 auto; align-items: start; }
-.home-ritual-visual { position: sticky; top: 112px; overflow: hidden; border: 1px solid rgb(52 76 53 / 13%); border-radius: 24px; background: #e7e3d6; box-shadow: 0 20px 45px rgb(35 59 37 / 12%); }
+.home-ritual-visual { position: sticky; top: 112px; width: 88%; max-width: 500px; justify-self: center; overflow: hidden; border: 1px solid rgb(52 76 53 / 13%); border-radius: 24px; background: #e7e3d6; box-shadow: 0 20px 45px rgb(35 59 37 / 12%); }
 .home-ritual-visual img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; animation: ritual-image-in .45s ease both; }
 .home-ritual-story-copy { padding: 8px 0; }
 .home-ritual-story-copy .eyebrow { margin-bottom: 20px; }

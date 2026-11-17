@@ -19,6 +19,7 @@ body {
 }
 html {
   scroll-padding-top: 90px;
+  scroll-behavior: smooth;
 }
 a {
   color: inherit;

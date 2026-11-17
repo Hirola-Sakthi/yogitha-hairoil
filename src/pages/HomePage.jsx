@@ -1,6 +1,6 @@
 ﻿import { Droplets, Flower2, HandHeart, Leaf, ShieldCheck, Truck, MessageCircle } from "lucide-react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { imageUrl } from "../shared/imageUrl";
 import "./home-assurances.css";
 
@@ -15,10 +15,14 @@ const RecentBlogs = lazy(() => import("../commerce/RecentBlogs"));
 const RitualCta = lazy(() => import("../commerce/RitualCta"));
 const HomeFaq = lazy(() => import("../commerce/HomeFaq"));
 
-function DeferredSection({ children, minHeight = 240 }) {
+function DeferredSection({ children, minHeight = 240, id, force = false }) {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(force);
   useEffect(() => {
+    if (force) {
+      setVisible(true);
+      return undefined;
+    }
     const element = ref.current;
     if (!element) return undefined;
     const observer = new IntersectionObserver(([entry]) => {
@@ -30,7 +34,7 @@ function DeferredSection({ children, minHeight = 240 }) {
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
-  return <div ref={ref} style={visible ? undefined : { minHeight }}><Suspense fallback={null}>{visible ? children : null}</Suspense></div>;
+  return <div id={id} ref={ref} style={visible ? undefined : { minHeight }}><Suspense fallback={null}>{visible ? children : null}</Suspense></div>;
 }
 
 function HeroFallback() {
@@ -45,7 +49,16 @@ function HeroFallback() {
 }
 
 export default function HomePage() {
+  const location = useLocation();
   const [sequenceActive, setSequenceActive] = useState(() => !matchMedia("(max-width: 600px)").matches);
+  const shouldScrollToShop = location.state?.scrollTo === "shop";
+  useEffect(() => {
+    if (!shouldScrollToShop) return undefined;
+    const frame = requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
+    return () => cancelAnimationFrame(frame);
+  }, [shouldScrollToShop]);
   useEffect(() => {
     if (!matchMedia("(max-width: 600px)").matches) return undefined;
     const activate = () => setSequenceActive(true);
@@ -108,10 +121,10 @@ export default function HomePage() {
           <Link className="shop-discover" to="/about">Discover More <span aria-hidden="true">&rarr;</span></Link>
         </div>
       </section>
-      <DeferredSection minHeight={760}><ProductCollection /></DeferredSection>
-      <DeferredSection minHeight={520}><ManufacturingRegistry /></DeferredSection>
+      <DeferredSection id="shop" minHeight={760} force={shouldScrollToShop}><ProductCollection /></DeferredSection>
       <DeferredSection minHeight={620}><OilBlendStory /></DeferredSection>
       <DeferredSection minHeight={860}><HomeRitualGuide /></DeferredSection>
+      <DeferredSection minHeight={520}><ManufacturingRegistry /></DeferredSection>
       <DeferredSection minHeight={760}><IngredientStoryCards /></DeferredSection>
       <DeferredSection minHeight={400}><CustomerReviews /></DeferredSection>
       <section className="home-assurances" aria-label="Shopping with confidence">

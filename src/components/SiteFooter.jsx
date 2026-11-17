@@ -1,11 +1,13 @@
 import { useStore } from "../commerce/StoreContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Mail, Phone, Truck, HeartHandshake } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaYoutube, FaLinkedinIn, FaMoneyBillWave, FaWhatsapp } from "react-icons/fa6";
 import { storeContact, policyNavigation } from "../shared/storeDefaults";
 import "./site-footer.css";
 
 export default function SiteFooter() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { data } = useStore();
   const settings = data?.settings;
   const contact = { ...settings, email: settings?.email || storeContact.email, phone: settings?.phone || storeContact.phone, address: settings?.address || storeContact.address };
@@ -15,6 +17,14 @@ export default function SiteFooter() {
   const socials = [["Instagram", "instagramUrl", FaInstagram], ["Facebook", "facebookUrl", FaFacebookF], ["YouTube", "youtubeUrl", FaYoutube], ["LinkedIn", "linkedinUrl", FaLinkedinIn]];
   const whatsApp = contact?.whatsapp?.replace(/\D/g, "");
   const whatsAppMessage = contact?.whatsappMessage?.trim() || "Hello Dr. Yogitha's Team, I would like to inquire about the Intensive Hair Ampoule";
+  const goToShop = (event) => {
+    event.preventDefault();
+    if (location.pathname === "/") {
+      document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    navigate("/", { state: { scrollTo: "shop" } });
+  };
   return <>
   <footer className="store-footer">
     <div className="store-footer-main">
@@ -31,7 +41,7 @@ export default function SiteFooter() {
         </div></div>
       </div>
       <nav className="store-footer-column" aria-label="Shop links"><h2>SHOP</h2>
-        {product && <Link to={`/products/${product.slug}`}>50 ml & 100 ml</Link>}
+        {product && <Link to="/#shop" onClick={goToShop}>50 ml & 100 ml</Link>}
         <Link to="/cart">Shopping bag</Link>
         <Link to="/blog">The journal</Link>
       </nav>

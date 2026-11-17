@@ -1,5 +1,5 @@
 import { Menu, UserRound, X } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const prefetch = {
@@ -12,6 +12,8 @@ const prefetch = {
 const prefetchRoute = (path) => () => prefetch[path]?.();
 
 export default function SiteHeader({ bagQuantity }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -25,6 +27,15 @@ export default function SiteHeader({ bagQuantity }) {
   }, [menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+  const goToShop = (event) => {
+    event.preventDefault();
+    closeMenu();
+    if (location.pathname === "/") {
+      document.getElementById("shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    navigate("/", { state: { scrollTo: "shop" } });
+  };
   return (
     <>
     <header className="site-header">
@@ -69,7 +80,7 @@ export default function SiteHeader({ bagQuantity }) {
       >
         <UserRound size={18} />
       </Link>
-      <Link to="/#shop" className="nav-shop">
+      <Link to="/#shop" className="nav-shop" onClick={goToShop}>
         Shop
       </Link>
     </header>

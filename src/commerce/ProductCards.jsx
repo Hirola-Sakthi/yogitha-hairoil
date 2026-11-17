@@ -56,7 +56,7 @@ export function ProductCard({ product }) {
 export default function ProductCollection() {
   const { data, error } = useStore();
   const product = data?.products.find(p => p.id === "hair-oil") || data?.products[0];
-  return <section id="shop" className="home-collection single-product-section" aria-label="Shop our hair oil" tabIndex={-1}>
+  return <section className="home-collection single-product-section" aria-label="Shop our hair oil" tabIndex={-1}>
     {error && !data ? <p className="collection-empty" role="alert">We couldn’t load the collection. Please try again shortly.</p>
       : !data ? <p className="collection-empty" role="status">Loading our collection…</p>
       : product ? <ProductPurchase key={product.id} product={product} />

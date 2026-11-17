@@ -61,18 +61,28 @@ export default function App() {
 
   useEffect(() => {
     if (location.hash) {
-      const target = document.getElementById(location.hash.slice(1));
-      if (!target) return;
-      if (lenisRef.current) {
-        lenisRef.current.scrollTo(target, {
-          duration: 1.1,
-          onComplete: () => target.focus({ preventScroll: true }),
-        });
-      } else {
-        target.scrollIntoView();
-        target.focus({ preventScroll: true });
-      }
-      return;
+      const targetId = decodeURIComponent(location.hash.slice(1));
+      let frameId;
+      let attempts = 0;
+      const scrollToTarget = () => {
+        const target = document.getElementById(targetId);
+        if (!target && attempts++ < 30) {
+          frameId = requestAnimationFrame(scrollToTarget);
+          return;
+        }
+        if (!target) return;
+        if (lenisRef.current) {
+          lenisRef.current.scrollTo(target, {
+            duration: 1.1,
+            onComplete: () => target.focus({ preventScroll: true }),
+          });
+        } else {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          target.focus({ preventScroll: true });
+        }
+      };
+      frameId = requestAnimationFrame(scrollToTarget);
+      return () => cancelAnimationFrame(frameId);
     }
 
     lenisRef.current?.scrollTo(0, { immediate: true });
