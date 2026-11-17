@@ -5,6 +5,8 @@ import { imageUrl } from "../shared/imageUrl";
 import "./home-assurances.css";
 
 const ProductCollection = lazy(() => import("../commerce/ProductCards"));
+const ManufacturingRegistry = lazy(() => import("../commerce/ManufacturingRegistry"));
+const OilBlendStory = lazy(() => import("../commerce/OilBlendStory"));
 const HomeRitualGuide = lazy(() => import("../commerce/HomeRitualGuide"));
 const ProductSequence = lazy(() => import("../ProductSequence"));
 const IngredientStoryCards = lazy(() => import("../commerce/IngredientStoryCards"));
@@ -107,6 +109,8 @@ export default function HomePage() {
         </div>
       </section>
       <DeferredSection minHeight={760}><ProductCollection /></DeferredSection>
+      <DeferredSection minHeight={520}><ManufacturingRegistry /></DeferredSection>
+      <DeferredSection minHeight={620}><OilBlendStory /></DeferredSection>
       <DeferredSection minHeight={860}><HomeRitualGuide /></DeferredSection>
       <DeferredSection minHeight={760}><IngredientStoryCards /></DeferredSection>
       <DeferredSection minHeight={400}><CustomerReviews /></DeferredSection>

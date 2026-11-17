@@ -1,0 +1,88 @@
+.manufacturing-registry {
+  padding: clamp(40px, 4vw, 72px) clamp(5%, 7.2vw, 140px);
+  background: var(--cream);
+  color: var(--brand);
+}
+
+.manufacturing-registry-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.03fr) minmax(500px, 1fr);
+  gap: clamp(42px, 6vw, 96px);
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  align-items: center;
+}
+
+.manufacturing-registry-intro .eyebrow { margin-bottom: 18px; }
+
+.manufacturing-registry-intro h2 {
+  max-width: 620px;
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: clamp(37px, 4.1vw, 60px);
+  font-weight: 550;
+  letter-spacing: -.055em;
+  line-height: .98;
+}
+
+.manufacturing-registry-intro h2 span { display: block; }
+
+.manufacturing-registry-description {
+  max-width: 650px;
+  margin: 24px 0 25px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.manufacturing-registry-unit,
+.manufacturing-registry-card {
+  border: 1px solid rgb(52 76 53 / 11%);
+  border-radius: 18px;
+  background: rgb(255 254 249 / 82%);
+}
+
+.manufacturing-registry-unit { max-width: 720px; padding: 25px 30px; }
+.manufacturing-registry-unit > span,
+.manufacturing-registry-card > span {
+  display: block;
+  color: #8d8982;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  line-height: 1.25;
+}
+
+.manufacturing-registry-unit strong,
+.manufacturing-registry-card strong {
+  display: block;
+  color: var(--brand-dark);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.manufacturing-registry-unit strong { margin: 13px 0 5px; }
+.manufacturing-registry-unit p,
+.manufacturing-registry-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+.manufacturing-registry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.manufacturing-registry-card { min-height: 124px; padding: 25px; }
+.manufacturing-registry-card strong { margin: 11px 0 5px; font-size: 17px; }
+.manufacturing-registry-card p.is-verified { color: #088a61; }
+.manufacturing-registry-card p.is-verified::before { display: inline-block; width: 7px; height: 7px; margin: 0 5px 1px 0; border-radius: 50%; background: currentColor; content: ""; }
+
+@media (max-width: 900px) {
+  .manufacturing-registry { padding: 54px 8% 62px; }
+  .manufacturing-registry-inner { grid-template-columns: 1fr; gap: 35px; }
+  .manufacturing-registry-unit { max-width: none; }
+}
+
+@media (max-width: 600px) {
+  .manufacturing-registry { padding: 32px 6% 42px; }
+  .manufacturing-registry-intro h2 { font-size: clamp(35px, 10vw, 50px); }
+  .manufacturing-registry-description { margin: 17px 0 20px; font-size: 14px; }
+  .manufacturing-registry-unit { padding: 20px; }
+  .manufacturing-registry-grid { grid-template-columns: 1fr; gap: 12px; }
+  .manufacturing-registry-card { min-height: auto; padding: 20px; }
+}

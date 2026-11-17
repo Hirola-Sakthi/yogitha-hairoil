@@ -798,7 +798,10 @@ dialog small {
 .home-faq-section .eyebrow,
 .home-social-gallery .eyebrow,
 .home-recent-blogs .eyebrow,
-.home-ritual-cta .eyebrow {
+.home-ritual-cta .eyebrow,
+.manufacturing-registry .eyebrow,
+.oil-blend-story .eyebrow,
+.home-ritual-story .eyebrow {
   font-size: 10px !important;
   font-weight: 700 !important;
   letter-spacing: .3em !important;

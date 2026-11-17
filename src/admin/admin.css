@@ -1255,7 +1255,14 @@ button:disabled {
   margin: 0;
 }
 .login-form > p { margin: 0; font-size: 15px; }
-.login-form > .overline { font-size: 11px; letter-spacing: 1.6px; }
+.login-form > .login-eyebrow {
+  align-self: flex-start;
+  margin: 0 -1px -4px;
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .3em;
+}
 .login-input {
   display: flex;
   align-items: center;

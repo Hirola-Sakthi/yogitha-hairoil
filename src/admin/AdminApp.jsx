@@ -684,8 +684,8 @@ function Dashboard({ data }) {
         </div>
         <div className="welcome-art">
           <img
-            src={imageUrl("/product-showcase.webp")}
-            alt="Dr. Yogitha's botanical hair oil"
+            src={imageUrl("/how-to-use-banner.png")}
+            alt="Dr. Yogitha's botanical hair oil ritual"
           />
           <span>THE EVERYDAY RITUAL</span>
         </div>
@@ -1841,7 +1841,7 @@ function AdminLogin({ onLogin }) {
           <Leaf size={34} aria-hidden="true" />
           <div><h1>Dr. Yogitha’s</h1><p>Ayurvedic herbal care.</p></div>
         </div>
-        <img src={imageUrl("/admin-login-nature.png")} alt="Dr. Yogitha’s Ayurvedic hair oil surrounded by herbs and flowers" />
+        <img src={imageUrl("/how-to-use-banner.png")} alt="Dr. Yogitha's botanical hair oil ritual" />
       </div>
       <form
         className="cms-form login-form"
@@ -1863,7 +1863,7 @@ function AdminLogin({ onLogin }) {
           }
         }}
       >
-        <p className="overline">DR. YOGITHA’S · PRIVATE STUDIO</p>
+        <p className="eyebrow login-eyebrow">PRIVATE STUDIO</p>
         <h2>Welcome back.</h2>
         <p>Sign in to care for your store.</p>
         <label>
