@@ -118,6 +118,16 @@ export default function AboutPage() {
             <Link className="about-doctor-link" to="/#shop">Discover the hair oil <span aria-hidden="true">&rarr;</span></Link>
           </div>
         </div>
+        <section className="about-cinematic-ritual" aria-label="Dr. Yogitha's botanical ritual video">
+          <div className="about-cinematic-ritual-film" aria-label="Dr. Yogitha's botanical ritual video">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/jAOvro8WSt4?autoplay=1&mute=1&controls=0&loop=1&playlist=jAOvro8WSt4&playsinline=1&rel=0&modestbranding=1"
+              title="Dr. Yogitha's botanical ritual video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </section>
         <section className="about-purpose" aria-labelledby="about-purpose-title">
           <header className="about-purpose-heading">
             <p className="eyebrow">WHAT GUIDES US</p>

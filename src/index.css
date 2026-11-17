@@ -1693,6 +1693,15 @@ dialog small {
 .about-journey-pillars span { color: rgb(255 250 237 / 83%); font-size: 10px; }
 .about-journey-link { display: inline-flex; align-items: center; gap: 13px; margin-top: 26px; padding: 13px 19px; border: 1px solid var(--brand); border-radius: 999px; background: var(--brand); color: var(--color-fff2e2); font-size: 13px; font-weight: 600; text-decoration: none; transition: gap .2s ease, background-color .2s ease; }
 .about-journey-link:hover { gap: 19px; background: var(--brand-dark); }
+.about-cinematic-ritual { width: min(1120px, 100%); margin: clamp(50px, 7vw, 100px) auto clamp(54px, 7vw, 92px); }
+.about-cinematic-ritual-film { position: relative; min-height: clamp(310px, 43vw, 550px); overflow: hidden; border: 0; border-radius: 30px 30px 74px 30px; background: var(--brand-dark); box-shadow: 0 24px 48px rgb(35 59 37 / 15%); isolation: isolate; }
+.about-cinematic-ritual-film video,
+.about-cinematic-ritual-film iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
+.about-cinematic-ritual-film iframe { pointer-events: none; }
+@media (max-width: 600px) {
+  .about-cinematic-ritual { margin: 46px auto 50px; }
+  .about-cinematic-ritual-film { min-height: 380px; border-radius: 20px 20px 48px 20px; }
+}
 @media (max-width: 900px) {
   .about-journey { grid-template-columns: 1fr 1fr; gap: 42px; padding: 84px 0 62px; }
   .about-journey-collage { min-height: 360px; }
