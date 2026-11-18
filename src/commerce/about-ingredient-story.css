@@ -3,7 +3,7 @@
   isolation: isolate;
   scroll-margin-top: 100px;
   overflow: hidden;
-  padding: clamp(40px, 4vw, 58px) 24px 38px;
+  padding: clamp(40px, 4vw, 72px) clamp(5%, 7.2vw, 140px);
   background:
     radial-gradient(ellipse at 15% 45%, #4c603638, transparent 45%),
     radial-gradient(ellipse at 85% 80%, #bfa56d12, transparent 42%),
@@ -14,7 +14,7 @@
 .botanical-inner {
   position: relative;
   z-index: 1;
-  max-width: 1120px;
+  max-width: 1480px;
   margin: auto;
 }
 .botanical-foliage {

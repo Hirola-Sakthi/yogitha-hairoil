@@ -790,6 +790,128 @@ dialog small {
   }
 }
 
+/* About page: each content block has its own product-section gutter. */
+.about-page-body > .about-journey,
+.about-page-body > .about-doctor,
+.about-page-body > .about-purpose,
+.about-page-body > .about-ritual-guide,
+.about-page-body > .about-explore,
+.about-page-body > .about-cinematic-ritual {
+  width: auto;
+  margin-inline: clamp(5%, 7.2vw, 140px);
+}
+.about-standards-wrap, .about-ritual-cta-wrap { padding-inline: clamp(5%, 7.2vw, 140px); }
+
+@media (max-width: 900px) {
+  .about-page-body > .about-journey,
+  .about-page-body > .about-doctor,
+  .about-page-body > .about-purpose,
+  .about-page-body > .about-ritual-guide,
+  .about-page-body > .about-explore,
+  .about-page-body > .about-cinematic-ritual { margin-inline: 8%; }
+  .about-standards-wrap, .about-ritual-cta-wrap { padding-inline: 8%; }
+}
+@media (max-width: 600px) {
+  .about-page-body > .about-journey,
+  .about-page-body > .about-doctor,
+  .about-page-body > .about-purpose,
+  .about-page-body > .about-ritual-guide,
+  .about-page-body > .about-explore,
+  .about-page-body > .about-cinematic-ritual { margin-inline: 6%; }
+  .about-standards-wrap, .about-ritual-cta-wrap { padding-inline: 6%; }
+}
+
+/* Match the Home product section: every About block owns its outer spacing. */
+.about-page.about-page-body { padding: 0; }
+.about-content-section {
+  padding: clamp(40px, 4vw, 72px) clamp(5%, 7.2vw, 140px);
+}
+.about-content-section > .about-journey,
+.about-content-section > .about-cinematic-ritual,
+.about-content-section > .about-purpose,
+.about-content-section > .about-ritual-guide,
+.about-content-section > .about-explore {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  padding: 0;
+}
+.about-content-section > .about-doctor {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .about-content-section { padding: 54px 8% 62px; }
+}
+@media (max-width: 600px) {
+  .about-content-section { padding: 32px 6% 42px; }
+}
+
+.about-standards-wrap { padding: clamp(40px, 4vw, 72px) clamp(5%, 7.2vw, 140px); }
+.about-ritual-cta-section > .about-ritual-cta { width: min(1480px, 100%); margin: 0 auto; }
+
+/* Founder feature: editorial cream-and-botanical-green composition. */
+.about-doctor {
+  min-height: clamp(480px, 38vw, 580px);
+  grid-template-columns: minmax(0, 1.38fr) minmax(300px, .62fr);
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 14px 14px 64px 14px;
+  background: linear-gradient(90deg, var(--color-f7f5ed, #f7f5ed) 0 70%, var(--brand-dark) 70% 100%);
+  box-shadow: 0 18px 44px rgb(31 47 32 / 10%);
+  overflow: hidden;
+}
+.about-doctor::before {
+  top: 7%;
+  right: -4%;
+  width: 36%;
+  height: 86%;
+  border-color: rgb(210 176 89 / 48%);
+  border-radius: 50% 50% 0 0;
+}
+.about-doctor-copy {
+  grid-column: 1;
+  grid-row: 1;
+  max-width: 690px;
+  padding: clamp(42px, 5.5vw, 78px) clamp(38px, 6vw, 96px);
+}
+.about-doctor-copy .eyebrow { color: var(--brand-dark); font-size: 10px; letter-spacing: .28em; }
+.about-doctor-copy h2 { margin-top: 31px; font-size: clamp(48px, 5.7vw, 82px); color: var(--brand-dark); line-height: .98; }
+.about-doctor-lead { max-width: 590px; margin-top: 17px; color: var(--brand-dark); font-size: clamp(22px, 2.35vw, 33px); line-height: 1.22; }
+.about-doctor-rule { width: 255px; margin: 20px 0 24px; background: linear-gradient(90deg, #c79a35 0 48%, transparent 48%); }
+.about-doctor-rule::after { display: block; width: 14px; height: 14px; margin: -6px auto 0; border-radius: 50%; background: #bf9030; content: ""; }
+.about-doctor-body { max-width: 565px; color: var(--ink); font-size: clamp(14px, 1.25vw, 17px); line-height: 1.65; }
+.about-doctor-link { margin-top: 29px; padding: 14px 23px; border-color: var(--brand-dark); background: var(--brand-dark); font-size: 15px; }
+.about-doctor-image {
+  z-index: 1;
+  grid-column: 2;
+  grid-row: 1;
+  width: min(118%, 440px);
+  max-width: none;
+  height: min(88%, 500px);
+  align-self: center;
+  justify-self: start;
+  margin-left: -22%;
+  border: 1px solid #c49a3c;
+  border-radius: 58px 58px 0 0;
+  background: #f7f5ed;
+  box-shadow: none;
+}
+.about-doctor-image::before { display: none; }
+.about-doctor-image img { border-radius: 57px 57px 0 0; object-position: center top; }
+.about-doctor-image-caption { display: none; }
+
+@media (max-width: 700px) {
+  .about-doctor { min-height: 0; grid-template-columns: 1fr; background: var(--color-f7f5ed, #f7f5ed); }
+  .about-doctor-copy { grid-column: 1; grid-row: 2; padding: 34px 25px 40px; text-align: left; }
+  .about-doctor-copy h2 { margin-top: 24px; font-size: clamp(45px, 12vw, 62px); }
+  .about-doctor-lead { font-size: 22px; }
+  .about-doctor-rule { margin-inline: 0; }
+  .about-doctor-image { grid-column: 1; grid-row: 1; width: min(84%, 380px); height: auto; aspect-ratio: 4 / 5; justify-self: end; margin: 30px 22px 0 0; border-radius: 42px 42px 0 0; background: var(--brand-dark); }
+  .about-doctor-image img { border-radius: 41px 41px 0 0; }
+}
+
 /* One consistent eyebrow scale across all home-page sections. */
 .scene-copy .eyebrow,
 .shop-copy .eyebrow,
@@ -1308,7 +1430,7 @@ dialog small {
   padding: 150px clamp(6%, 8vw, 11%) clamp(40px, 4vw, 72px);
 }
 .about-page .info-page-inner {
-  width: min(100%, 1380px);
+  width: min(100%, 1480px);
 }
 .about-page.about-page-body {
   padding-top: 0;
@@ -1472,7 +1594,7 @@ dialog small {
 .about-doctor-body { max-width: 480px; margin: 18px 0 0; color: var(--color-52604f); font-size: 15px; line-height: 1.85; }
 .about-doctor-link { display: inline-flex; align-items: center; gap: 14px; margin-top: 28px; padding: 13px 20px; border: 1px solid var(--brand); border-radius: 999px; background: var(--brand); color: var(--color-fff2e2); font-size: 13px; font-weight: 600; text-decoration: none; transition: gap .2s ease, background-color .2s ease; }
 .about-doctor-link:hover { gap: 20px; background: var(--brand-dark); }
-.about-purpose { width: min(1120px, 100%); margin: 0 auto; padding: clamp(40px, 4vw, 72px) 0; }
+.about-purpose { width: min(1480px, 100%); margin: 0 auto; padding: clamp(40px, 4vw, 72px) 0; }
 .about-purpose-heading { max-width: 700px; margin: 0 0 34px; }
 .about-purpose-heading .eyebrow { margin: 0 0 12px; color: var(--color-526841); font-size: 10px; font-weight: 650; letter-spacing: .22em; }
 .about-purpose-heading h2 { margin: 0; color: var(--brand); font-size: clamp(36px, 4.4vw, 58px); font-weight: 500; letter-spacing: -.05em; line-height: 1.08; }
@@ -1499,7 +1621,7 @@ dialog small {
 .about-purpose-leaf { position: absolute; right: -13px; bottom: -65px; color: rgb(255 255 255 / 5%); font-size: 230px; line-height: 1; transform: rotate(-18deg); pointer-events: none; }
 .about-purpose-signoff { margin-top: 27px; color: var(--color-526841); font-size: 8px; font-weight: 650; letter-spacing: .18em; }
 .about-purpose-signoff i { padding: 0 5px; color: #c9b477; font-style: normal; }
-.about-ritual-guide { position: relative; width: min(1120px, 100%); margin: clamp(34px, 5vw, 72px) auto clamp(62px, 7vw, 100px); overflow: hidden; border: 1px solid color-mix(in srgb, #d0ba88 42%, transparent); border-radius: 28px 8px 28px 8px; background: var(--brand-dark); color: var(--cream); box-shadow: 0 26px 70px rgb(24 39 26 / 18%); isolation: isolate; }
+.about-ritual-guide { position: relative; width: min(1480px, 100%); margin: clamp(34px, 5vw, 72px) auto clamp(62px, 7vw, 100px); overflow: hidden; border: 1px solid color-mix(in srgb, #d0ba88 42%, transparent); border-radius: 28px 8px 28px 8px; background: var(--brand-dark); color: var(--cream); box-shadow: 0 26px 70px rgb(24 39 26 / 18%); isolation: isolate; }
 .about-ritual-guide::before { position: absolute; z-index: -1; top: -240px; right: -160px; width: 620px; height: 620px; border: 1px solid rgb(216 199 150 / 13%); border-radius: 50%; content: ""; }
 .about-ritual-guide::after { position: absolute; z-index: -1; bottom: -210px; left: -180px; width: 470px; height: 470px; border: 1px solid rgb(216 199 150 / 10%); border-radius: 50%; content: ""; }
 .about-ritual-guide-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .72fr); align-items: end; gap: clamp(32px, 8vw, 110px); padding: clamp(42px, 6vw, 72px) clamp(28px, 6vw, 72px) clamp(34px, 4vw, 50px); border-bottom: 1px solid rgb(216 199 150 / 20%); }
@@ -1526,7 +1648,7 @@ dialog small {
 .about-ritual-guide-note a { display: inline-flex; align-items: center; gap: 12px; color: #e2d5ae; font-size: 11px; font-weight: 650; letter-spacing: .05em; white-space: nowrap; transition: gap .2s ease; }
 .about-ritual-guide-note a:hover { gap: 17px; }
 .about-standards-wrap { padding: 26px clamp(6%, 8vw, 11%) clamp(40px, 4vw, 72px); background: var(--cream); }
-.about-standards { max-width: 1380px; margin: 0 auto; padding: clamp(30px, 4.5vw, 52px) clamp(20px, 3vw, 38px); border: 1px solid color-mix(in srgb, var(--brand) 10%, transparent); border-radius: 18px; background: var(--color-f7f5ed, #f7f5ed); box-shadow: 0 10px 28px rgb(39 52 38 / 5%); }
+.about-standards { max-width: 1480px; margin: 0 auto; padding: clamp(30px, 4.5vw, 52px) clamp(20px, 3vw, 38px); border: 1px solid color-mix(in srgb, var(--brand) 10%, transparent); border-radius: 18px; background: var(--color-f7f5ed, #f7f5ed); box-shadow: 0 10px 28px rgb(39 52 38 / 5%); }
 .about-standards h2 { display: flex; align-items: center; justify-content: center; gap: 11px; margin: 0 0 36px; color: var(--brand); font-size: clamp(22px, 2.8vw, 31px); font-weight: 500; letter-spacing: -.025em; line-height: 1.25; text-align: center; }
 .about-standards h2 svg { flex: 0 0 auto; color: var(--color-526841); }
 .about-standards-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; gap: clamp(10px, 2vw, 26px); }
@@ -1535,12 +1657,12 @@ dialog small {
 .about-standard-icon::before { position: absolute; inset: 4px; border: 1px solid color-mix(in srgb, var(--brand) 45%, transparent); border-radius: inherit; content: ""; pointer-events: none; }
 .about-standard-icon svg { width: 40px; height: 40px; }
 .about-standard strong { max-width: 150px; color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.4; }
-.about-explore { width: min(1120px, 100%); margin: 58px auto 56px; }
+.about-explore { width: min(1480px, 100%); margin: 58px auto 56px; }
 .about-explore-heading { display: grid; justify-items: center; margin: 0 0 28px; text-align: center; }
 .about-explore-heading .eyebrow { margin: 0 0 8px; color: var(--color-526841); font-size: 10px; font-weight: 650; letter-spacing: .2em; }
 .about-explore-heading h2 { margin: 0; color: var(--brand); font-size: clamp(30px, 3.5vw, 42px); font-weight: 500; letter-spacing: -.04em; }
 .about-explore-heading > span { width: 62px; height: 1px; margin-top: 15px; background: color-mix(in srgb, #c9b477 72%, transparent); }
-.about-explore-grid { display: grid; max-width: 1120px; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 19px); margin: 0 auto; }
+.about-explore-grid { display: grid; max-width: 1480px; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 19px); margin: 0 auto; }
 .about-explore-card { position: relative; display: block; min-width: 0; padding: 0; aspect-ratio: .72; overflow: hidden; border: 1px solid color-mix(in srgb, var(--brand) 12%, transparent); border-radius: 12px; background: #101610; color: var(--cream); box-shadow: 0 10px 26px rgb(42 51 37 / 10%); font: inherit; isolation: isolate; text-align: left; cursor: pointer; }
 .about-explore-card::after { display: none; }
 .about-explore-card::after { position: absolute; z-index: 0; inset: 0; background: linear-gradient(180deg, rgb(18 34 22 / 10%) 0%, transparent 32%, rgb(18 34 22 / 78%) 100%); content: ""; transition: opacity .3s ease; }
@@ -1572,7 +1694,7 @@ dialog small {
 .about-reel-prev { left: 26px; }
 .about-reel-next { right: 26px; }
 .about-reel-close:hover, .about-reel-nav:hover { background: rgb(255 250 237 / 24%); }
-.about-ritual-cta { position: relative; display: grid; width: min(1120px, 100%); min-height: 370px; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; isolation: isolate; overflow: hidden; margin: 0 auto 52px; border: 1px solid color-mix(in srgb, #d0ba88 38%, transparent); border-radius: 22px; background: linear-gradient(112deg, var(--brand-dark), var(--brand) 72%, #40573b); color: var(--cream); box-shadow: 0 18px 44px rgb(31 47 32 / 14%); }
+.about-ritual-cta { position: relative; display: grid; width: min(1480px, 100%); min-height: 370px; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; isolation: isolate; overflow: hidden; margin: 0 auto 52px; border: 1px solid color-mix(in srgb, #d0ba88 38%, transparent); border-radius: 22px; background: linear-gradient(112deg, var(--brand-dark), var(--brand) 72%, #40573b); color: var(--cream); box-shadow: 0 18px 44px rgb(31 47 32 / 14%); }
 .about-ritual-cta::before { position: absolute; z-index: -1; top: -210px; right: 10%; width: 500px; height: 500px; border: 1px solid rgb(220 198 145 / 18%); border-radius: 50%; content: ""; }
 .about-ritual-cta-copy { position: relative; z-index: 2; grid-column: 2; grid-row: 1; max-width: 630px; padding: clamp(34px, 5vw, 66px); }
 .about-ritual-cta-copy .eyebrow { margin: 0 0 17px; color: #d8c796; font-size: 10px; font-weight: 650; letter-spacing: .22em; }
@@ -1693,7 +1815,7 @@ dialog small {
 .about-journey-pillars span { color: rgb(255 250 237 / 83%); font-size: 10px; }
 .about-journey-link { display: inline-flex; align-items: center; gap: 13px; margin-top: 26px; padding: 13px 19px; border: 1px solid var(--brand); border-radius: 999px; background: var(--brand); color: var(--color-fff2e2); font-size: 13px; font-weight: 600; text-decoration: none; transition: gap .2s ease, background-color .2s ease; }
 .about-journey-link:hover { gap: 19px; background: var(--brand-dark); }
-.about-cinematic-ritual { width: min(1120px, 100%); margin: clamp(50px, 7vw, 100px) auto clamp(54px, 7vw, 92px); }
+.about-cinematic-ritual { width: min(1480px, 100%); margin: clamp(50px, 7vw, 100px) auto clamp(54px, 7vw, 92px); }
 .about-cinematic-ritual-film { position: relative; min-height: clamp(310px, 43vw, 550px); overflow: hidden; border: 0; border-radius: 30px 30px 74px 30px; background: var(--brand-dark); box-shadow: 0 24px 48px rgb(35 59 37 / 15%); isolation: isolate; }
 .about-cinematic-ritual-film video,
 .about-cinematic-ritual-film iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
@@ -3115,5 +3237,75 @@ footer {
   .mobile-menu-backdrop:not(.is-open) {
     pointer-events: none;
   }
+}
+
+/* Final founder-feature composition — intentionally after the legacy About rules. */
+.about-doctor {
+  min-height: 550px;
+  grid-template-columns: 70% 30%;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 14px 14px 64px 14px;
+  background: linear-gradient(90deg, #faf7ef 0 70%, #103d24 70%);
+  box-shadow: none;
+}
+.about-doctor::before {
+  display: none;
+}
+.about-doctor-flower {
+  position: absolute;
+  z-index: 0;
+  top: 16px;
+  right: -13px;
+  width: min(25%, 230px);
+  height: calc(100% - 32px);
+  object-fit: contain;
+  object-position: right center;
+  opacity: .82;
+  pointer-events: none;
+}
+.about-doctor-copy {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  max-width: 710px;
+  padding: 58px 72px;
+  text-align: left;
+}
+.about-doctor-copy .eyebrow { color: #173f29; font-size: 10px; letter-spacing: .3em; }
+.about-doctor-copy h2 { margin-top: 32px; color: #103d24; font-size: clamp(52px, 5.8vw, 80px); line-height: .98; }
+.about-doctor-lead { max-width: 590px; margin-top: 17px; color: #173f29; font-size: clamp(23px, 2.25vw, 32px); line-height: 1.2; }
+.about-doctor-rule { display: none; }
+.about-doctor-rule::after { display: none; }
+.about-doctor-body { max-width: 550px; color: #323d31; font-size: 16px; line-height: 1.65; }
+.about-doctor-link { margin-top: 28px; padding: 14px 23px; border-color: #103d24; background: #103d24; color: #fffaf0; font-size: 15px; }
+.about-doctor-image {
+  z-index: 1;
+  grid-column: 2;
+  grid-row: 1;
+  width: 315px;
+  max-width: none;
+  height: 458px;
+  align-self: end;
+  justify-self: start;
+  margin-left: -132px;
+  border: 1px solid #c09031;
+  border-radius: 58px 58px 0 0;
+  background: #f7f5ed;
+}
+.about-doctor-image::before { display: none; }
+.about-doctor-image img { border-radius: 57px 57px 0 0; object-position: center top; }
+.about-doctor-image-caption { display: none; }
+
+@media (max-width: 700px) {
+  .about-doctor { min-height: 0; grid-template-columns: 1fr; background: #faf7ef; }
+  .about-doctor-copy { grid-column: 1; grid-row: 2; padding: 36px 25px 42px; }
+  .about-doctor-copy h2 { margin-top: 24px; font-size: clamp(46px, 12vw, 64px); }
+  .about-doctor-lead { font-size: 22px; }
+  .about-doctor-image { grid-column: 1; grid-row: 1; width: min(83%, 350px); height: auto; aspect-ratio: 4 / 5; justify-self: end; margin: 28px 22px 0 0; border-radius: 42px 42px 0 0; }
+  .about-doctor-image img { border-radius: 41px 41px 0 0; }
+  .about-doctor-flower { top: 13px; right: -9px; width: 32%; height: 310px; }
 }
 

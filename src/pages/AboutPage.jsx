@@ -79,6 +79,7 @@ export default function AboutPage() {
     </section>
     <section className="info-page about-page about-page-body">
       <div className="info-page-inner">
+        <div className="about-content-section">
         <section className="about-journey" aria-labelledby="about-journey-title">
           <div className="about-journey-collage" aria-label="Moments from a mindful hair-care ritual">
             <div className="about-journey-image about-journey-image-main"><img src="/routine-1.webp" alt="Long, healthy-looking hair in a botanical setting" loading="lazy" /></div>
@@ -99,7 +100,10 @@ export default function AboutPage() {
             <Link className="about-journey-link" to="/#shop">Explore the hair oil <span aria-hidden="true">&rarr;</span></Link>
           </div>
         </section>
+        </div>
+        <div className="about-content-section">
         <div className="about-doctor" id="about-details">
+          <img className="about-doctor-flower" src="/flower-design.webp" alt="" aria-hidden="true" />
           <div className="about-doctor-image">
             <img src="/dr-yogitha.jpg" alt="Dr. Yogitha" loading="lazy" />
             <span className="about-doctor-image-caption">DR. YOGITHA&apos;S &middot; PERSONAL CARE, ROOTED IN TRADITION</span>
@@ -118,6 +122,8 @@ export default function AboutPage() {
             <Link className="about-doctor-link" to="/#shop">Discover the hair oil <span aria-hidden="true">&rarr;</span></Link>
           </div>
         </div>
+        </div>
+        <div className="about-content-section">
         <section className="about-cinematic-ritual" aria-label="Dr. Yogitha's botanical ritual video">
           <div className="about-cinematic-ritual-film" aria-label="Dr. Yogitha's botanical ritual video">
             <iframe
@@ -128,6 +134,8 @@ export default function AboutPage() {
             />
           </div>
         </section>
+        </div>
+        <div className="about-content-section">
         <section className="about-purpose" aria-labelledby="about-purpose-title">
           <header className="about-purpose-heading">
             <p className="eyebrow">WHAT GUIDES US</p>
@@ -149,6 +157,8 @@ export default function AboutPage() {
             </article>
           </div>
         </section>
+        </div>
+        <div className="about-content-section">
         <section className="about-ritual-guide" aria-labelledby="about-ritual-guide-title">
           <header className="about-ritual-guide-heading">
             <div>
@@ -177,6 +187,8 @@ export default function AboutPage() {
             <span>Rooted in Ayurveda</span><i>&bull;</i><span>Backed by science</span><i>&bull;</i><span>Made with care</span>
           </div>
         </section>
+        </div>
+        <div className="about-content-section">
         <section className="about-explore" aria-labelledby="about-explore-title">
           <header className="about-explore-heading">
             <p className="eyebrow">A RITUAL, ROOTED IN CARE</p>
@@ -191,6 +203,7 @@ export default function AboutPage() {
             ))}
           </div>
         </section>
+        </div>
 
       </div>
     </section>
@@ -210,6 +223,7 @@ export default function AboutPage() {
     </div>
     <AboutIngredientStory />
     <HomeSocialGallery />
+    <div className="about-content-section about-ritual-cta-section">
     <section className="about-ritual-cta" aria-labelledby="about-ritual-cta-title">
       <div className="about-ritual-cta-copy">
         <p className="eyebrow">A MORE MINDFUL RITUAL</p>
@@ -222,6 +236,7 @@ export default function AboutPage() {
       </div>
       <span className="about-ritual-cta-note" aria-hidden="true">DR. YOGITHA&apos;S <i>&middot;</i> ROOTED IN CARE</span>
     </section>
+    </div>
     {activeReel >= 0 && (
       <div className="about-reel-backdrop" role="dialog" aria-modal="true" aria-label={aboutReels[activeReel].title} onClick={(event) => { if (event.target === event.currentTarget) setActiveReel(-1); }}>
         <button className="about-reel-close" type="button" onClick={() => setActiveReel(-1)} aria-label="Close video"><X size={21} /></button>

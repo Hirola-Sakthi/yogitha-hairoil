@@ -5,7 +5,7 @@
 }
 .home-faq-layout {
   display: grid;
-  width: min(100%, 1380px);
+  width: min(100%, 1480px);
   grid-template-columns: minmax(260px, .82fr) minmax(0, 1.18fr);
   gap: clamp(48px, 9vw, 150px);
   align-items: start;
