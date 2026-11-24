@@ -70,7 +70,7 @@ const nav = [
 const Badge = ({ value }) => (
   <span className={"badge status-" + value}>{String(value ?? "—")}</span>
 );
-const deletableModules = ["products", "leads", "posts", "categories"];
+const deletableModules = ["products", "leads", "reviews", "posts", "categories"];
 export default function AdminApp() {
   const location = useLocation(),
     navigate = useNavigate(),
@@ -1173,14 +1173,15 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
         {Object.values(uploadingImages).some(Boolean) ? "Uploading image…" : busy ? "Saving…" : "Save changes"}
           <Check size={16} />
         </button>
-        {onDelete && module !== "categories" && (
+        {onDelete && !["categories", "reviews"].includes(module) && (
           <button
             type="button"
-            className="text-button danger"
+            className="btn danger"
             disabled={busy}
             onClick={onDelete}
           >
-            Delete record
+            <Trash2 size={16} />
+            Delete {module === "reviews" ? "review" : "record"}
           </button>
         )}
       </div>

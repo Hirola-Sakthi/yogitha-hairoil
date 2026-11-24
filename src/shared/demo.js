@@ -218,15 +218,24 @@ export async function demo(path, { method = "GET", body: b = {} } = {}) {
   }
   if (path === "/auth/forgot" || path === "/auth/reset")
     return { message: "Preview only. No email was sent." };
-  if (path === "/public")
+  if (path === "/public") {
+    const publicReviews = state.reviews
+      .filter((r) => String(r.status || "").toLowerCase() === "approved")
+      .sort(
+        (a, b) =>
+          (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0),
+      )
+      .map((r) => ({ ...r, status: String(r.status).toLowerCase() }));
     return {
       ...structuredClone(state),
       products: state.products.filter((p) => p.status === "active"),
       posts: state.posts.filter(isPublished),
       policies: state.policies.filter(isPublished),
-      reviews: state.reviews.filter((r) => r.status === "approved"),
+      reviews: publicReviews,
+      homeReviews: publicReviews.slice(0, 5),
       checkout: { cod: true, onlinePayments: false, razorpayKeyId: "" },
     };
+  }
   if (path === "/admin/dashboard")
     return {
       orders: state.orders.length,

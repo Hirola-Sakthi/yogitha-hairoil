@@ -5,26 +5,32 @@ import "./customer-reviews.css";
 
 export default function CustomerReviews() {
   const { data } = useStore();
-  const reviews = (data?.reviews || [])
+  const reviews = (data?.homeReviews || data?.reviews || [])
     .filter((review) => review.rating > 0 && review.content?.trim())
     .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
     .slice(0, 5);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    setActiveIndex((index) => reviews.length ? index % reviews.length : 0);
-  }, [reviews.length]);
+  const reviewOrderKey = reviews
+    .map((review) => `${review.id}:${review.createdAt || ""}`)
+    .join("|");
+  const [activeReview, setActiveReview] = useState({ orderKey: "", index: 0 });
+  const activeIndex = activeReview.orderKey === reviewOrderKey ? activeReview.index : 0;
 
   useEffect(() => {
     if (reviews.length < 2) return undefined;
     const timer = window.setInterval(() => {
-      setActiveIndex((index) => (index + 1) % reviews.length);
+      setActiveReview((active) => ({
+        orderKey: reviewOrderKey,
+        index: ((active.orderKey === reviewOrderKey ? active.index : 0) + 1) % reviews.length,
+      }));
     }, 6000);
     return () => window.clearInterval(timer);
-  }, [reviews.length]);
+  }, [reviewOrderKey, reviews.length]);
 
   const move = (direction) => {
-    setActiveIndex((index) => (index + direction + reviews.length) % reviews.length);
+    setActiveReview({
+      orderKey: reviewOrderKey,
+      index: (activeIndex + direction + reviews.length) % reviews.length,
+    });
   };
   const visibleReviews = reviews.map((item, index) => {
     let offset = index - activeIndex;
@@ -79,7 +85,7 @@ export default function CustomerReviews() {
         </div>
         <div className="review-pagination" aria-label={reviews.length > 1 ? "Choose a review" : "Review carousel position"}>
           {reviews.length > 1
-            ? reviews.map((item, index) => <button key={item.id || index} type="button" className={index === activeIndex ? "active" : ""} aria-label={`Show review ${index + 1}`} aria-current={index === activeIndex ? "true" : undefined} onClick={() => setActiveIndex(index)} />)
+            ? reviews.map((item, index) => <button key={item.id || index} type="button" className={index === activeIndex ? "active" : ""} aria-label={`Show review ${index + 1}`} aria-current={index === activeIndex ? "true" : undefined} onClick={() => setActiveReview({ orderKey: reviewOrderKey, index })} />)
             : Array.from({ length: 5 }, (_, index) => <span key={index} className={index === (reviews.length ? 0 : 2) ? "active" : ""} aria-hidden="true" />)}
         </div>
       </div>

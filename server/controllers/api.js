@@ -254,16 +254,25 @@ export async function api(req, res, url, b) {
       user: safe(n),
     };
   }
-  if (path === "/public" && m === "GET")
+  if (path === "/public" && m === "GET") {
+    const publicReviews = (await all("reviews"))
+      .filter((r) => String(r.status || "").toLowerCase() === "approved")
+      .sort(
+        (a, b) =>
+          (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0),
+      )
+      .map(({ email, userId, status, ...r }) => ({
+        ...r,
+        status: String(status).toLowerCase(),
+      }));
     return {
       settings: await get("settings", "store"),
       products: (await all("products")).filter((p) => p.status === "active"),
       posts: (await all("posts")).filter(isPublished),
       categories: await all("categories"),
       policies: (await all("policies")).filter(isPublished),
-      reviews: (await all("reviews"))
-        .filter((r) => r.status === "approved")
-        .map(({ email, userId, ...r }) => r),
+      reviews: publicReviews,
+      homeReviews: publicReviews.slice(0, 5),
       checkout: {
         cod: status().cod,
         onlinePayments: status().onlinePayments,
@@ -271,6 +280,7 @@ export async function api(req, res, url, b) {
         razorpayMode: status().razorpay.mode,
       },
     };
+  }
   if (path === "/leads" && m === "POST") {
     check(
       await limit("lead:" + req.socket.remoteAddress, 8),
