@@ -1,0 +1,158 @@
+/* Shared customer-facing button palette. Layout remains defined by each component. */
+#main-content :is(
+  .store-btn,
+  .collection-add,
+  .shop-button,
+  .info-page-button,
+  .about-buy-button,
+  .about-doctor-link,
+  .about-journey-link,
+  .home-social-follow,
+  .confirmation-primary
+) {
+  border-color: var(--store-button-border);
+  background: var(--store-button-bg);
+  color: var(--store-button-text);
+}
+
+#main-content .confirmation-primary {
+  border-color: var(--store-button-border) !important;
+}
+
+#main-content :is(
+  .store-btn,
+  .collection-add,
+  .shop-button,
+  .info-page-button,
+  .about-buy-button,
+  .about-doctor-link,
+  .about-journey-link,
+  .home-social-follow,
+  .confirmation-primary
+):hover:not(:disabled) {
+  background: var(--store-button-hover-bg);
+  color: var(--store-button-text);
+}
+
+/* Outline buttons retain the gold border without losing contrast on cream pages. */
+#main-content :is(
+  .store-btn.secondary,
+  .about-details-button,
+  .oil-buy-now,
+  .confirmation-secondary,
+  .journal-empty button
+) {
+  border-color: var(--store-button-border) !important;
+  background: transparent;
+  color: var(--store-button-outline-text);
+}
+
+#main-content :is(
+  .store-btn.secondary,
+  .about-details-button,
+  .oil-buy-now,
+  .confirmation-secondary,
+  .journal-empty button
+):hover:not(:disabled) {
+  background: var(--store-button-hover-bg);
+  color: var(--store-button-text);
+}
+
+/* These calls to action sit on dark artwork, so the original transparent treatment is retained. */
+#main-content :is(
+  .pill-button,
+  .dark-button,
+  .about-ritual-cta-button,
+  .home-ritual-cta-button
+) {
+  border: 1px solid var(--store-button-border);
+  background: transparent;
+  color: var(--store-button-text);
+}
+
+/* The not-found page uses the shared pill class on a light surface. */
+#main-content .info-page-button {
+  background: var(--store-button-bg);
+  color: var(--store-button-text);
+}
+
+#main-content .info-page-button:hover {
+  background: var(--store-button-hover-bg);
+  color: var(--store-button-text);
+}
+
+#main-content :is(
+  .pill-button,
+  .dark-button,
+  .about-ritual-cta-button,
+  .home-ritual-cta-button
+):hover {
+  background: var(--store-button-hover-tint);
+  color: var(--store-button-text);
+}
+
+/* Compact storefront controls use the same green-and-gold family without changing their behavior. */
+#main-content .oil-sizes button,
+#main-content .journal-filters button {
+  border-color: var(--store-button-border);
+  color: var(--store-button-outline-text);
+}
+
+#main-content :is(.oil-sizes button, .journal-filters button):hover {
+  border-color: var(--store-button-border);
+  background: var(--store-button-hover-tint);
+}
+
+#main-content :is(.oil-sizes button, .journal-filters button)[aria-pressed="true"] {
+  border-color: var(--store-button-border);
+  background: var(--store-button-bg);
+  color: var(--store-button-text);
+}
+
+#main-content .oil-quantity button {
+  color: var(--store-button-outline-text);
+}
+
+#main-content .review-arrow {
+  border-color: var(--store-button-border);
+  background: var(--store-button-bg);
+  color: var(--store-button-text);
+}
+
+#main-content .review-arrow:hover:not(:disabled) {
+  background: var(--store-button-hover-bg);
+  color: var(--store-button-text);
+}
+
+#main-content .botanical-card-controls button {
+  border-color: var(--store-button-border);
+  color: var(--store-button-text);
+}
+
+#main-content .botanical-card-controls button:hover {
+  background: var(--store-button-hover-tint);
+}
+
+.site-header .nav-shop,
+.site-header .bag-button {
+  border: 1px solid var(--store-button-border);
+  background: transparent;
+  color: var(--store-button-text);
+}
+
+.site-header .nav-shop:hover,
+.site-header .bag-button:hover {
+  background: var(--store-button-hover-tint);
+  color: var(--store-button-text);
+}
+
+.site-header .bag-button span {
+  background: var(--store-button-border);
+  color: var(--brand-dark);
+}
+
+#main-content :is(.store-btn, .collection-add, .shop-button):disabled {
+  border-color: color-mix(in srgb, var(--store-button-border) 45%, transparent);
+  background: color-mix(in srgb, var(--store-button-bg) 60%, transparent);
+  color: color-mix(in srgb, var(--store-button-text) 65%, transparent);
+}

@@ -4,13 +4,13 @@ import {
   Brush,
   ChevronLeft,
   ChevronRight,
-  CircleUserRound,
-  CookingPot,
+  Droplets,
+  Fingerprint,
   Hand,
   Leaf,
-  ListChecks,
   MoonStar,
-  UserRound,
+  Scale,
+  ScanFace,
   Wind,
   X,
 } from "lucide-react";
@@ -25,10 +25,10 @@ const aboutReels = [
   { video: "/reels/reels-2.mp4", title: "Hair-care reel 4" },
 ];
 const aboutStandards = [
-  { title: "Classical Taila Paka", Icon: CookingPot },
-  { title: "Rasapanchaka-guided selection", Icon: ListChecks },
-  { title: "Scalp types considered", Icon: CircleUserRound },
-  { title: "Individual Prakruthi considered", Icon: UserRound },
+  { title: "Classical Taila Paka", Icon: Droplets },
+  { title: "Rasapanchaka-guided selection", Icon: Scale },
+  { title: "Scalp types considered", Icon: ScanFace },
+  { title: "Individual Prakruthi considered", Icon: Fingerprint },
 ];
 const ritualSteps = [
   {

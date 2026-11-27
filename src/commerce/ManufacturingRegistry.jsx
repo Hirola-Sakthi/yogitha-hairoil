@@ -1,24 +1,45 @@
 import "./manufacturing-registry.css";
 
 const registryItems = [
-  { label: "BATCH IDENTIFIER", value: "DY–2025–042", note: "Verified lab tested", verified: true },
-  { label: "MFG. DATE", value: "January 2025", note: "Moonlit harvest batch" },
-  { label: "EXPIRY / SHELF-LIFE", value: "December 2026 (24M)", note: "Amber glass stabilized" },
-  { label: "QUALITY STANDARD", value: "Ayurvedic GMP", note: "100% organics certified" },
+  {
+    label: "COLOUR",
+    value: "Are all green hair oils the same?",
+    note: "They can differ in quality, ingredients, and intended use.",
+  },
+  { label: "PREPARATION METHOD", value: "	Is mixing herbs into oil the same as Sneha Paka?", note: "Sneha Paka follows specific proportions and preparation stages." },
+  {
+    label: "TEMPERATURE",
+    value: "Does higher heat make a better oil?",
+    note: "Excessive heat can affect the oil’s quality and its heat-sensitive compounds.",
+  },
+  {
+    label: "INGREDIENT PROPORTIONS",
+    value: "Does ingredient quantity matter?",
+    note: "Classical Ayurvedic preparation considers how much of each ingredient goes into the formula.",
+  },
 ];
 
 export default function ManufacturingRegistry() {
   return (
-    <section className="manufacturing-registry" aria-labelledby="manufacturing-registry-title">
+    <section
+      className="manufacturing-registry"
+      aria-labelledby="manufacturing-registry-title"
+    >
       <div className="manufacturing-registry-inner">
         <div className="manufacturing-registry-intro">
-          <p className="eyebrow">AUTHENTIC PHARMACY DISCLOSURE</p>
-          <h2 id="manufacturing-registry-title">Verified manufacturing <span>&amp; atelier registry</span></h2>
-          <p className="manufacturing-registry-description">All formulations are prepared with thoughtful Ayurvedic care and attention to every botanical detail.</p>
+          <p className="eyebrow">MYTHS & FACTS</p>
+          <h2 id="manufacturing-registry-title">
+            What can a hair oil’s colour really tell you?
+          </h2>
+          <p className="manufacturing-registry-description">
+            	Hair oils can look alike even when their ingredients, proportions, and preparation methods differ.
+          </p>
           <article className="manufacturing-registry-unit">
-            <span>ATELIER &amp; MANUFACTURING UNIT</span>
-            <strong>Dr. Yogitha&apos;s Botanical Atelier</strong>
-            <p>1–61, Nalgampalle, Bangarupalem, Chittoor District, Andhra Pradesh, India</p>
+            <span>BEFORE YOU CHOOSE</span>
+            <strong>Look beyond the colour</strong>
+            <p>
+              Read the ingredient list and find out how the oil was prepared.
+            </p>
           </article>
         </div>
         <div className="manufacturing-registry-grid">
@@ -26,7 +47,9 @@ export default function ManufacturingRegistry() {
             <article className="manufacturing-registry-card" key={item.label}>
               <span>{item.label}</span>
               <strong>{item.value}</strong>
-              <p className={item.verified ? "is-verified" : undefined}>{item.note}</p>
+              <p>
+                {item.note}
+              </p>
             </article>
           ))}
         </div>

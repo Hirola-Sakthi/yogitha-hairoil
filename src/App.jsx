@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SiteFooter from "./components/SiteFooter";
 import SiteHeader from "./components/SiteHeader";
+import "./storefront-buttons.css";
 
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const CartPage = lazy(() => import("./commerce/CartPage"));

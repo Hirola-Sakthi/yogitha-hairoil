@@ -1,6 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { imageUrl } from "../shared/imageUrl";
 import "./ingredient-story-cards.css";
 
 const ingredients = [
@@ -58,9 +57,7 @@ export default function IngredientStoryCards() {
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <img
-                  src={imageUrl(
-                    `${import.meta.env.BASE_URL}${ingredient.image}`,
-                  )}
+                  src={`${import.meta.env.BASE_URL}${ingredient.image}`}
                   alt={ingredient.name}
                   loading="lazy"
                   decoding="async"

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Hand, MoonStar, Pipette, Wind } from "lucide-react";
-import { imageUrl } from "../shared/imageUrl";
 import "./home-ritual-guide.css";
 
 const steps = [
@@ -55,7 +54,7 @@ export default function HomeRitualGuide() {
         <div className="home-ritual-visual" aria-live="polite">
           <img
             key={active.image}
-            src={imageUrl(`${import.meta.env.BASE_URL}${active.image}`)}
+            src={`${import.meta.env.BASE_URL}${active.image}`}
             alt={active.alt}
             loading="lazy"
             decoding="async"

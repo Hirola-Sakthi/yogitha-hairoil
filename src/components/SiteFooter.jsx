@@ -38,6 +38,7 @@ export default function SiteFooter() {
     ["YouTube", "youtubeUrl", FaYoutube],
     ["LinkedIn", "linkedinUrl", FaLinkedinIn],
   ];
+  const phoneNumber = contact?.phone?.replace(/[^+\d]/g, "");
   const whatsApp = contact?.whatsapp?.replace(/\D/g, "");
   const whatsAppMessage =
     contact?.whatsappMessage?.trim() ||
@@ -142,8 +143,8 @@ export default function SiteFooter() {
                 <span>{contact.email}</span>
               </a>
             )}
-            {contact?.phone && (
-              <a href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`}>
+            {phoneNumber && (
+              <a href={`tel:${phoneNumber}`}>
                 <Phone size={16} />
                 <span>{contact.phone}</span>
               </a>
@@ -207,17 +208,31 @@ export default function SiteFooter() {
           <Link to="/#top">Back to top ↑</Link>
         </div>
       </footer>
-      {whatsApp && (
-        <a
-          className="whatsapp-float"
-          href={`https://wa.me/${whatsApp}?text=${encodeURIComponent(whatsAppMessage)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Chat with us on WhatsApp"
-          title="Chat with us on WhatsApp"
-        >
-          <FaWhatsapp aria-hidden="true" />
-        </a>
+      {(phoneNumber || whatsApp) && (
+        <div className="floating-contact-actions">
+          {phoneNumber && (
+            <a
+              className="call-float"
+              href={`tel:${phoneNumber}`}
+              aria-label={`Call ${brand}`}
+              title={`Call ${brand}`}
+            >
+              <Phone aria-hidden="true" />
+            </a>
+          )}
+          {whatsApp && (
+            <a
+              className="whatsapp-float"
+              href={`https://wa.me/${whatsApp}?text=${encodeURIComponent(whatsAppMessage)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat with us on WhatsApp"
+              title="Chat with us on WhatsApp"
+            >
+              <FaWhatsapp aria-hidden="true" />
+            </a>
+          )}
+        </div>
       )}
     </>
   );

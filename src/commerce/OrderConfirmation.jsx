@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Clock3, Leaf, Package } from "lucide-react";
 import { money } from "../shared/api";
-import { imageUrl } from "../shared/imageUrl";
 import "./order-confirmation.css";
 
 export default function OrderConfirmation({ order, product, preview }) {
@@ -26,7 +25,7 @@ export default function OrderConfirmation({ order, product, preview }) {
           <div className="confirmation-reference"><span>Order number</span><strong>{order.id}</strong></div>
           <div className="confirmation-items">
             {items.map((item, index) => <div className="confirmation-product" key={`${item.productId || index}-${item.variantId || "item"}`}>
-              <img src={imageUrl(item.image || product?.image || "/product-showcase.webp")} alt={item.productName || "Ayurvedic hair oil"} />
+              <img src={item.image || product?.image || "/product-showcase.webp"} alt={item.productName || "Ayurvedic hair oil"} />
               <div><span>YOUR SELECTION</span><h2>{item.productName}</h2><p>Quantity {item.quantity || 1}</p></div>
               {index === 0 && <Package size={22} strokeWidth={1.3} aria-hidden="true" />}
             </div>)}

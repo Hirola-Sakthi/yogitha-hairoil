@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { imageUrl } from "../shared/imageUrl";
 import { useStore } from "./StoreContext";
 import "./home-social-gallery.css";
 
@@ -96,7 +95,7 @@ export default function HomeSocialGallery() {
             <p className="home-social-description">Explore classical Ayurveda, the ingredients we choose, and gentle tips for everyday hair care.</p>
           </div>
           <div className="home-social-profile">
-            <img src={imageUrl(`${import.meta.env.BASE_URL}dr-yogitha.jpg`)} alt="" />
+            <img src={`${import.meta.env.BASE_URL}dr-yogitha.jpg`} alt="" />
             <div className="home-social-profile-copy">
               <strong>{instagramHandle ? `@${instagramHandle.replace(/^@/, "")}` : data?.settings?.brand || "Dr. Yogitha’s"}</strong>
               <span>Ayurvedic Hair Oil</span>
@@ -109,7 +108,7 @@ export default function HomeSocialGallery() {
             photo.empty
               ? <div className={`home-social-empty is-${photo.position}`} key={photo.position} aria-hidden="true" />
               : <div className={`home-social-tile${photo.featured ? " is-featured" : ""}${photo.position ? ` is-${photo.position}` : ""}`} key={photo.src}>
-                  <img src={imageUrl(photo.src)} alt={photo.alt} loading="lazy" />
+                  <img src={photo.src} alt={photo.alt} loading="lazy" />
                 </div>
           ))}
         </div>

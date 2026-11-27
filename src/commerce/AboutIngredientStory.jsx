@@ -1,182 +1,122 @@
 ﻿import { useRef, useState } from "react";
 import {
-  ArrowRight,
   ChevronLeft,
   ChevronRight,
   Droplets,
-  Flower2,
   Leaf,
-  Sparkles,
   Sprout,
 } from "lucide-react";
-import { imageUrl } from "../shared/imageUrl";
 import "./about-ingredient-story.css";
 
-// Sample editorial content. Replace with the confirmed formula and approved copy.
 const ingredients = [
   {
     name: "Hibiscus",
+    title: "Japa (Hibiscus)",
     botanical: "Hibiscus rosa-sinensis",
     image: "ing-4.webp",
     note: "A little flower. A beautiful ritual.",
     description:
-      "Vivid petals, lush green leaves, and a long connection to traditional hair-care rituals. Hibiscus brings a beautiful botanical character to the story of our oil.",
+      "Helps condition the hair and is traditionally used to soothe the scalp.",
     details:
       "Known for its unmistakable red blooms, hibiscus has a place in many traditional botanical preparations. Here, we celebrate the flower, the plant, and the care rituals that have grown around it.",
-    traits: [
-      "Floral botanical",
-      "Petals & leaves",
-      "Ritual inspired",
-      "Nature's colour",
-    ],
   },
   {
     name: "Bhringraj",
+    title: "Bhringaraja (Bhringraj)",
     botanical: "Eclipta prostrata",
     image: "ing-1.webp",
     note: "Small flowers. Deep-rooted tradition.",
     description:
-      "A humble green herb with delicate white flowers, Bhringraj is closely associated with Ayurvedic hair-care traditions. Its story is one of simple ingredients and time-honoured rituals.",
+      "Traditionally used in Ayurvedic hair care to support hair growth.",
     details:
       "Look closely and you will find small, white flower heads nestled among the leaves. This understated botanical is a familiar name in traditional hair oils and a reminder of the richness of plant-based care.",
-    traits: [
-      "Leafy botanical",
-      "White blossoms",
-      "Ayurvedic roots",
-      "Traditional care",
-    ],
   },
   {
     name: "Amla",
+    title: "Amalaki (Amla)",
     botanical: "Phyllanthus emblica",
     image: "ing-2.webp",
     note: "A treasured fruit. A timeless ritual.",
-    description:
-      "Also known as Indian gooseberry, Amla is a bright green fruit woven into generations of Ayurvedic tradition. Its distinctive shape and fresh character make it an instantly recognisable botanical.",
+    description: "Used to nourish the scalp and support hair health.",
     details:
       "Amla's rounded, gently ribbed fruits grow on a leafy tree. From family traditions to botanical hair-care preparations, this familiar fruit carries a long cultural connection to everyday care.",
-    traits: [
-      "Indian gooseberry",
-      "Fruit botanical",
-      "Heritage inspired",
-      "Everyday ritual",
-    ],
   },
   {
     name: "Neem",
+    title: "Nimba (Neem)",
     botanical: "Azadirachta indica",
     image: "ing-3.webp",
     note: "Evergreen inspiration. Thoughtful care.",
-    description:
-      "Recognised by its slender, serrated leaves, Neem is a familiar part of India's botanical landscape. Its green, earthy character brings a connection to nature and traditional personal-care rituals.",
+    description: "Traditionally used in scalp care for dandruff and itching.",
     details:
       "Neem is a leafy tree with a distinctive branching form. Its place in traditional personal care reflects a long-standing interest in the plants that grow around us and the rituals they inspire.",
-    traits: [
-      "Green leaves",
-      "Tree botanical",
-      "Earthy character",
-      "Traditional ritual",
-    ],
   },
   {
     name: "Rosemary",
+    title: "Rosemary Essential Oil",
     botanical: "Salvia rosmarinus",
     image: "ing-5.webp",
     note: "An aromatic herb. A moment of calm.",
-    description:
-      "Fine, needle-like leaves and delicate flowers give Rosemary its distinctive character. This aromatic herb adds another chapter to a botanical story inspired by mindful, unhurried care.",
+    description: "Used in hair-care preparations for scalp care and fragrance.",
     details:
       "Rosemary is an evergreen herb recognised for its narrow leaves and fresh, woody aroma. Its familiar botanical silhouette invites a closer look at the textures and details of the natural world.",
-    traits: [
-      "Aromatic herb",
-      "Evergreen leaves",
-      "Woody character",
-      "Mindful ritual",
-    ],
   },
   {
     name: "Curry Leaf",
+    title: "Karivepa (Curry Leaves)",
     botanical: "Murraya koenigii",
     image: "ing-6.webp",
     note: "Glossy leaves. A fragrant green ritual.",
     description:
-      "Curry leaves bring a fresh, verdant chapter to our botanical library, celebrating the beauty of simple leaves and their place in Indian botanical traditions.",
+      "Traditionally used to nourish the scalp and support natural hair colour.",
     details:
       "Murraya koenigii is recognised for its glossy, aromatic leaflets and branching form. We include it here as part of a broader story of botanical texture and mindful care.",
-    traits: [
-      "Aromatic leaves",
-      "Glossy foliage",
-      "Garden grown",
-      "Quiet ritual",
-    ],
   },
   {
     name: "Moringa",
+    title: "Shigru (Moringa)",
     botanical: "Moringa oleifera",
     image: "ing-7.webp",
     note: "Leaf by leaf. Naturally considered.",
     description:
-      "Moringa's rounded leaflets and branching silhouette offer another connection to the richness of plant-led personal-care traditions.",
+      "Used in traditional preparations to cleanse and nourish the scalp.",
     details:
       "Known as a fast-growing tree with delicate compound leaves, Moringa is a familiar part of many botanical landscapes and rituals of everyday care.",
-    traits: [
-      "Compound leaves",
-      "Green botanical",
-      "Tree inspired",
-      "Everyday care",
-    ],
   },
   {
     name: "Lotus",
+    title: "Padma (Lotus)",
     botanical: "Nelumbo nucifera",
     image: "ing-8.webp",
     note: "A bloom that invites stillness.",
     description:
-      "Soft pink petals and a golden centre make lotus a beautiful symbol of pause, care, and considered personal rituals.",
+      "Traditionally used for its cooling and soothing effects on the scalp.",
     details:
       "The lotus is admired for its generous petals and distinctive central seed pod. Its graceful form brings a sense of calm to this botanical collection.",
-    traits: [
-      "Pink petals",
-      "Floral beauty",
-      "Calm ritual",
-      "Golden centre",
-    ],
   },
   {
-    name: "Almond",
+    name: "Almond Oil",
+    title: "Almond Oil",
     botanical: "Prunus dulcis",
     image: "ing-9.webp",
     note: "A familiar nut. A thoughtful touch.",
     description:
-      "Almond is a recognisable natural ingredient whose warm colour and tactile form belong beautifully in a story of everyday care.",
+      "Helps moisturise dry hair and scalp and leaves hair feeling softer.",
     details:
       "With its textured shell and warm, earthy tones, almond is a longstanding part of botanical and culinary traditions across many cultures.",
-    traits: [
-      "Earthy texture",
-      "Natural nut",
-      "Warm tones",
-      "Botanical story",
-    ],
   },
   {
     name: "Black Seed",
+    title: "Kalajaji (Black Seed)",
     botanical: "Nigella sativa",
     image: "ing-10.webp",
     note: "Tiny seeds. A deep-rooted story.",
-    description:
-      "Black seed adds a bold, textural contrast to our botanical library and reflects a long history of plant-based traditions.",
+    description: "Traditionally used in scalp care for dandruff and itching.",
     details:
       "Nigella sativa is recognised by its small, dark seeds. Here it is celebrated for its distinctive appearance and connection to traditional botanical practices.",
-    traits: [
-      "Dark seeds",
-      "Textural detail",
-      "Heritage inspired",
-      "Botanical ritual",
-    ],
   },
 ];
-const traitIcons = [Leaf, Flower2, Sprout, Sparkles];
-const asset = (name) => imageUrl(`${import.meta.env.BASE_URL}${name}`);
+const asset = (name) => `${import.meta.env.BASE_URL}${name}`;
 
 export default function AboutIngredientStory() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -227,13 +167,12 @@ export default function AboutIngredientStory() {
       />
       <div className="botanical-inner">
         <header className="botanical-heading">
-          <p className="eyebrow botanical-eyebrow">POWERED BY NATURE</p>
+          <p className="eyebrow botanical-eyebrow">INSIDE THE AMPOULE</p>
           <h2 id="botanical-title">
-            Rooted in Ayurveda.
-            <br className="botanical-mobile-break" /> <em>Rich in nature.</em>
+            Get to know our <em>ingredients</em>
           </h2>
           <p>
-            A closer look at the botanicals behind a beautiful hair-care ritual.
+            Explore the ingredients in Dr. Yogitha’s Intensive Hair Ampoule and their traditional uses in hair and scalp care.
           </p>
         </header>
         <div className="botanical-layout">
@@ -252,13 +191,8 @@ export default function AboutIngredientStory() {
                 <div className="botanical-drop">
                   <Droplets size={66} strokeWidth={1} />
                 </div>
-                <span className="botanical-heart-kicker">
-                  THE ART OF BOTANICAL CARE
-                </span>
                 <p>
-                  Pure inspiration.
-                  <br />
-                  <em>Thoughtful rituals.</em>
+                  <strong>Every ingredient has a purpose.</strong>
                 </p>
                 <span className="botanical-heart-rule">
                   <i />
@@ -293,7 +227,7 @@ export default function AboutIngredientStory() {
               })}
             </div>
             <p className="botanical-selector-hint">
-              <span /> Select a botanical. Discover its story.
+              <span /> Select an ingredient to learn more.
             </p>
           </div>
           <article
@@ -303,7 +237,7 @@ export default function AboutIngredientStory() {
           >
             <div className="botanical-card-toolbar">
               <span className="botanical-card-eyebrow">
-                THE BOTANICAL LIBRARY
+                INGREDIENT LIBRARY
               </span>
               <div className="botanical-card-controls">
                 <span>
@@ -337,7 +271,7 @@ export default function AboutIngredientStory() {
                 </div>
                 <div className="botanical-card-title">
                   <span>MEET THE INGREDIENT</span>
-                  <h3>{selected.name}</h3>
+                  <h3>{selected.title}</h3>
                   <p className="botanical-latin">{selected.botanical}</p>
                   <p className="botanical-note">{selected.note}</p>
                 </div>
@@ -348,25 +282,10 @@ export default function AboutIngredientStory() {
                 <span />
               </div>
               <p className="botanical-description">{selected.description}</p>
-              <ul className="botanical-traits">
-                {selected.traits.map((trait, index) => {
-                  const Icon = traitIcons[index];
-                  return (
-                    <li key={trait}>
-                      <span>
-                        <Icon size={25} strokeWidth={1.2} aria-hidden="true" />
-                      </span>
-                      {trait}
-                    </li>
-                  );
-                })}
-              </ul>
-              <details className="botanical-more">
-                <summary>
-                  Know more <ArrowRight size={17} aria-hidden="true" />
-                </summary>
+              <div className="botanical-ingredient-details">
+                <span>INGREDIENT DETAILS</span>
                 <p>{selected.details}</p>
-              </details>
+              </div>
             </div>
           </article>
         </div>

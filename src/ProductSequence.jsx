@@ -3,14 +3,11 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import sequence from "./sequenceManifest.json";
 import { frameAtProgress } from "./sequenceTimeline";
-import { imageUrl } from "./shared/imageUrl";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const frameUrl = (index, source) =>
-  imageUrl(
-    `${import.meta.env.BASE_URL}${source.directory}/frame_${String(index + 1).padStart(4, "0")}.webp?v=${source.revision}`,
-  );
+  `${import.meta.env.BASE_URL}${source.directory}/frame_${String(index + 1).padStart(4, "0")}.webp?v=${source.revision}`;
 
 export default function ProductSequence() {
   const section = useRef(null);
@@ -237,17 +234,13 @@ export default function ProductSequence() {
         <picture>
           <source
             media="(max-width: 600px)"
-            srcSet={imageUrl(
-              `${import.meta.env.BASE_URL}${sequence.mobile.directory}/poster.webp?v=${sequence.mobile.revision}`,
-            )}
+            srcSet={`${import.meta.env.BASE_URL}${sequence.mobile.directory}/poster.webp?v=${sequence.mobile.revision}`}
             width={sequence.mobile.width}
             height={sequence.mobile.height}
           />
           <img
             className="film-poster"
-            src={imageUrl(
-              `${import.meta.env.BASE_URL}${sequence.directory}/poster.webp?v=${sequence.revision}`,
-            )}
+            src={`${import.meta.env.BASE_URL}${sequence.directory}/poster.webp?v=${sequence.revision}`}
             alt="Dr. Yogitha's Ayurvedic hair oil advertisement"
             width={sequence.width}
             height={sequence.height}

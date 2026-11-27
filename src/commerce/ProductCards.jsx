@@ -4,7 +4,6 @@ import { ArrowUpRight, Check, ShoppingBag } from "lucide-react";
 import { useStore } from "./StoreContext";
 import { money } from "../shared/api";
 import { productForSize } from "../shared/productOptions";
-import { imageUrl } from "../shared/imageUrl";
 import "./product-cards.css";
 
 export function AddToCartButton({
@@ -75,13 +74,13 @@ export function ProductCard({ product }) {
         aria-label={`View ${p.name}`}
       >
         <img
-          src={imageUrl(p.image || "/product-showcase.webp")}
+          src={p.image || "/product-showcase.webp"}
           alt={p.name}
           loading="lazy"
           onError={(e) => {
             e.currentTarget.onerror = null;
             if (!e.currentTarget.src.endsWith("/product-showcase.webp"))
-              e.currentTarget.src = imageUrl("/product-showcase.webp");
+              e.currentTarget.src = "/product-showcase.webp";
           }}
         />
         {discount > 0 && (
@@ -188,14 +187,14 @@ export function ProductPurchase({ product }) {
                 aria-pressed={size === v}
                 onClick={() => changeSize(v)}
               >
-                <img src={imageUrl(productForSize(product, v).image)} alt="" />
+                <img src={productForSize(product, v).image} alt="" />
               </button>
             ))}
           </div>
         )}
         <div className="oil-main-image">
           <img
-            src={imageUrl(p.image || "/product-showcase.webp")}
+            src={p.image || "/product-showcase.webp"}
             alt={`${p.name} — ${p.sizeLabel}`}
             loading="lazy"
           />

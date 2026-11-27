@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { api } from "../shared/api";
 import RichTextEditor, { editorHtml } from "./RichTextEditor";
 import { uploadImage } from "./media";
-import { imageUrl } from "../shared/imageUrl";
 import "./content-editor.css";
 
 const localDate = value => {
@@ -69,7 +68,7 @@ export default function ContentForm({ module, item, busy, onSave, onDelete }) {
         <label>Tags<input value={tag} placeholder="Type and press Enter" onChange={e => setTag(e.target.value)} onKeyDown={e => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addTag(); } }} onBlur={addTag} /></label>
         <div className="composer-tags">{form.tags.map(t => <button type="button" key={t} onClick={() => update("tags", form.tags.filter(x => x !== t))} aria-label={`Remove tag ${t}`}>{t} ×</button>)}</div>
       </div></section>
-      <section className="composer-card"><h2>Featured image</h2><div className="composer-fields">{form.image ? <img className="composer-image" src={imageUrl(form.image)} alt="Featured image preview" /> : <div className="composer-image-empty">No image selected</div>}
+      <section className="composer-card"><h2>Featured image</h2><div className="composer-fields">{form.image ? <img className="composer-image" src={form.image} alt="Featured image preview" /> : <div className="composer-image-empty">No image selected</div>}
         <label>Choose image<input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading} onChange={async e => { const file = e.target.files?.[0]; if (!file) return; setUploading(true); try { update("image", await uploadImage(file)); } catch (err) { toast.error(err.message); } finally { setUploading(false); e.target.value = ""; } }} /></label>
         {field("image", "Or image URL")}<small>JPG, PNG or WebP, up to 5 MB. Recommended 1600 × 900.</small>{form.image && <button type="button" className="text-button" onClick={() => update("image", "")}>Remove image</button>}
       </div></section></>}

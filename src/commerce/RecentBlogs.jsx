@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Leaf } from "lucide-react";
 import { useStore } from "./StoreContext";
 import { date } from "../shared/api";
-import { imageUrl } from "../shared/imageUrl";
 import "./journal.css";
 
 export default function RecentBlogs() {
@@ -26,7 +25,7 @@ export default function RecentBlogs() {
             <article className="journal-story" key={post.id}>
               <Link to={"/blog/" + post.slug}>
                 <div className="journal-image">
-                  {post.image ? <img src={imageUrl(post.image)} alt={post.title} loading="lazy" /> :
+                  {post.image ? <img src={post.image} alt={post.title} loading="lazy" /> :
                     <div className="journal-image-placeholder"><Leaf size={48} strokeWidth={1} /><span>Dr. Yogitha’s Journal</span></div>}
                 </div>
                 <div className="journal-meta"><span>{category?.name || "The journal"}</span>{published && <time dateTime={published}>{date(published)}</time>}</div>

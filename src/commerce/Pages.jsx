@@ -29,7 +29,6 @@ import "./contact.css";
 import "./store-auth.css";
 import OrderConfirmation from "./OrderConfirmation";
 import { productForSize } from "../shared/productOptions";
-import { imageUrl } from "../shared/imageUrl";
 import { storeContact } from "../shared/storeDefaults";
 import DOMPurify from "dompurify";
 export function Frame({ eyebrow, title, children, className = "" }) {
@@ -63,7 +62,7 @@ export function AuthPage({ mode = "login" }) {
     <section className="store-auth-page" aria-labelledby="store-auth-title">
       <div className="store-auth-shell">
       <aside className="store-auth-art">
-        <img src={imageUrl("/how-to-use-banner.webp")} alt="Dr. Yogitha's botanical hair oil ritual" />
+        <img src="/how-to-use-banner.webp" alt="Dr. Yogitha's botanical hair oil ritual" />
         <div className="store-auth-brand"><Leaf size={28} strokeWidth={1.4} /><div><span>DR. YOGITHA’S</span><p>Ayurvedic herbal care.</p></div></div>
       </aside>
       <div className="auth-card store-auth-card">
@@ -364,7 +363,7 @@ export function CheckoutPage() {
         <h1 id="checkout-signin-title">Your care is almost yours.</h1>
         <p className="checkout-signin-description">Sign in to place your order and keep your delivery updates in one place.</p>
         {checkoutItems.map(item => <div className="checkout-signin-product" key={`${item.productId}-${item.variantId}`}>
-          <img src={imageUrl(item.image || "/product-showcase.webp")} alt={item.name} />
+          <img src={item.image || "/product-showcase.webp"} alt={item.name} />
           <div><h2>{item.name}</h2><p>{item.sizeLabel} · Quantity {item.quantity}</p></div>
           <strong>{money(item.pricePaise * item.quantity)}</strong>
         </div>)}
@@ -577,7 +576,7 @@ export function CheckoutPage() {
         <aside className="order-summary">
           <div className="checkout-summary-heading"><h2>Your order</h2><Leaf size={24} strokeWidth={1.3} /></div>
           {checkoutItems.map(item => <div className="checkout-summary-product" key={`${item.productId}-${item.variantId}`}>
-            <img src={imageUrl(item.image || "/product-showcase.webp")} alt={item.name} />
+            <img src={item.image || "/product-showcase.webp"} alt={item.name} />
             <div><span className="checkout-brand">DR. YOGITHA&apos;S</span><h3>{item.name}</h3><p>{item.sizeLabel} &middot; Quantity {item.quantity}</p></div>
             <strong>{money(item.pricePaise * item.quantity)}</strong>
           </div>)}
@@ -671,7 +670,7 @@ export function AccountPage() {
             <span className="order-status">{o.status.replaceAll("_", " ")}</span>
             <div className="account-order-items">
               {items.map((item, index) => <div className="account-order-item" key={`${item.productName}-${index}`}>
-                <img src={imageUrl(item.image || "/product-showcase.webp")} alt="" />
+                <img src={item.image || "/product-showcase.webp"} alt="" />
                 <span>{item.productName} <small>× {item.quantity}</small></span>
               </div>)}
               <strong className="account-order-total">{money(o.totalPaise)}</strong>
@@ -827,7 +826,7 @@ export function JournalPage() {
   const categoryName = post => categories.find(c => belongsTo(post, c.id))?.name || "The journal";
   const storyImage = (post, prominent = false) => (
     <div className="journal-image">
-      {post.image ? <img src={imageUrl(post.image)} alt={post.title} loading={prominent ? "eager" : "lazy"} /> :
+      {post.image ? <img src={post.image} alt={post.title} loading={prominent ? "eager" : "lazy"} /> :
         <div className="journal-image-placeholder"><Leaf size={48} strokeWidth={1} /><span>Dr. Yogitha’s Journal</span></div>}
     </div>
   );
@@ -905,7 +904,7 @@ export function ContentPage({ type }) {
           By {p.author} · {date(p.updatedAt || p.createdAt)}
         </p>
       )}
-      {p.image && <img className="article-image" src={imageUrl(p.image)} alt={p.title} />}
+      {p.image && <img className="article-image" src={p.image} alt={p.title} />}
       {p.contentFormat === "html" ? <article className="article-body formatted-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(p.content) }} /> : <article className="article-body">{p.content}</article>}
       {p.tags?.length > 0 && <p className="article-tags">{p.tags.map(tag => <span key={tag}>{tag}</span>)}</p>}
       {type === "posts" && data.posts.some(post => p.relatedPostIds?.includes(post.id)) && <section className="product-faq"><h2>Related stories</h2>{data.posts.filter(post => p.relatedPostIds?.includes(post.id)).map(post => <p key={post.id}><Link to={`/blog/${post.slug}`}>{post.title}</Link></p>)}</section>}

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { imageUrl } from "../shared/imageUrl";
 import "../pages/home-assurances.css";
 
 export default function RitualCta() {
@@ -11,7 +10,7 @@ export default function RitualCta() {
         <Link to="/#shop" className="home-ritual-cta-button">Shop now <span aria-hidden="true">&rarr;</span></Link>
       </div>
       <div className="home-ritual-cta-image">
-        <img src={imageUrl(`${import.meta.env.BASE_URL}cta-img.webp`)} alt="Woman with long hair beside an Ayurvedic hair oil bottle" loading="lazy" />
+        <img src={`${import.meta.env.BASE_URL}cta-img.webp`} alt="Woman with long hair beside an Ayurvedic hair oil bottle" loading="lazy" />
       </div>
     </section>
   );

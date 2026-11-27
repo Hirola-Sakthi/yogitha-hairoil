@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ShoppingBag, Trash2, Minus, Plus } from "lucide-react";
 import { useStore } from "./StoreContext";
 import { money } from "../shared/api";
-import { imageUrl } from "../shared/imageUrl";
 import "./cart-page.css";
 
 export default function CartPage() {
@@ -37,7 +36,7 @@ export default function CartPage() {
       <div className="bag-page-items" aria-busy={cartBusy}>
         <div className="bag-items-heading"><span>Your selection</span><span>Amount</span></div>
         {cart.items.map(p => <article className="bag-page-item" key={`${p.productId}-${p.variantId}`}>
-          <img src={imageUrl(p.image || "/product-showcase.webp")} alt={p.name} width="160" height="180" />
+          <img src={p.image || "/product-showcase.webp"} alt={p.name} width="160" height="180" />
           <div className="bag-page-item-copy">
             <span className="bag-product-brand">DR. YOGITHA’S</span>
             <h2>{p.name}</h2><span className="bag-size">{p.sizeLabel || (p.variantId === "100ml" ? "100 ml" : "50 ml")}</span><p>{money(p.pricePaise)} each</p>

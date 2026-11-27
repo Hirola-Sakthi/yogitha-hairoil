@@ -40,8 +40,12 @@
 .store-footer-social span { opacity: .65; }
 .footer-payment-label { display: flex; align-items: center; gap: 10px; }
 .footer-payment-label svg { flex-shrink: 0; font-size: 20px; }
-.whatsapp-float { position: fixed; z-index: 90; right: 28px; bottom: 28px; display: grid; width: 58px; height: 58px; place-items: center; border: 0; border-radius: 50%; background: #25d366; color: #fff; box-shadow: 0 12px 28px rgb(18 62 35 / 30%); transition: transform .2s ease, box-shadow .2s ease; }
-.whatsapp-float:hover { color: #fff; transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 32px rgb(18 62 35 / 37%); }
-.whatsapp-float svg { width: 30px; height: 30px; }
+.floating-contact-actions { position: fixed; z-index: 90; right: 28px; bottom: 28px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.whatsapp-float, .call-float { display: grid; width: 58px; height: 58px; place-items: center; border: 0; border-radius: 50%; color: #fff; box-shadow: 0 12px 28px rgb(18 62 35 / 30%); transition: transform .2s ease, box-shadow .2s ease; }
+.whatsapp-float { background: #25d366; }
+.call-float { background: var(--brand); }
+.whatsapp-float:hover, .call-float:hover { color: #fff; transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 32px rgb(18 62 35 / 37%); }
+.whatsapp-float svg, .call-float svg { width: 30px; height: 30px; }
+.whatsapp-float:focus-visible, .call-float:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 @media (max-width: 1150px) { .store-footer-main { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; } .store-footer-brand { grid-column: 1 / -1; display: block; max-width: 500px; padding-right: 0; } }
-@media (max-width: 700px) { .store-footer { padding: 50px 24px 28px; } .store-footer-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .store-footer-brand { grid-column: 1 / -1; } .store-footer-service { grid-template-columns: 1fr; gap: 24px; } .store-footer-legal { flex-direction: column; gap: 15px; } .store-footer-legal nav { gap: 10px 20px; } .store-footer-bottom { flex-wrap: wrap; } .whatsapp-float { right: 18px; bottom: 18px; width: 52px; height: 52px; } }
+@media (max-width: 700px) { .store-footer { padding: 50px 24px 28px; } .store-footer-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .store-footer-brand { grid-column: 1 / -1; } .store-footer-service { grid-template-columns: 1fr; gap: 24px; } .store-footer-legal { flex-direction: column; gap: 15px; } .store-footer-legal nav { gap: 10px 20px; } .store-footer-bottom { flex-wrap: wrap; } .floating-contact-actions { right: 18px; bottom: 18px; } .whatsapp-float, .call-float { width: 52px; height: 52px; } }

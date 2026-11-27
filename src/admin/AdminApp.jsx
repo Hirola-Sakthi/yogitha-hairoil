@@ -42,7 +42,6 @@ import {
   Store,
   Info,
 } from "lucide-react";
-import { imageUrl } from "../shared/imageUrl";
 import toast from "react-hot-toast";
 import { api, preview, money, date } from "../shared/api";
 import { uploadImage } from "./media";
@@ -189,7 +188,7 @@ export default function AdminApp() {
       r.image ? (
         <img
           className="blog-table-image"
-          src={imageUrl(r.image)}
+          src={r.image}
           alt={r.title || "Blog featured image"}
           loading="lazy"
         />
@@ -229,7 +228,7 @@ export default function AdminApp() {
     <div className="cms">
       <aside className={"cms-sidebar " + (mobile ? "is-open" : "")}>
         <Link className="cms-logo" to="/admin">
-          <img src={imageUrl("/logo.webp")} alt="Dr. Yogitha's" />
+          <img src="/logo.webp" alt="Dr. Yogitha's" />
           <span>
             <Leaf size={21} />
           </span>
@@ -684,7 +683,7 @@ function Dashboard({ data }) {
         </div>
         <div className="welcome-art">
           <img
-            src={imageUrl("/how-to-use-banner.webp")}
+            src="/how-to-use-banner.webp"
             alt="Dr. Yogitha's botanical hair oil ritual"
           />
           <span>THE EVERYDAY RITUAL</span>
@@ -873,7 +872,7 @@ function ProductRecordForm({ item, busy, onSave }) {
     <label key={key} className={`product-input-field product-upload-field product-field-${key}`}>
       {key !== "image" && <span>{label}</span>}
       {key === "image" ? <span className="product-upload-control product-main-upload">
-        {values[key] ? <img src={imageUrl(values[key])} alt={`${label} preview`} /> : <span className="product-image-empty"><Package size={25} /></span>}
+        {values[key] ? <img src={values[key]} alt={`${label} preview`} /> : <span className="product-image-empty"><Package size={25} /></span>}
         <span className="product-main-upload-copy">
           <strong>{label}</strong>
           <small>{uploading[key] ? "Uploading…" : "Upload JPG, PNG or WebP up to 5 MB."}</small>
@@ -881,7 +880,7 @@ function ProductRecordForm({ item, busy, onSave }) {
           <input className="product-hidden-file-input" type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading[key] || busy} onChange={(event) => upload(key, event.currentTarget.files?.[0], event.currentTarget)} />
         </span>
       </span> : <span className="product-upload-control product-optional-upload">
-        {values[key] && <img src={imageUrl(values[key])} alt={`${label} preview`} />}
+        {values[key] && <img src={values[key]} alt={`${label} preview`} />}
         <span><input className="product-native-file" type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading[key] || busy} onChange={(event) => upload(key, event.currentTarget.files?.[0], event.currentTarget)} /><small>{uploading[key] ? "Uploading…" : "JPG, PNG or WebP; up to 5 MB."}</small></span>
       </span>}
     </label>
@@ -1047,7 +1046,7 @@ function GenericRecordForm({ module, fields, item, busy, onSave, onDelete }) {
                   {values[k] && (
                     <img
                       className="product-image-preview"
-                      src={imageUrl(values[k])}
+                      src={values[k]}
                       alt={`${label} preview`}
                     />
                   )}
@@ -1603,7 +1602,7 @@ function OrderDetails({ item, choices, status, setStatus, busy, onAction, action
           <div className="order-line-items">
             {items.map((line, index) => (
               <div className="order-line-item" key={line.id || line.variantId || index}>
-                {line.image ? <img src={imageUrl(line.image)} alt="" /> : <span className="order-item-placeholder"><Package size={19} /></span>}
+                {line.image ? <img src={line.image} alt="" /> : <span className="order-item-placeholder"><Package size={19} /></span>}
                 <p><strong>{line.productName || line.name || "Product"}</strong><span>{line.sizeLabel || line.variantLabel || ""}{line.quantity ? ` · Qty ${line.quantity}` : ""}</span></p>
                 <strong>{money(line.subtotalPaise ?? line.unitPricePaise ?? 0)}</strong>
               </div>
@@ -1764,7 +1763,7 @@ function SettingsForm({ data, busy, onSave }) {
                   {form.socialImage && (
                     <img
                       className="product-image-preview"
-                      src={imageUrl(form.socialImage)}
+                      src={form.socialImage}
                       alt="Social sharing image preview"
                     />
                   )}
@@ -1842,7 +1841,7 @@ function AdminLogin({ onLogin }) {
           <Leaf size={34} aria-hidden="true" />
           <div><h1>Dr. Yogitha’s</h1><p>Ayurvedic herbal care.</p></div>
         </div>
-        <img src={imageUrl("/how-to-use-banner.webp")} alt="Dr. Yogitha's botanical hair oil ritual" />
+        <img src="/how-to-use-banner.webp" alt="Dr. Yogitha's botanical hair oil ritual" />
       </div>
       <form
         className="cms-form login-form"

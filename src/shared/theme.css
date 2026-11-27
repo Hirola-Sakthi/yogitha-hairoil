@@ -12,6 +12,12 @@
   --accent: #bfa56d;
   --soft: #edf1e7;
   --danger: #ad413b;
+  --store-button-bg: var(--brand-dark);
+  --store-button-hover-bg: var(--brand);
+  --store-button-border: rgb(191 165 109 / 40%);
+  --store-button-text: #ead19b;
+  --store-button-outline-text: var(--brand-dark);
+  --store-button-hover-tint: rgb(191 165 109 / 8%);
   --orange: var(--brand);
   --font: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-family: var(--font);

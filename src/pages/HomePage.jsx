@@ -9,7 +9,6 @@
 } from "lucide-react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { imageUrl } from "../shared/imageUrl";
 import "./home-assurances.css";
 
 const ProductCollection = lazy(() => import("../commerce/ProductCards"));
@@ -126,9 +125,7 @@ export default function HomePage() {
       <section className="shop-section shop-hero">
         <img
           className="shop-leaves shop-leaves-left"
-          src={imageUrl(
-            `${import.meta.env.BASE_URL}botanical-corner-foliage.png`,
-          )}
+          src={`${import.meta.env.BASE_URL}botanical-corner-foliage.png`}
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -136,9 +133,7 @@ export default function HomePage() {
         />
         <img
           className="shop-leaves shop-leaves-right"
-          src={imageUrl(
-            `${import.meta.env.BASE_URL}botanical-corner-foliage.png`,
-          )}
+          src={`${import.meta.env.BASE_URL}botanical-corner-foliage.png`}
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -146,9 +141,7 @@ export default function HomePage() {
         />
         <div className="shop-image shop-product-art">
           <img
-            src={imageUrl(
-              `${import.meta.env.BASE_URL}ayurvedic-hair-oil-display.webp`,
-            )}
+            src={`${import.meta.env.BASE_URL}ayurvedic-hair-oil-display.webp`}
             alt="Dr. Yogitha's Ayurvedic hair oil bottle surrounded by green leaves, botanicals, and a red flower"
             width="1074"
             height="1024"

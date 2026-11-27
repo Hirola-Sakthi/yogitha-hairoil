@@ -1,4 +1,3 @@
-import { imageUrl } from "../shared/imageUrl";
 import "./oil-blend-story.css";
 
 const oils = [
@@ -53,7 +52,7 @@ export default function OilBlendStory() {
             <span className="oil-blend-orbit oil-blend-orbit-one" />
             <span className="oil-blend-orbit oil-blend-orbit-two" />
             <img
-              src={imageUrl(`${import.meta.env.BASE_URL}oil-dropper.webp`)}
+              src={`${import.meta.env.BASE_URL}oil-dropper.webp`}
               alt=""
               loading="lazy"
               decoding="async"

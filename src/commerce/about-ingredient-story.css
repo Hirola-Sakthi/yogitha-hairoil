@@ -155,12 +155,6 @@
   margin-bottom: 12px;
   filter: drop-shadow(0 0 16px #e5b2568a);
 }
-.botanical-heart-kicker {
-  padding: 0 14px;
-  color: #c1caaf;
-  font-size: clamp(6px, 0.58vw, 8px);
-  letter-spacing: 0.16em;
-}
 .botanical-heart p {
   margin: 9px 0 12px;
   color: var(--cream);
@@ -243,8 +237,7 @@
   box-shadow: 0 0 12px #e4c48780;
 }
 .botanical-choice:focus-visible,
-.botanical-card-controls button:focus-visible,
-.botanical-more summary:focus-visible {
+.botanical-card-controls button:focus-visible {
   outline: 2px solid var(--cream);
   outline-offset: 5px;
 }
@@ -406,68 +399,21 @@
   line-height: 1.65;
   font-weight: 400;
 }
-.botanical-traits {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  list-style: none;
-  margin: 18px 0;
-  padding: 0;
+.botanical-ingredient-details {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #bfa56d47;
 }
-.botanical-traits li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  color: #dce0d1;
-  font-size: 11px;
-  text-align: center;
-  line-height: 1.5;
+.botanical-ingredient-details > span {
+  color: #c2b58f;
+  font-size: 9px;
+  letter-spacing: 0.16em;
 }
-.botanical-traits li > span {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 1px solid #bfa56d70;
-  border-radius: 50%;
-  color: #dfc286;
-}
-.botanical-more {
-  text-align: center;
-}
-.botanical-more summary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  width: min(100%, 210px);
-  min-height: 42px;
-  margin: auto;
-  padding: 9px 20px;
-  border: 1px solid #bfa56d66;
-  border-radius: 999px;
-  color: #ead19b;
-  font-size: 12px;
-  cursor: pointer;
-  list-style: none;
-  transition: background 0.2s;
-}
-.botanical-more summary::-webkit-details-marker {
-  display: none;
-}
-.botanical-more summary:hover {
-  background: #bfa56d15;
-}
-.botanical-more[open] summary svg {
-  transform: rotate(90deg);
-}
-.botanical-more > p {
-  margin: 20px 0 0;
+.botanical-ingredient-details > p {
+  margin: 7px 0 0;
   color: #d6dccd;
   font-size: 13px;
-  line-height: 1.8;
-  text-align: left;
+  line-height: 1.75;
 }
 .botanical-announcement {
   position: absolute;
@@ -487,11 +433,6 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-@media (min-width: 1500px) {
-  .botanical-heart-kicker {
-    font-size: 9px;
   }
 }
 @media (max-width: 1050px) {
@@ -532,9 +473,6 @@
   .botanical-heart-rule {
     display: none;
   }
-  .botanical-traits {
-    gap: 8px;
-  }
 }
 @media (max-width: 760px) {
   .botanical-story {
@@ -564,9 +502,6 @@
   }
   .botanical-heart p {
     font-size: clamp(14px, 4vw, 20px);
-  }
-  .botanical-heart-kicker {
-    font-size: 6px;
   }
   .botanical-selector-hint {
     margin-top: 5px;
@@ -625,12 +560,6 @@
   }
   .botanical-detail {
     padding-inline: 17px;
-  }
-  .botanical-traits {
-    gap: 6px;
-  }
-  .botanical-traits li {
-    font-size: 10px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
