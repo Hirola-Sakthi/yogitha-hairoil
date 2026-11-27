@@ -1,0 +1,22 @@
+import { defineModel } from "./model.js";
+export const Post = defineModel("Post", "posts", {
+  id: String,
+  title: { type: String, trim: true },
+  slug: String,
+  excerpt: String,
+  content: String,
+  contentFormat: String,
+  featured: Boolean,
+  tags: { type: Array, default: [] },
+  categoryIds: { type: Array, default: [] },
+  relatedPostIds: { type: Array, default: [] },
+  author: String,
+  categoryId: String,
+  image: String,
+  status: String,
+  publishedAt: String,
+  seoTitle: String,
+  seoDescription: String,
+  createdAt: String,
+  updatedAt: String,
+});

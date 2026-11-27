@@ -5,31 +5,31 @@ import "./ingredient-story-cards.css";
 
 const ingredients = [
   {
-    name: "Amla",
+    name: "Amalaki (Amla)",
     botanical: "Phyllanthus emblica",
     image: "home-ing-1.webp",
-    copy: "The bright Indian gooseberry brings generations of botanical care to every ritual.",
+    copy: "	Helps nourish the scalp and supports overall hair health as part of a regular hair-care routine.",
     tone: "amla",
   },
   {
-    name: "Bhringraj",
-    botanical: "Eclipta prostrata",
+    name: "Bhringaraja (Bhringraj)",
+    botanical: "Eclipta alba",
     image: "home-ing-2.webp",
-    copy: "A revered green herb at the heart of time-honoured Ayurvedic hair rituals.",
+    copy: "	Traditionally used in Ayurvedic hair care to support hair growth and help manage hair fall.",
     tone: "bhringraj",
   },
   {
-    name: "Rosemary",
+    name: "Rosemary Essential Oil",
     botanical: "Salvia rosmarinus",
     image: "home-ing-3.webp",
-    copy: "An aromatic herb that adds a fresh, mindful note to our botanical ritual.",
+    copy: "Used in hair-care preparations to support scalp health and give the oil its aromatic fragrance.",
     tone: "rosemary",
   },
   {
-    name: "Hibiscus",
+    name: "Japa (Hibiscus)",
     botanical: "Hibiscus rosa-sinensis",
     image: "home-ing-4.webp",
-    copy: "Vivid petals and lush leaves that make every hair-care moment feel more beautiful.",
+    copy: "	Helps condition the hair and is traditionally used in scalp care for its cooling and soothing effects.",
     tone: "hibiscus",
   },
 ];
@@ -40,17 +40,31 @@ export default function IngredientStoryCards() {
       <div className="keystones-inner">
         <header className="keystones-heading">
           <div>
-            <p className="eyebrow keystones-kicker">BOTANICAL KEYSTONES</p>
-            <h2 id="keystones-title">Nature&apos;s finest, chosen with care.</h2>
+            <p className="eyebrow keystones-kicker">FEATURED INGREDIENTS</p>
+            <h2 id="keystones-title">	The right hair care begins with the right understanding.</h2>
           </div>
-          <p className="keystones-intro">Inspired by Ayurveda and gathered into one thoughtful ritual for stronger-looking, beautifully cared-for hair.</p>
+          <p className="keystones-intro">
+            	Before choosing a hair-care product, take time to understand your hair and scalp needs and check the ingredients.
+          </p>
         </header>
         <div className="keystones-grid">
           {ingredients.map((ingredient, index) => (
-            <article className={`keystone-card is-${ingredient.tone}`} key={ingredient.name}>
+            <article
+              className={`keystone-card is-${ingredient.tone}`}
+              key={ingredient.name}
+            >
               <div className="keystone-image-wrap">
-                <span className="keystone-number">{String(index + 1).padStart(2, "0")}</span>
-                <img src={imageUrl(`${import.meta.env.BASE_URL}${ingredient.image}`)} alt={ingredient.name} loading="lazy" decoding="async" />
+                <span className="keystone-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <img
+                  src={imageUrl(
+                    `${import.meta.env.BASE_URL}${ingredient.image}`,
+                  )}
+                  alt={ingredient.name}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <div className="keystone-copy">
                 <h3>{ingredient.name}</h3>
@@ -60,7 +74,6 @@ export default function IngredientStoryCards() {
             </article>
           ))}
         </div>
-        <Link className="keystones-link" to="/about#ingredients">Explore our botanical story <ArrowUpRight size={17} aria-hidden="true" /></Link>
       </div>
     </section>
   );

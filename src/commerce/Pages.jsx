@@ -63,7 +63,7 @@ export function AuthPage({ mode = "login" }) {
     <section className="store-auth-page" aria-labelledby="store-auth-title">
       <div className="store-auth-shell">
       <aside className="store-auth-art">
-        <img src={imageUrl("/how-to-use-banner.png")} alt="Dr. Yogitha's botanical hair oil ritual" />
+        <img src={imageUrl("/how-to-use-banner.webp")} alt="Dr. Yogitha's botanical hair oil ritual" />
         <div className="store-auth-brand"><Leaf size={28} strokeWidth={1.4} /><div><span>DR. YOGITHA’S</span><p>Ayurvedic herbal care.</p></div></div>
       </aside>
       <div className="auth-card store-auth-card">

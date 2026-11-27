@@ -1,29 +1,35 @@
 # Backend
 
-Node.js HTTP API with MongoDB, storefront serving, and SEO rendering. Requires
-Node.js 24 or newer and a MongoDB replica set for transactions.
+Express API with MongoDB, storefront serving, and SEO rendering. Requires Node.js
+24 or newer and a MongoDB replica set for transactions.
 
 ## Structure
 
 ```text
 server/
-  config/        MongoDB connection and transaction helpers
+  config/        MongoDB connection, schema initialization, and transaction helpers
   controllers/   API and media request handlers
   cors/          Same-origin request validation
   cron/          Reserved for scheduled job entry points
   middleware/    Authentication, sessions, rate limiting, and JSON parsing
-  models/        Collection access, defaults, and audit records
+  models/        Mongoose collection models and data-access helpers
   routes/        Request dispatch to API and media controllers
   services/      Checkout, payments, shipping, email, images, and SEO
   utils/         Validation, content sanitization, and maintenance commands
   tests/         Unit and integration tests
-  index.js       HTTP server and storefront entry point
+  index.js       Express application and storefront entry point
 ```
 
-The backend uses the MongoDB driver directly; `models/db.js` provides its data
-access functions. Shared storefront modules are imported from `../src/shared`,
-so retain the repository layout when deploying. The built storefront is served
-from `../dist`.
+The backend uses Mongoose for application data access. Shared storefront modules
+are imported from `../src/shared`, so retain the repository layout when deploying.
+The built storefront is served from `../dist`.
+
+## Database initialization
+
+Required MongoDB indexes and initial store records are created when the backend
+connects to the database. `migrate:imagekit` is intentionally separate because it uploads files and
+rewrites database records. First run it without `--apply`, back up the target
+database, then run the apply command only after reviewing the dry-run output.
 
 ## Setup and commands
 
@@ -40,7 +46,7 @@ then configure MongoDB and the integrations you use. Keep secrets out of Git.
 npm run dev             # Watch the backend
 npm start               # Start the backend and built storefront
 npm run admin           # Interactive administrator setup
-npm run migrate:imagekit
+npm run migrate:imagekit # Dry-run the ImageKit data migration
 npm test                # Uses an isolated in-memory MongoDB replica set
 npm run format          # Apply Prettier to backend files
 npm run format:check    # Check backend formatting

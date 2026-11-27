@@ -20,8 +20,8 @@
 .collection-price { margin-top: auto; display: flex; align-items: baseline; gap: 12px; padding-bottom: 18px; }
 .collection-price strong { font-size: 22px; font-weight: 600; }
 .collection-price del { font-size: 14px; color: #7b8073; }
-.collection-add { display: flex; width: 100%; justify-content: center; align-items: center; gap: 9px; min-height: 46px; padding: 10px 16px; border: 1px solid #344d35; border-radius: 7px; background: #344d35; color: #fffdf5; font: inherit; font-size: 14px; cursor: pointer; }
-.collection-add:hover:not(:disabled) { background: #243629; }
+.collection-add { display: flex; width: 100%; justify-content: center; align-items: center; gap: 9px; min-height: 46px; padding: 10px 16px; border: 1px solid #bf8b22; border-radius: 7px; background: #bf8b22; color: #201b10; font: inherit; font-size: 14px; cursor: pointer; }
+.collection-add:hover:not(:disabled) { background: #bf8b22; }
 .collection-add:disabled { opacity: .55; cursor: not-allowed; }
 .collection-feedback, .collection-error { display: block; margin-top: 8px; font-size: 12px; line-height: 1.4; }
 .collection-feedback { color: #344d35; }
@@ -39,7 +39,7 @@
 .oil-gallery { display: flex; gap: 14px; min-width: 0; width: 90%; justify-self: center; }
 .oil-thumbnails { display: flex; flex-direction: column; gap: 10px; width: 64px; flex-shrink: 0; }
 .oil-thumbnails button { border-radius: 8px; overflow: hidden; border: 1px solid transparent; padding: 3px; background: transparent; cursor: pointer; }
-.oil-thumbnails button[aria-pressed="true"] { border-color: #344d35; }
+.oil-thumbnails button[aria-pressed="true"] { border-color: #bf8b22; }
 .oil-thumbnails img { border-radius: 5px; width: 100%; aspect-ratio: .85; object-fit: cover; display: block; }
 .oil-main-image { position: relative; flex: 1; min-width: 0; background: #e6e8da; border-radius: 8px; overflow: hidden; }
 .oil-main-image > img { width: 100%; aspect-ratio: .89; object-fit: cover; display: block; }
@@ -54,22 +54,22 @@
 .oil-sizes { padding: 0; border: 0; margin: 0 0 24px; }
 .oil-sizes legend { font-size: 13px; font-weight: 500; margin-bottom: 11px; }
 .oil-sizes legend span { color: #7c8073; font-weight: 400; }
-.oil-sizes button { background: transparent; color: #344d35; border: 1px solid #344d3533; border-radius: 8px; font: inherit; font-size: 14px; padding: 9px 21px; margin-right: 9px; cursor: pointer; }
-.oil-sizes button[aria-pressed="true"] { border-color: #344d35; background: #344d35; color: #fffdf5; }
+.oil-sizes button { background: transparent; color: #bf8b22; border: 1px solid #bf8b22; border-radius: 8px; font: inherit; font-size: 14px; padding: 9px 21px; margin-right: 9px; cursor: pointer; }
+.oil-sizes button[aria-pressed="true"] { border-color: #bf8b22; background: #bf8b22; color: #201b10; }
 .oil-stock { color: #597052; font-size: 12px; margin: 0 0 14px; }
 .oil-purchase-actions { display: flex; align-items: flex-start; gap: 12px; }
 .oil-quantity { border-radius: 8px; overflow: hidden; display: flex; height: 48px; border: 1px solid #344d3533; flex-shrink: 0; align-items: center; }
-.oil-quantity button { width: 34px; height: 46px; background: transparent; color: #344d35; border: 0; font: inherit; cursor: pointer; }
+.oil-quantity button { width: 34px; height: 46px; background: transparent; color: #bf8b22; border: 0; font: inherit; cursor: pointer; }
 .oil-quantity button:disabled { opacity: .35; cursor: not-allowed; }
 .oil-quantity output { min-width: 30px; text-align: center; font-size: 14px; }
 .oil-purchase-actions .collection-action { flex: 1; }
 .oil-purchase-actions .collection-add { min-height: 48px; border-radius: 8px; letter-spacing: .08em; font-size: 12px; text-transform: uppercase; }
-.oil-buy-now { border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 46px; border: 1px solid #344d35; color: #344d35; background: transparent; text-decoration: none; font: inherit; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; margin-top: 12px; }
-.oil-buy-now:hover { background: #e4e9db; }
+.oil-buy-now { border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 46px; border: 1px solid #bf8b22; color: #bf8b22; background: transparent; text-decoration: none; font: inherit; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; margin-top: 12px; }
+.oil-buy-now:hover { background: #bf8b22; color: #201b10; }
 .oil-buy-now:disabled { opacity: .4; }
 .oil-purchase-note { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #68715f; border-top: 1px solid #344d3522; border-bottom: 1px solid #344d3522; padding: 22px 0; margin-top: 28px; }
 .oil-sku { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: #7c8073; font-size: 11px; margin-top: 20px; }
-.oil-sizes button:focus-visible, .oil-quantity button:focus-visible, .oil-buy-now:focus-visible, .oil-thumbnails button:focus-visible { outline: 2px solid #9b7844; outline-offset: 3px; }
+.oil-sizes button:focus-visible, .oil-quantity button:focus-visible, .oil-buy-now:focus-visible, .oil-thumbnails button:focus-visible { outline: 2px solid #bf8b22; outline-offset: 3px; }
 @media (max-width: 800px) { .oil-purchase { grid-template-columns: 1fr; gap: 26px; } .oil-main-image > img { aspect-ratio: 1; } .oil-details { padding: 0; } .oil-thumbnails { width: 50px; } }
 @media (max-width: 900px) { .single-product-section { padding: 54px 8% 62px; } }
 @media (max-width: 600px) { .single-product-section { padding: 32px 6% 42px; } }
@@ -116,7 +116,7 @@
   transform: translateY(-2px);
 }
 .oil-thumbnails button[aria-pressed="true"] {
-  border-color: var(--accent);
+  border-color: #bf8b22;
 }
 .oil-details {
   padding: 18px 0 18px clamp(0px, 1.2vw, 24px);
@@ -192,12 +192,12 @@
 }
 .oil-sizes button:hover {
   transform: translateY(-1px);
-  border-color: var(--brand);
+  border-color: #bf8b22;
 }
 .oil-sizes button[aria-pressed="true"] {
-  border-color: var(--brand-dark);
-  background: var(--brand-dark);
-  color: var(--surface);
+  border-color: #bf8b22;
+  background: #bf8b22;
+  color: #201b10;
 }
 .oil-stock {
   margin-bottom: 18px;
@@ -221,9 +221,9 @@
 }
 .oil-purchase-actions .collection-add {
   min-height: 50px;
-  border: 1px solid var(--brand-dark);
+  border: 1px solid #bf8b22;
   border-radius: 999px;
-  background: var(--brand-dark);
+  background: #bf8b22;
   box-shadow: 0 8px 20px rgb(35 59 37 / 13%);
   font-size: 11px;
   letter-spacing: .12em;
@@ -231,16 +231,16 @@
 }
 .oil-purchase-actions .collection-add:hover:not(:disabled) {
   transform: translateY(-2px);
-  background: var(--brand);
+  background: #bf8b22;
   box-shadow: 0 12px 24px rgb(35 59 37 / 18%);
 }
 .oil-buy-now {
   min-height: 50px;
   margin-top: 13px;
-  border-color: rgb(52 76 53 / 24%);
+  border-color: #bf8b22;
   border-radius: 999px;
   background: rgb(255 254 249 / 48%);
-  color: var(--brand-dark);
+  color: #bf8b22;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .14em;
@@ -248,8 +248,9 @@
 }
 .oil-buy-now:hover {
   transform: translateY(-1px);
-  border-color: var(--accent);
-  background: #f3eddb;
+  border-color: #bf8b22;
+  background: #bf8b22;
+  color: #201b10;
 }
 .oil-purchase-note {
   gap: 12px;

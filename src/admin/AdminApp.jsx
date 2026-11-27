@@ -49,6 +49,7 @@ import { uploadImage } from "./media";
 import { modules, labels } from "./schema";
 import "./admin.css";
 import ContentForm from "./ContentForm";
+import WorkspaceLoader from "../components/WorkspaceLoader";
 const nav = [
   ["dashboard", "Overview", LayoutDashboard],
   ["leads", "Leads", MessageSquare],
@@ -157,8 +158,7 @@ export default function AdminApp() {
     const name = record.name || record.title || record.id;
     setPendingDelete({ id: record.id, name });
   }
-  if (user === undefined)
-    return <div className="cms-loading">Opening your workspace…</div>;
+  if (user === undefined) return <WorkspaceLoader />;
   if (!user || !["owner", "manager", "editor"].includes(user.role))
     return (
       <AdminLogin
@@ -229,7 +229,7 @@ export default function AdminApp() {
     <div className="cms">
       <aside className={"cms-sidebar " + (mobile ? "is-open" : "")}>
         <Link className="cms-logo" to="/admin">
-          <img src={imageUrl("/admin-logo.webp")} alt="Dr. Yogitha's" />
+          <img src={imageUrl("/logo.webp")} alt="Dr. Yogitha's" />
           <span>
             <Leaf size={21} />
           </span>
@@ -684,7 +684,7 @@ function Dashboard({ data }) {
         </div>
         <div className="welcome-art">
           <img
-            src={imageUrl("/how-to-use-banner.png")}
+            src={imageUrl("/how-to-use-banner.webp")}
             alt="Dr. Yogitha's botanical hair oil ritual"
           />
           <span>THE EVERYDAY RITUAL</span>
@@ -1842,7 +1842,7 @@ function AdminLogin({ onLogin }) {
           <Leaf size={34} aria-hidden="true" />
           <div><h1>Dr. Yogitha’s</h1><p>Ayurvedic herbal care.</p></div>
         </div>
-        <img src={imageUrl("/how-to-use-banner.png")} alt="Dr. Yogitha's botanical hair oil ritual" />
+        <img src={imageUrl("/how-to-use-banner.webp")} alt="Dr. Yogitha's botanical hair oil ritual" />
       </div>
       <form
         className="cms-form login-form"

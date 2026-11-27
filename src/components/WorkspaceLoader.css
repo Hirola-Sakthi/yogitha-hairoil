@@ -1,0 +1,37 @@
+.workspace-loader {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  background: var(--cream, #fffaf0);
+  color: var(--brand, #234232);
+}
+
+.workspace-loader-ring {
+  width: 42px;
+  height: 42px;
+  border: 3px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: workspace-loader-spin 0.75s linear infinite;
+}
+
+.workspace-loader-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@keyframes workspace-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-loader-ring {
+    animation-duration: 1.5s;
+  }
+}

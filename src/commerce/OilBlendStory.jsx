@@ -3,47 +3,69 @@ import "./oil-blend-story.css";
 
 const oils = [
   {
-    name: "Coconut oil",
-    botanical: "Cocos nucifera",
-    copy: "A nourishing base that leaves every strand feeling soft, smooth, and cared for.",
+    name: "Narikela (Coconut)",
+    botanical: "Cocos nucifera L.",
+    copy: "Nourishes and moisturises the scalp and conditions hair.",
     side: "left",
   },
   {
-    name: "Rosemary essential oil",
-    botanical: "Rosmarinus officinalis",
-    copy: "A revitalising aromatic oil chosen for a refreshed scalp ritual.",
+    name: "Rosemary Essential Oil",
+    botanical: "Salvia rosmarinus",
+    copy: "Used in hair care to support scalp health and add fragrance.",
     side: "left",
   },
   {
-    name: "Vetiver essential oil",
-    botanical: "Vetiveria zizanioides",
-    copy: "A grounding botanical note that brings depth to the blend and calm to the ritual.",
+    name: "Ushira (Vetiver)",
+    botanical: "Chrysopogon zizanioides",
+    copy: "Traditionally used for its cooling and soothing effects.",
     side: "right",
   },
 ];
 
 export default function OilBlendStory() {
   return (
-    <section className="oil-blend-story" aria-labelledby="oil-blend-story-title">
+    <section
+      className="oil-blend-story"
+      aria-labelledby="oil-blend-story-title"
+    >
       <div className="oil-blend-story-inner">
         <div className="oil-blend-story-heading">
-          <p className="eyebrow">THE BOTANICAL BLEND</p>
-          <h2 id="oil-blend-story-title">Every drop begins<br />with intention.</h2>
-          <p>Three thoughtfully chosen oils come together in one slow, sensorial ritual for your hair.</p>
+          <p className="eyebrow">OUR PREPARATION METHOD</p>
+          <h2 id="oil-blend-story-title">
+            	Every ingredient
+            <br />
+            has a purpose.
+          </h2>
+          <p>
+           	Thoughtfully formulated with different scalp types and individual Prakruthi in mind.
+          </p>
         </div>
 
         <div className="oil-blend-composition">
           <div className="oil-blend-callouts oil-blend-callouts-left">
-            {oils.filter((oil) => oil.side === "left").map((oil) => <OilCallout key={oil.name} oil={oil} />)}
+            {oils
+              .filter((oil) => oil.side === "left")
+              .map((oil) => (
+                <OilCallout key={oil.name} oil={oil} />
+              ))}
           </div>
           <div className="oil-blend-visual" aria-hidden="true">
             <span className="oil-blend-orbit oil-blend-orbit-one" />
             <span className="oil-blend-orbit oil-blend-orbit-two" />
-            <img src={imageUrl(`${import.meta.env.BASE_URL}oil-dropper.webp`)} alt="" loading="lazy" decoding="async" />
-            <span className="oil-blend-caption">A concentrated botanical ritual</span>
+            <img
+              src={imageUrl(`${import.meta.env.BASE_URL}oil-dropper.webp`)}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span className="oil-blend-caption">EVERY DEGREE MATTERS</span>
           </div>
           <div className="oil-blend-callouts oil-blend-callouts-right">
-            {oils.filter((oil) => oil.side === "right").map((oil) => <OilCallout key={oil.name} oil={oil} />)}
+            {oils
+              .filter((oil) => oil.side === "right")
+              .map((oil) => (
+                <OilCallout key={oil.name} oil={oil} />
+              ))}
           </div>
         </div>
       </div>

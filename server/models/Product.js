@@ -1,0 +1,27 @@
+import { defineModel } from "./model.js";
+
+export const Product = defineModel("Product", "products", {
+  id: String,
+  name: { type: String, trim: true },
+  slug: { type: String, trim: true },
+  sku: { type: String, trim: true },
+  description: { type: String, trim: true },
+  pricePaise: Number,
+  compareAtPricePaise: Number,
+  price100Paise: Number,
+  compareAt100Paise: Number,
+  stock: Number,
+  stock100: Number,
+  status: String,
+  image: String,
+  image100: String,
+  weight: Number,
+  length: Number,
+  breadth: Number,
+  height: Number,
+  seoTitle: String,
+  seoDescription: String,
+  faq: { type: Array, default: [] },
+  createdAt: String,
+  updatedAt: String,
+});

@@ -177,15 +177,15 @@
   transform: translateY(-50%);
   border: 1px solid color-mix(in srgb, var(--brand) 26%, transparent);
   border-radius: 50%;
-  background: var(--brand);
-  color: var(--surface);
+  background: #bf8b22;
+  color: #201b10;
   box-shadow: 0 5px 16px rgb(24 45 28 / 30%);
   cursor: pointer;
   transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
 }
 .review-arrow:hover:not(:disabled) {
-  background: var(--brand-dark);
-  color: var(--surface);
+  background: #bf8b22;
+  color: #201b10;
 }
 .review-arrow:disabled {
   opacity: 0.48;

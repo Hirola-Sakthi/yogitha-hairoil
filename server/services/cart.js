@@ -1,6 +1,7 @@
 import { randomBytes, createHash } from "node:crypto";
-import { db, mongoOptions, tx } from "../config/mongo.js";
+import { mongoOptions, tx } from "../config/db.js";
 import { get } from "../models/db.js";
+import { Cart } from "../models/index.js";
 import { check, text } from "../utils/validate.js";
 import { productForSize } from "../../src/shared/productOptions.js";
 
@@ -19,6 +20,15 @@ function cartId(req, res) {
   }
   return createHash("sha256").update(token).digest("hex");
 }
+
+const options = () => {
+  const session = mongoOptions().session;
+  return session ? { session } : {};
+};
+const withSession = (query) => {
+  const session = mongoOptions().session;
+  return session ? query.session(session) : query;
+};
 
 export function cartIdentifier(req) {
   const token = (req.headers.cookie || "")
@@ -66,9 +76,8 @@ async function view(lines) {
 
 export async function cart(req, res, body) {
   const id = cartId(req, res);
-  const collection = db.collection("carts");
   if (req.method === "GET")
-    return view((await collection.findOne({ _id: id }))?.items || []);
+    return view((await Cart.findById(id).lean())?.items || []);
   check(
     ["POST", "PATCH", "DELETE"].includes(req.method),
     "Method not allowed",
@@ -87,13 +96,13 @@ export async function cart(req, res, body) {
       quantity <= 20,
     "Quantity must be between 0 and 20",
   );
-  await collection.updateOne(
+  await Cart.updateOne(
     { _id: id },
     { $setOnInsert: { items: [], expires: new Date(Date.now() + 2592000000) } },
-    { upsert: true },
-  );
+    { upsert: true, ...options() },
+  ).exec();
   return tx(async () => {
-    const current = await collection.findOne({ _id: id }, mongoOptions());
+    const current = await withSession(Cart.findById(id)).lean();
     const items = current.items;
     const existing = items.find(matches);
     const next =
@@ -122,11 +131,11 @@ export async function cart(req, res, body) {
       : next
         ? [...items, { productId, variantId, quantity: next }]
         : items;
-    await collection.updateOne(
+    await Cart.updateOne(
       { _id: id },
       { $set: { items: updated, expires: new Date(Date.now() + 2592000000) } },
-      mongoOptions(),
-    );
+      options(),
+    ).exec();
     return view(updated);
   });
 }
@@ -138,8 +147,7 @@ export async function consumeCart(req, items) {
 
 export async function consumeCartById(id, items) {
   if (!id) return;
-  const collection = db.collection("carts");
-  const current = await collection.findOne({ _id: id }, mongoOptions());
+  const current = await withSession(Cart.findById(id)).lean();
   if (!current) return;
   const selected = Array.isArray(items) ? items : [items];
   const updated = current.items
@@ -154,9 +162,9 @@ export async function consumeCartById(id, items) {
         : line;
     })
     .filter((p) => p.quantity);
-  await collection.updateOne(
+  await Cart.updateOne(
     { _id: id },
     { $set: { items: updated } },
-    mongoOptions(),
-  );
+    options(),
+  ).exec();
 }

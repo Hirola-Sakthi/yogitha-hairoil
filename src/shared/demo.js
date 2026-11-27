@@ -165,14 +165,14 @@ initial.payments = initial.orders.map((o) => ({
 }));
 let state;
 try {
-  state = JSON.parse(localStorage.getItem("ambar-preview-v2"));
+  state = JSON.parse(localStorage.getItem("dr-yogithas-preview-v2"));
 } catch {}
 state ||= structuredClone(initial);
 state.audit ||= [];
 state.webhooks ||= [];
-let user = JSON.parse(sessionStorage.getItem("ambar-demo-user") || "null");
+let user = JSON.parse(sessionStorage.getItem("dr-yogithas-demo-user") || "null");
 const save = () =>
-  localStorage.setItem("ambar-preview-v2", JSON.stringify(state));
+  localStorage.setItem("dr-yogithas-preview-v2", JSON.stringify(state));
 export async function demo(path, { method = "GET", body: b = {} } = {}) {
   if (path === "/shipping/quote")
     return { shippingPaise: state.settings.shippingPaise || 0, courierName: "Preview shipping" };
@@ -203,7 +203,7 @@ export async function demo(path, { method = "GET", body: b = {} } = {}) {
   if (path === "/auth/me") return { user };
   if (path === "/auth/logout") {
     user = null;
-    sessionStorage.removeItem("ambar-demo-user");
+    sessionStorage.removeItem("dr-yogithas-demo-user");
     return { ok: true };
   }
   if (path === "/auth/login" || path === "/auth/register") {
@@ -213,7 +213,7 @@ export async function demo(path, { method = "GET", body: b = {} } = {}) {
       email: b.email || "customer@example.com",
       role: "customer",
     };
-    sessionStorage.setItem("ambar-demo-user", JSON.stringify(user));
+    sessionStorage.setItem("dr-yogithas-demo-user", JSON.stringify(user));
     return { user };
   }
   if (path === "/auth/forgot" || path === "/auth/reset")

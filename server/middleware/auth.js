@@ -4,7 +4,8 @@ import {
   timingSafeEqual,
   createHash,
 } from "node:crypto";
-import { db, findOne, insert, deleteMany } from "../models/db.js";
+import { findOne, insert, deleteMany } from "../models/db.js";
+import { RateLimit } from "../models/index.js";
 export const digest = (s) => createHash("sha256").update(s).digest("hex");
 export function hash(p) {
   const salt = randomBytes(16).toString("hex");
@@ -62,7 +63,7 @@ export async function logout(req, res) {
 export async function limit(key, n = 15) {
   const time = new Date();
   const expired = { $lte: [{ $ifNull: ["$expires", new Date(0)] }, time] };
-  const r = await db.collection("limits").findOneAndUpdate(
+  const record = await RateLimit.findOneAndUpdate(
     { _id: key },
     [
       {
@@ -74,7 +75,7 @@ export async function limit(key, n = 15) {
         },
       },
     ],
-    { upsert: true, returnDocument: "after" },
-  );
-  return r.n <= n;
+    { upsert: true, returnDocument: "after", updatePipeline: true },
+  ).lean();
+  return record.n <= n;
 }

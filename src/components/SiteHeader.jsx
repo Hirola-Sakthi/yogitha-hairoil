@@ -43,7 +43,7 @@ export default function SiteHeader({ bagQuantity }) {
         <Menu size={22} strokeWidth={1.6} />
       </button>
       <Link className="wordmark" to="/" aria-label="Dr. Yogitha's home">
-        <img src="/main-logo.webp?v=3" alt="Dr. Yogitha's" width="200" height="21" fetchPriority="high" decoding="async" />
+        <img src="/logo.webp" alt="Dr. Yogitha's" width="200" height="21" fetchPriority="high" decoding="async" />
       </Link>
       <nav aria-label="Main navigation">
         <NavLink to="/about" onPointerEnter={prefetchRoute("/about")} onFocus={prefetchRoute("/about")}>About</NavLink>
@@ -88,7 +88,7 @@ export default function SiteHeader({ bagQuantity }) {
       <aside className="mobile-menu-panel" id="mobile-navigation" aria-label="Mobile navigation" onClick={(event) => event.stopPropagation()}>
         <div className="mobile-menu-top">
           <Link className="mobile-menu-logo" to="/" onClick={closeMenu} aria-label="Dr. Yogitha's home">
-            <img src="/main-logo.webp?v=3" alt="Dr. Yogitha's" width="200" height="21" />
+            <img src="/logo.webp" alt="Dr. Yogitha's" width="200" height="21" />
           </Link>
           <button className="mobile-menu-close" type="button" aria-label="Close menu" onClick={closeMenu}><X size={23} strokeWidth={1.6} /></button>
         </div>

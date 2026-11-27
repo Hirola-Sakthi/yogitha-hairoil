@@ -1305,10 +1305,6 @@ button:disabled {
 .mobile-toggle {
   display: none;
 }
-.cms-loading {
-  padding: 100px;
-  text-align: center;
-}
 .sidebar-backdrop {
   display: none;
 }

@@ -7,9 +7,10 @@ import { imageUrl } from "./shared/imageUrl";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const frameUrl = (index, source) => imageUrl(
-  `${import.meta.env.BASE_URL}${source.directory}/frame_${String(index + 1).padStart(4, "0")}.webp?v=${source.revision}`,
-);
+const frameUrl = (index, source) =>
+  imageUrl(
+    `${import.meta.env.BASE_URL}${source.directory}/frame_${String(index + 1).padStart(4, "0")}.webp?v=${source.revision}`,
+  );
 
 export default function ProductSequence() {
   const section = useRef(null);
@@ -23,7 +24,9 @@ export default function ProductSequence() {
     if (!sectionEl || !canvasEl || !context) return;
 
     const mobile = matchMedia("(max-width: 600px)");
-    const mediaSequence = mobile.matches ? { ...sequence, ...sequence.mobile } : sequence;
+    const mediaSequence = mobile.matches
+      ? { ...sequence, ...sequence.mobile }
+      : sequence;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const cacheLimit = mobile.matches ? 16 : 24;
     const concurrency = mobile.matches ? 4 : 6;
@@ -47,15 +50,26 @@ export default function ProductSequence() {
       if (disposed || !cache.size) return;
       const index = cache.has(desired)
         ? desired
-        : [...cache.keys()].reduce((a, b) => Math.abs(a - desired) < Math.abs(b - desired) ? a : b);
+        : [...cache.keys()].reduce((a, b) =>
+            Math.abs(a - desired) < Math.abs(b - desired) ? a : b,
+          );
       if (index === drawn) return;
       const frame = cache.get(index);
-      const scale = Math.max(canvasEl.width / frame.width, canvasEl.height / frame.height);
+      const scale = Math.max(
+        canvasEl.width / frame.width,
+        canvasEl.height / frame.height,
+      );
       const width = frame.width * scale;
       const height = frame.height * scale;
       context.fillStyle = "#17251c";
       context.fillRect(0, 0, canvasEl.width, canvasEl.height);
-      context.drawImage(frame, (canvasEl.width - width) / 2, (canvasEl.height - height) / 2, width, height);
+      context.drawImage(
+        frame,
+        (canvasEl.width - width) / 2,
+        (canvasEl.height - height) / 2,
+        width,
+        height,
+      );
       canvasEl.style.opacity = "1";
       canvasEl.dataset.frame = String(index + 1);
       drawn = index;
@@ -73,12 +87,22 @@ export default function ProductSequence() {
       if (!reducedMotion.matches) {
         const radius = Math.floor((cacheLimit - 1) / 2);
         for (let offset = 1; offset <= radius; offset += 1) {
-          candidates.push(preloadTarget + offset * direction, preloadTarget - offset * direction);
+          candidates.push(
+            preloadTarget + offset * direction,
+            preloadTarget - offset * direction,
+          );
         }
       }
       for (const index of candidates) {
         if (loading.size >= concurrency) break;
-        if (index < 0 || index >= mediaSequence.frameCount || cache.has(index) || loading.has(index) || failures.has(index)) continue;
+        if (
+          index < 0 ||
+          index >= mediaSequence.frameCount ||
+          cache.has(index) ||
+          loading.has(index) ||
+          failures.has(index)
+        )
+          continue;
         loading.add(index);
         const image = new Image();
         image.decoding = "async";
@@ -89,7 +113,9 @@ export default function ProductSequence() {
           loading.delete(index);
           if (disposed) return;
           cache.set(index, image);
-          const farthest = [...cache.keys()].sort((a, b) => Math.abs(b - preloadTarget) - Math.abs(a - preloadTarget));
+          const farthest = [...cache.keys()].sort(
+            (a, b) => Math.abs(b - preloadTarget) - Math.abs(a - preloadTarget),
+          );
           while (cache.size > cacheLimit) cache.delete(farthest.shift());
           schedule();
           pump();
@@ -116,14 +142,28 @@ export default function ProductSequence() {
     };
 
     const updatePanels = (progress) => {
-      const windows = [[0, 0, 0.065, 0.1], [0.11, 0.14, 0.25, 0.29], [0.37, 0.4, 0.64, 0.69], [0.74, 0.76, 0.8, 0.84], [0.86, 0.89, 1, 1]];
+      const windows = [
+        [0, 0.03, 0.24, 0.28],
+        [0.32, 0.36, 0.58, 0.62],
+        [0.66, 0.7, 0.92, 0.96],
+      ];
       panels.forEach((panel, index) => {
         const [start, full, end, done] = windows[index];
-        const opacity = progress < start || progress > done ? 0 : progress < full ? (progress - start) / (full - start) : progress > end ? 1 - (progress - end) / (done - end) : 1;
+        const opacity =
+          progress < start || progress > done
+            ? 0
+            : progress < full
+              ? (progress - start) / (full - start)
+              : progress > end
+                ? 1 - (progress - end) / (done - end)
+                : 1;
         panel.style.opacity = String(opacity);
         panel.style.visibility = opacity > 0.01 ? "visible" : "hidden";
-        const offset = progress < full ? (1 - opacity) * 20 : -(1 - opacity) * 20;
-        panel.style.transform = mobile.matches ? `translateY(${offset}px)` : `translateY(calc(-50% + ${offset}px))`;
+        const offset =
+          progress < full ? (1 - opacity) * 20 : -(1 - opacity) * 20;
+        panel.style.transform = mobile.matches
+          ? `translateY(${offset}px)`
+          : `translateY(calc(-50% + ${offset}px))`;
       });
     };
 
@@ -175,32 +215,86 @@ export default function ProductSequence() {
       observer.disconnect();
       cancelAnimationFrame(raf);
       window.clearTimeout(initialLoadTimer);
-      requests.forEach((image) => { image.onload = image.onerror = null; image.src = ""; });
+      requests.forEach((image) => {
+        image.onload = image.onerror = null;
+        image.src = "";
+      });
       cache.clear();
     };
   }, []);
 
   return (
-    <section id="top" className="sequence" ref={section} aria-label="The Ayurvedic hair oil story">
+    <section
+      id="top"
+      className="sequence"
+      ref={section}
+      aria-label="The Ayurvedic hair oil story"
+    >
       <span id="formula" className="scene-anchor anchor-formula" />
       <span id="craft" className="scene-anchor anchor-craft" />
       <span id="result" className="scene-anchor anchor-result" />
       <div className="film-stage">
         <picture>
-          <source media="(max-width: 600px)" srcSet={imageUrl(`${import.meta.env.BASE_URL}${sequence.mobile.directory}/poster.webp?v=${sequence.mobile.revision}`)} width={sequence.mobile.width} height={sequence.mobile.height} />
-          <img className="film-poster" src={imageUrl(`${import.meta.env.BASE_URL}${sequence.directory}/poster.webp?v=${sequence.revision}`)} alt="Dr. Yogitha's Ayurvedic hair oil advertisement" width={sequence.width} height={sequence.height} fetchPriority="high" decoding="async" />
+          <source
+            media="(max-width: 600px)"
+            srcSet={imageUrl(
+              `${import.meta.env.BASE_URL}${sequence.mobile.directory}/poster.webp?v=${sequence.mobile.revision}`,
+            )}
+            width={sequence.mobile.width}
+            height={sequence.mobile.height}
+          />
+          <img
+            className="film-poster"
+            src={imageUrl(
+              `${import.meta.env.BASE_URL}${sequence.directory}/poster.webp?v=${sequence.revision}`,
+            )}
+            alt="Dr. Yogitha's Ayurvedic hair oil advertisement"
+            width={sequence.width}
+            height={sequence.height}
+            fetchPriority="high"
+            decoding="async"
+          />
         </picture>
         <canvas ref={canvas} className="film-canvas" aria-hidden="true" />
         <div className="film-shade" />
-        <div className="scene-copy intro-copy"><p className="eyebrow">DR. YOGITHA&apos;S</p><h2>Ayurvedic hair care, rooted in tradition.</h2><p>A golden blend of botanical oils, inspired by Ayurvedic traditions.<br />Make hair care a considered ritual—and a little time for yourself.</p><a className="pill-button" href="#shop">Discover the oil <span aria-hidden="true">↗</span></a></div>
-        <div className="scene-copy formula-copy"><p className="eyebrow">THE BOTANICAL STORY</p><h2>Botanical oils,<br /><span>rooted in tradition.</span></h2><p>A golden blend of botanical oils,<br />inspired by Ayurvedic traditions.</p></div>
-        <div className="scene-copy filling-copy"><p className="eyebrow">THE GOLDEN POUR</p><h2>From bowl<br /><span>to bottle.</span></h2><p>Watch the golden oil come together,<br />ready for your hair-care ritual.</p></div>
-        <div className="scene-copy packaging-copy"><p className="eyebrow">THE FINAL TOUCH</p><h2>A considered<br /><span>final touch.</span></h2><p>A clear bottle, finished with a black cap<br />and a botanical label.</p></div>
-        <div className="scene-copy result-copy"><p className="eyebrow">YOUR HAIR RITUAL</p><h2>Make space<br /><span>for hair care.</span></h2><p>Bring Ayurvedic-inspired botanical care<br />into a simple moment for yourself.</p><a className="pill-button dark-button" href="#shop">Meet the hair oil <span aria-hidden="true">↗</span></a></div>
-        <a href="#formula" className="scroll-cue">SCROLL <span aria-hidden="true">↓</span></a>
+        <div className="scene-copy intro-copy">
+          <p className="eyebrow">DR. YOGITHA&apos;S</p>
+          <h2>Awaken your roots</h2>
+          <p>
+            With Intensive Hair Ampoule, rooted in classical Ayurveda—an
+            everyday ritual that cares for hair from root to tip.
+          </p>
+          <a className="pill-button" href="#shop">
+            Discover the oil <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div className="scene-copy formula-copy">
+          <p className="eyebrow">THE MAKING</p>
+          <h2>Beyond regular hair oil</h2>
+          <p>
+            An Ayurvedic Taila Paka, meticulously crafted following every
+            principle in classical text, slowly prepared to honour the character
+            of every botanical.
+          </p>
+        </div>
+        <div className="scene-copy filling-copy">
+          <p className="eyebrow">AYURVEDIC TAILA PAKA</p>
+          <h2>Wisdom of Ayurveda</h2>
+          <p>
+            Experience the authenticity and let the results speak through a
+            time-honoured ritual for everyday moments of care.
+          </p>
+        </div>
+        <a href="#formula" className="scroll-cue">
+          SCROLL <span aria-hidden="true">↓</span>
+        </a>
         <span className="film-caption">DR. YOGITHA'S / AYURVEDIC HAIR OIL</span>
         <div className="film-progress" aria-hidden="true" />
-        {failed && <p className="film-error" role="status">Showing the still image. Discover the hair oil below.</p>}
+        {failed && (
+          <p className="film-error" role="status">
+            Showing the still image. Discover the hair oil below.
+          </p>
+        )}
       </div>
     </section>
   );

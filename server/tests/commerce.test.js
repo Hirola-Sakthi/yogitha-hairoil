@@ -3,15 +3,17 @@ import assert from "node:assert/strict";
 import { MongoMemoryReplSet } from "mongodb-memory-server";
 const mongo = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
 process.env.MONGODB_URI = mongo.getUri();
-process.env.MONGODB_DB = "ambar_test";
+process.env.MONGODB_DB = "dr_yogithas_test";
 process.env.NODE_ENV = "test";
 process.env.ALLOW_COD = "true";
 process.env.SITE_URL = "http://localhost:5173";
-const { server } = await import("../index.js");
+const { app } = await import("../index.js");
 const { db, client, insert, tx, findOne, get, put, all } =
   await import("../models/db.js");
+const { modelFor } = await import("../models/index.js");
 const { hash, digest, limit } = await import("../middleware/auth.js");
-await new Promise((r) => server.listen(0, "127.0.0.1", r));
+const server = app.listen(0, "127.0.0.1");
+await new Promise((resolve) => server.once("listening", resolve));
 const origin = "http://127.0.0.1:" + server.address().port;
 let customer = "",
   owner = "",
@@ -42,6 +44,22 @@ const address = {
   state: "Karnataka",
   pincode: "560001",
 };
+test("Database schema and defaults are initialized for application collections", async () => {
+  assert.equal(
+    (await db.collection("settings").findOne({ id: "store" })).brand,
+    "Dr. Yogitha's",
+  );
+  assert.equal(modelFor("products").modelName, "Product");
+  assert.equal(modelFor("carts").modelName, "Cart");
+  assert.equal(modelFor("limits").modelName, "RateLimit");
+  assert.ok(
+    (await db.collection("payments").indexes()).some(
+      (index) => index.name === "provider_order_id_unique",
+    ),
+  );
+  assert.deepEqual((await call("/health")).data, { ok: true });
+  assert.equal((await call("/not-a-route")).status, 404);
+});
 test("Registration, session restoration and privilege escalation prevention", async () => {
   const r = await call("/auth/register", "POST", {
     name: "Tester",

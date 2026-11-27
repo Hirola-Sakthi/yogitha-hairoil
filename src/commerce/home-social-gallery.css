@@ -27,8 +27,8 @@
 .home-social-profile-copy { display: grid; gap: 4px; min-width: 0; }
 .home-social-profile-copy strong { max-width: 245px; overflow: hidden; color: var(--brand); font-size: 12px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
 .home-social-profile-copy > span { color: var(--muted); font-size: 11px; white-space: nowrap; }
-.home-social-follow { display: inline-flex; min-width: 78px; min-height: 40px; align-items: center; justify-content: center; margin-left: 4px; padding: 8px 15px; border: 1px solid var(--brand); border-radius: 999px; background: var(--brand); color: var(--surface); font: inherit; font-size: 12px; font-weight: 600; text-decoration: none; transition: background-color .2s ease; }
-.home-social-follow:hover:not(.is-unavailable) { background: var(--brand-dark); }
+.home-social-follow { display: inline-flex; min-width: 78px; min-height: 40px; align-items: center; justify-content: center; margin-left: 4px; padding: 8px 15px; border: 1px solid #bf8b22; border-radius: 999px; background: #bf8b22; color: #201b10; font: inherit; font-size: 12px; font-weight: 600; text-decoration: none; transition: background-color .2s ease; }
+.home-social-follow:hover:not(.is-unavailable) { background: #bf8b22; }
 .home-social-follow.is-unavailable { opacity: .7; cursor: default; }
 .home-social-gallery-grid {
   display: grid;

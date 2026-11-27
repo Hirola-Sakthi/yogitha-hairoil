@@ -1,6 +1,6 @@
 import { checkOrigin } from "../cors/index.js";
 import { randomUUID } from "node:crypto";
-import { db } from "../models/db.js";
+import { Media } from "../models/index.js";
 import { user } from "../middleware/auth.js";
 import { check } from "../utils/validate.js";
 import { uploadImageKitFile } from "../services/imagekit.js";
@@ -9,7 +9,7 @@ export async function media(req, res, url) {
   if (req.method === "GET") {
     const id = url.pathname.slice("/api/media/".length);
     check(/^[a-f0-9-]{36}$/.test(id), "Image not found", 404);
-    const image = await db.collection("media").findOne({ _id: id });
+    const image = await Media.findById(id).lean();
     check(image, "Image not found", 404);
     if (image.imagekitUrl) {
       res.statusCode = 302;

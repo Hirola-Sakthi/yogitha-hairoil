@@ -1,7 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { basename, dirname, extname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { client, db } from "../config/mongo.js";
+import { client, db } from "../config/db.js";
 import {
   hostImageKitUrl,
   imageKitConfigured,

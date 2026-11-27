@@ -6,8 +6,8 @@ export default function RitualCta() {
   return (
     <section className="home-ritual-cta" aria-labelledby="ritual-cta-title">
       <div className="home-ritual-cta-copy">
-        <h2 id="ritual-cta-title">A little care.<br /><span>A lasting ritual.</span></h2>
-        <p>Bring botanical inspiration and a mindful moment to your everyday hair care.</p>
+        <h2 id="ritual-cta-title">Be gentle.<br /><span>Your hair deserves care.</span></h2>
+        <p>Make four minutes of gentle scalp massage part of your daily hair-care routine. Use your fingertips and keep the pressure light.</p>
         <Link to="/#shop" className="home-ritual-cta-button">Shop now <span aria-hidden="true">&rarr;</span></Link>
       </div>
       <div className="home-ritual-cta-image">

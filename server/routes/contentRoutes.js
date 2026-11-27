@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { contentController } from "../controllers/contentController.js";
+import { jsonBody } from "../middleware/jsonBody.js";
+export const contentRoutes = Router();
+contentRoutes.use(async (req, res, next) => {
+  try {
+    if (!["GET", "HEAD"].includes(req.method)) req.body = await jsonBody(req);
+    await contentController(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+});

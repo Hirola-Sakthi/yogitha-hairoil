@@ -1,0 +1,21 @@
+import { defineModel } from "./model.js";
+export const Settings = defineModel("Settings", "settings", {
+  id: String,
+  brand: String,
+  description: String,
+  instagramUrl: String,
+  facebookUrl: String,
+  youtubeUrl: String,
+  linkedinUrl: String,
+  whatsapp: String,
+  whatsappMessage: String,
+  email: String,
+  phone: String,
+  address: String,
+  shippingPaise: Number,
+  seoTitle: String,
+  seoDescription: String,
+  socialImage: String,
+  createdAt: String,
+  updatedAt: String,
+});

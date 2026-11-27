@@ -1,115 +1,89 @@
 import { randomUUID } from "node:crypto";
-import { storeContact } from "../../src/shared/storeDefaults.js";
-import { db, mongoOptions } from "../config/mongo.js";
-export {
-  db,
-  client,
-  tx,
-  findOne,
-  findMany,
-  count,
-  insert,
-  update,
-  deleteMany,
-} from "../config/mongo.js";
+import { db, mongoOptions } from "../config/db.js";
+import { modelFor } from "./index.js";
+
+export { db, client, tx, mongoOptions } from "../config/db.js";
+
 export const now = () => new Date().toISOString();
-export async function all(c) {
-  const docs = await db
-    .collection(c)
-    .find({}, mongoOptions())
-    .sort({
-      _id: -1,
-    })
-    .toArray();
-  return docs.map(({ _id, ...d }) => d);
+
+const options = () => {
+  const session = mongoOptions().session;
+  return session ? { session } : {};
+};
+
+const clean = (document) => {
+  if (!document) return null;
+  const data =
+    typeof document.toObject === "function" ? document.toObject() : document;
+  const { _id, __v, ...record } = data;
+  return record;
+};
+
+const model = (name) => {
+  const collection = modelFor(name);
+  if (!collection) throw new Error(`No Mongoose model registered for ${name}`);
+  return collection;
+};
+
+const withSession = (query) => {
+  const session = mongoOptions().session;
+  return session ? query.session(session) : query;
+};
+
+export const findOne = async (name, filter) =>
+  clean(await withSession(model(name).findOne(filter)).lean());
+
+export const findMany = async (name, filter = {}) => {
+  const records = await withSession(model(name).find(filter))
+    .sort({ _id: -1 })
+    .lean();
+  return records.map(clean);
+};
+
+export const count = (name, filter = {}) =>
+  withSession(model(name).countDocuments(filter)).exec();
+
+export async function insert(name, data) {
+  const [record] = await model(name).create([{ ...data }], options());
+  return clean(record);
 }
-export async function get(c, id) {
-  const d = await db.collection(c).findOne(
-    {
-      id,
-    },
-    mongoOptions(),
-  );
-  if (!d) return null;
-  const { _id, ...data } = d;
-  return data;
+
+export const update = (name, filter, changes) =>
+  model(name).updateOne(filter, { $set: changes }, options()).exec();
+
+export const deleteMany = (name, filter) =>
+  model(name).deleteMany(filter, options()).exec();
+
+export async function all(collection) {
+  return findMany(collection);
 }
-export async function put(c, d) {
-  d = {
-    ...d,
-    id: d.id || randomUUID(),
+
+export async function get(collection, id) {
+  return findOne(collection, { id });
+}
+
+export async function put(collection, document) {
+  const record = {
+    ...document,
+    id: document.id || randomUUID(),
     updatedAt: now(),
   };
-  await db.collection(c).replaceOne(
-    {
-      id: d.id,
-    },
-    d,
-    {
-      ...mongoOptions(),
+  await model(collection)
+    .replaceOne({ id: record.id }, record, {
+      ...options(),
       upsert: true,
-    },
-  );
-  return d;
+      runValidators: true,
+    })
+    .exec();
+  return record;
 }
-export const remove = (c, id) =>
-  db.collection(c).deleteOne(
-    {
-      id,
-    },
-    mongoOptions(),
-  );
-export const audit = async (u, action) =>
-  await put("audit", {
-    userId: u.id,
+
+export const remove = (collection, id) =>
+  model(collection).deleteOne({ id }, options()).exec();
+
+export const audit = async (account, action) =>
+  put("audit", {
+    userId: account.id,
     action,
     createdAt: now(),
-  });
-async function seed(c, d) {
-  await db
-    .collection(c)
-    .updateOne(
-      { id: d.id },
-      { $setOnInsert: { ...d, updatedAt: now() } },
-      { upsert: true },
-    );
-}
-await seed("settings", {
-  id: "store",
-  brand: "Dr. Yogitha's",
-  description: "Ayurvedic hair oil inspired by botanical traditions.",
-  ...storeContact,
-  shippingPaise: 0,
-  seoTitle: "Dr. Yogitha's — Ayurvedic Hair Oil",
-  seoDescription: "A mindful botanical hair-care ritual.",
-  socialImage: "/product-showcase.webp",
-});
-await seed("products", {
-  id: "hair-oil",
-  name: "Ayurvedic Hair Oil",
-  slug: "ayurvedic-hair-oil",
-  sku: "AYU-001",
-  description: "A golden botanical hair oil inspired by Ayurvedic traditions.",
-  pricePaise: 0,
-  stock: 0,
-  status: "draft",
-  image: "/product-showcase.webp",
-  weight: 0,
-  length: 0,
-  breadth: 0,
-  height: 0,
-  faq: [],
-});
-for (const [slug, title] of [
-  ["privacy", "Privacy policy"],
-  ["terms", "Terms & conditions"],
-  ["shipping", "Shipping policy"],
-  ["returns", "Returns & refunds"],
-])
-  await seed("policies", {
-    id: slug,
-    slug,
-    title,
-    content: "",
-    status: "draft",
   });

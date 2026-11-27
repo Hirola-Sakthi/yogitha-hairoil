@@ -91,9 +91,9 @@ export default function HomeSocialGallery() {
       <div className="home-social-gallery-inner">
         <header className="home-social-gallery-heading">
           <div className="home-social-heading-copy">
-            <p className="eyebrow">FOLLOW US</p>
+            <p className="eyebrow">FIND US ON SOCIAL</p>
             <h2 id="home-social-gallery-title"><span className="home-social-heading-main">Follow Us On</span><span>Instagram</span></h2>
-            <p className="home-social-description">Botanical inspiration and little moments from our hair-care ritual.</p>
+            <p className="home-social-description">Explore classical Ayurveda, the ingredients we choose, and gentle tips for everyday hair care.</p>
           </div>
           <div className="home-social-profile">
             <img src={imageUrl(`${import.meta.env.BASE_URL}dr-yogitha.jpg`)} alt="" />
